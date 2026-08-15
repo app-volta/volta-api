@@ -1,6 +1,11 @@
 package com.volta.api.database.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -8,9 +13,29 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
+@Entity
 public class Company {
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
     private String name;
+
     private String cnpj;
+
     private String address;
+
+    @OneToMany(mappedBy = "Conversation")
+    private Set<Conversation> conversations = new HashSet<>();
+
+    @OneToMany(mappedBy = "Area")
+    private Set<Area> areas = new HashSet<>();
+
+    @OneToMany(mappedBy = "esg_metric")
+    private Set<EsgMetric> esgMetrics = new HashSet<>();
+
+    @OneToMany(mappedBy = "Incident")
+    private Set<Incident> incidents = new HashSet<>();
+
+
 }
