@@ -2,7 +2,7 @@ spring:
   application:
     name: volta-api
   datasource:
-    url: postgresql://neondb_owner:npg_ovBO3AbHr7aV@ep-polished-resonance-acijzxdw-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    url: postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@ep-polished-resonance-acijzxdw-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   jpa:
