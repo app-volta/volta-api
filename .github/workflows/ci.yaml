@@ -14,6 +14,10 @@ permissions:
   contents: read
 
 jobs:
+  validate-pr:
+    if: github.event_name == 'pull_request'
+    uses: app-volta/DevOps/.github/workflows/reusable-validate-pr.yml@v1
+
   build-test:
     name: build-test
     runs-on: ubuntu-latest

@@ -1,0 +1,114 @@
+name: CD
+
+on:
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: 'Tag existente a reimplantar (ex.- sha-a1b2c3d). Vazio = construir a partir do commit atual.'
+        required: false
+        type: string
+      environment:
+        description: 'Ambiente de destino'
+        required: true
+        type: choice
+        options: [qa, prod]
+        default: qa
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    name: setup
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.resolve.outputs.environment }}
+      moving-tag: ${{ steps.resolve.outputs.moving-tag }}
+      health-url: ${{ steps.resolve.outputs.health-url }}
+      rebuild: ${{ steps.resolve.outputs.rebuild }}
+    steps:
+      - name: Resolver ambiente
+        id: resolve
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_ENV: ${{ inputs.environment }}
+          INPUT_TAG: ${{ inputs.image-tag }}
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            ENVIRONMENT="$INPUT_ENV"
+            if [ -n "$INPUT_TAG" ]; then REBUILD="false"; else REBUILD="true"; fi
+          elif [ "$REF_NAME" = "main" ]; then
+            ENVIRONMENT="prod"
+            REBUILD="true"
+          else
+            ENVIRONMENT="qa"
+            REBUILD="true"
+          fi
+
+          if [ "$ENVIRONMENT" = "prod" ]; then
+            MOVING_TAG="latest"
+            HEALTH_URL="https://volta-api-prod.onrender.com/actuator/health"
+          else
+            MOVING_TAG="qa"
+            HEALTH_URL="https://volta-api-qa.onrender.com/actuator/health"
+          fi
+
+          {
+            echo "environment=${ENVIRONMENT}"
+            echo "moving-tag=${MOVING_TAG}"
+            echo "health-url=${HEALTH_URL}"
+            echo "rebuild=${REBUILD}"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Ambiente: ${ENVIRONMENT} | tag móvel: ${MOVING_TAG} | rebuild: ${REBUILD}"
+
+  build-test:
+    name: build-test
+    needs: setup
+    if: needs.setup.outputs.rebuild == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build, testes e empacotamento
+        run: mvn --batch-mode verify
+
+  docker:
+    name: docker
+    needs: [setup, build-test]
+    if: needs.setup.outputs.rebuild == 'true'
+    uses: app-volta/DevOps/.github/workflows/reusable-docker-build-push.yml@v1
+    with:
+      image-name: api
+      context: .
+      dockerfile: ./Dockerfile
+      push: true
+      moving-tag: ${{ needs.setup.outputs.moving-tag }}
+
+  deploy:
+    name: deploy
+    needs: [setup, docker]
+    if: always() && needs.setup.result == 'success' && (needs.docker.result == 'success' || needs.setup.outputs.rebuild == 'false')
+    uses: app-volta/DevOps/.github/workflows/reusable-render-deploy.yml@v1
+    with:
+      environment: ${{ needs.setup.outputs.environment }}
+      image-name: api
+      image-tag: ${{ needs.docker.outputs.image-tag || inputs.image-tag }}
+      health-url: ${{ needs.setup.outputs.health-url }}
+    secrets:
+      render-deploy-hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
