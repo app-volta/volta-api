@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -34,5 +34,5 @@ public class EsgMetric {
     private double recyclingPercentage;
 
     @Column(name = "calculated_at")
-    private LocalDate calculatedAt;
+    private LocalDateTime calculatedAt;
 }

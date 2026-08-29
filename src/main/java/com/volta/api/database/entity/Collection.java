@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,10 +29,10 @@ public class Collection {
     private Cooperative cooperative;
 
     @Column(name = "request_date")
-    private LocalDate requestDate;
+    private LocalDateTime requestDate;
 
     @Column(name = "scheduled_date")
-    private LocalDate scheduledDate;
+    private LocalDateTime scheduledDate;
 
     @Column(name = "current_status")
     private String currentStatus;

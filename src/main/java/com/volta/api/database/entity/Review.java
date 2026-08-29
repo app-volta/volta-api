@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -34,5 +34,6 @@ public class Review {
     private String comment;
 
     @Column(name = "review_date")
-    private LocalDate reviewDate;
+    private LocalDateTime reviewDate;
+
 }

@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -52,7 +52,7 @@ public class Incident {
     private String status;
 
     @Column(name = "registered_at")
-    private LocalDate registeredAt;
+    private LocalDateTime registeredAt;
 
     @OneToMany(mappedBy = "incident")
     private Set<Attachment> attachments = new HashSet<>();

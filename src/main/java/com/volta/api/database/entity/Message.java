@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,10 +32,10 @@ public class Message {
     private boolean reported;
 
     @Column(name = "sent_at")
-    private LocalDate sentAt;
+    private LocalDateTime sentAt;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "message")
     private Set<MessageAttachment> messageAttachments = new HashSet<>();

@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -25,7 +25,7 @@ public class CollectionStatus {
     private String status;
 
     @Column(name = "change_date")
-    private LocalDate changeDate;
+    private LocalDateTime changeDate;
 
     private String observation;
 }
