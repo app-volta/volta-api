@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
 public class Company {
@@ -25,17 +24,16 @@ public class Company {
 
     private String address;
 
-    @OneToMany(mappedBy = "Conversation")
+    @OneToMany(mappedBy = "company")
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(mappedBy = "Area")
+    @OneToMany(mappedBy = "company")
     private Set<Area> areas = new HashSet<>();
 
-    @OneToMany(mappedBy = "esg_metric")
+    @OneToMany(mappedBy = "company")
     private Set<EsgMetric> esgMetrics = new HashSet<>();
 
-    @OneToMany(mappedBy = "Incident")
+    @OneToMany(mappedBy = "company")
     private Set<Incident> incidents = new HashSet<>();
-
 
 }

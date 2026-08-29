@@ -12,7 +12,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
 public class Incident {
@@ -55,9 +54,9 @@ public class Incident {
     @Column(name = "registered_at")
     private LocalDate registeredAt;
 
-    @OneToMany(mappedBy = "Attachment")
+    @OneToMany(mappedBy = "incident")
     private Set<Attachment> attachments = new HashSet<>();
 
-    @OneToMany(mappedBy = "Collection")
+    @OneToMany(mappedBy = "incident")
     private Set<Collection> collections = new HashSet<>();
 }

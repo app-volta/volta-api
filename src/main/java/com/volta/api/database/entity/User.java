@@ -12,7 +12,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
 public class User {
@@ -37,15 +36,15 @@ public class User {
     @Column(name = "user_type")
     private String userType;
 
-    @OneToMany(mappedBy = "Incident")
+    @OneToMany(mappedBy = "user")
     private Set<Incident> incidents = new HashSet<>();
 
-    @OneToMany(mappedBy = "Message")
+    @OneToMany(mappedBy = "user")
     private Set<Message> messages = new HashSet<>();
 
-    @OneToMany(mappedBy = "Notification")
+    @OneToMany(mappedBy = "user")
     private Set<Notification> notifications = new HashSet<>();
 
-    @OneToMany(mappedBy = "Review")
+    @OneToMany(mappedBy = "user")
     private Set<Review> reviews = new HashSet<>();
 }

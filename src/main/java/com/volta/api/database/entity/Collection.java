@@ -12,9 +12,9 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
+@Table(name = "collection")
 public class Collection {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,12 +42,12 @@ public class Collection {
 
     private boolean urgent;
 
-    @OneToMany(mappedBy = "collection_status")
+    @OneToMany(mappedBy = "collection")
     private Set<CollectionStatus> collectionStatuses = new HashSet<>();
 
-    @OneToMany(mappedBy = "Conversation")
+    @OneToMany(mappedBy = "collection")
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(mappedBy = "Review")
+    @OneToMany(mappedBy = "collection")
     private Set<Review> reviews = new HashSet<>();
 }

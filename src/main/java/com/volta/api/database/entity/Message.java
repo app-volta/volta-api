@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -38,6 +37,6 @@ public class Message {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
-    @OneToMany(mappedBy = "message_attachment")
+    @OneToMany(mappedBy = "message")
     private Set<MessageAttachment> messageAttachments = new HashSet<>();
 }

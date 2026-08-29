@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
 @Table(name = "waste_type")
@@ -27,6 +26,6 @@ public class WasteType {
     @Column(name = "default_risk_level")
     private String defaultRiskLevel;
 
-    @OneToMany(mappedBy = "Incident")
+    @OneToMany(mappedBy = "wasteType")
     private Set<Incident> incidents = new HashSet<>();
 }

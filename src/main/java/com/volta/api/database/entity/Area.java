@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
 public class Area {
@@ -29,8 +28,7 @@ public class Area {
     @Column(name = "location_description")
     private String locationDescription;
 
-    @OneToMany(mappedBy = "Incident")
+    @OneToMany(mappedBy = "area")
     private Set<Incident> incidents = new HashSet<>();
-
 
 }

@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @Entity
 public class Cooperative {
@@ -28,13 +27,13 @@ public class Cooperative {
 
     private String specialties;
 
-    @OneToMany(mappedBy = "Collection")
+    @OneToMany(mappedBy = "cooperative")
     private Set<Collection> collections = new HashSet<>();
 
-    @OneToMany(mappedBy = "Conversation")
+    @OneToMany(mappedBy = "cooperative")
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(mappedBy = "Review")
+    @OneToMany(mappedBy = "cooperative")
     private Set<Review> reviews = new HashSet<>();
 
 }
