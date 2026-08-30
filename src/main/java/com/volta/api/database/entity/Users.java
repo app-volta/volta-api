@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class User {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -31,10 +31,9 @@ public class User {
     @Column(name = "password_hash")
     private String passwordHash;
 
-    private String role;
-
-    @Column(name = "user_type")
-    private String userType;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private Set<Incident> incidents = new HashSet<>();

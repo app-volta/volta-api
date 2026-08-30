@@ -3,7 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class Conversation {
     private Collection collection;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "conversation")
     private Set<Message> messages = new HashSet<>();

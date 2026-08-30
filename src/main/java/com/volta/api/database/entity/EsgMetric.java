@@ -3,6 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,14 +25,14 @@ public class EsgMetric {
 
     private String period;
 
-    @Column(name = "total_waste_kg")
-    private double totalWasteKg;
+    @Column(name = "total_waste_kg", columnDefinition = "DECIMAL(14,2)")
+    private BigDecimal totalWasteKg;
 
-    @Column(name = "total_recycle_kg")
-    private double totalRecycledKg;
+    @Column(name = "total_recycled_kg", columnDefinition = "DECIMAL(14,2)")
+    private BigDecimal totalRecycledKg;
 
-    @Column(name = "recycling_percentage")
-    private double recyclingPercentage;
+    @Column(name = "recycling_percentage", columnDefinition = "DECIMAL(5,2)")
+    private BigDecimal recyclingPercentage;
 
     @Column(name = "calculated_at")
     private LocalDateTime calculatedAt;

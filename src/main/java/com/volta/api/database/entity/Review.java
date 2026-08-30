@@ -23,7 +23,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "collection_id")
@@ -33,7 +33,7 @@ public class Review {
 
     private String comment;
 
-    @Column(name = "review_date")
-    private LocalDateTime reviewDate;
+    @Column(name = "reviewed_at")
+    private LocalDateTime reviewedAt;
 
 }

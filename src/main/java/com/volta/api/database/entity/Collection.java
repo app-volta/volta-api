@@ -28,11 +28,11 @@ public class Collection {
     @JoinColumn(name = "cooperative_id")
     private Cooperative cooperative;
 
-    @Column(name = "request_date")
-    private LocalDateTime requestDate;
+    @Column(name = "requested_at")
+    private LocalDateTime requestedAt;
 
-    @Column(name = "scheduled_date")
-    private LocalDateTime scheduledDate;
+    @Column(name = "scheduled_at")
+    private LocalDateTime scheduledAt;
 
     @Column(name = "current_status")
     private String currentStatus;

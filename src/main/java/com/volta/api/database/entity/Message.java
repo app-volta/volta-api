@@ -25,7 +25,7 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     private String text;
 
@@ -33,9 +33,6 @@ public class Message {
 
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "message")
     private Set<MessageAttachment> messageAttachments = new HashSet<>();

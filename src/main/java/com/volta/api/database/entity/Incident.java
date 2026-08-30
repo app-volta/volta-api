@@ -3,6 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class Incident {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "area_id")
@@ -44,8 +45,8 @@ public class Incident {
     @Column(name = "contamination_level")
     private String contaminationLevel;
 
-    @Column(name = "estimated_quantity")
-    private String estimatedQuantity;
+    @Column(name = "estimated_quantity", columnDefinition = "DECIMAL(12,2)")
+    private BigDecimal estimatedQuantity;
 
     private String priority;
 

@@ -24,8 +24,8 @@ public class CollectionStatus {
 
     private String status;
 
-    @Column(name = "change_date")
-    private LocalDateTime changeDate;
+    @Column(name = "changed_at")
+    private LocalDateTime changedAt;
 
     private String observation;
 }

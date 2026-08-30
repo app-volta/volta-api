@@ -3,6 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,11 +20,15 @@ public class Cooperative {
     private UUID id;
     private String name;
     private String cnpj;
-    private double latitude;
-    private double longitude;
 
-    @Column(name = "average_rating")
-    private double averageRating;
+    @Column(columnDefinition = "DECIMAL(9,6)")
+    private BigDecimal latitude;
+
+    @Column(columnDefinition = "DECIMAL(9,6)")
+    private BigDecimal longitude;
+
+    @Column(name = "average_rating", columnDefinition = "NUMERIC(3,2)")
+    private BigDecimal averageRating;
 
     private String specialties;
 
