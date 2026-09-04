@@ -1,7 +1,9 @@
 package com.volta.api.database.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -18,29 +20,42 @@ import java.util.UUID;
 public class Collection {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(
+            columnDefinition = "UUID DEFAULT gen_random_uuid()",
+            updatable = false,
+            nullable = false,
+            unique = true
+    )
     private UUID id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "incident_id")
+    @JoinColumn(name = "incident_id", nullable = false)
     private Incident incident;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "cooperative_id")
+    @JoinColumn(name = "cooperative_id", nullable = false)
     private Cooperative cooperative;
-
+    @NotNull
+    @CreationTimestamp
     @Column(name = "requested_at")
     private LocalDateTime requestedAt;
 
     @Column(name = "scheduled_at")
     private LocalDateTime scheduledAt;
 
-    @Column(name = "current_status")
+    @NotNull
+    @Column(name = "current_status", length = 50, nullable = false)
     private String currentStatus;
 
-    @Column(name = "collection_type")
+    @NotNull
+    @Column(name = "collection_type", length = 50, nullable = false)
     private String collectionType;
 
-    private boolean urgent;
+    @NotNull
+    @Column(nullable = false)
+    private boolean urgent = false;
 
     @OneToMany(mappedBy = "collection")
     private Set<CollectionStatus> collectionStatuses = new HashSet<>();

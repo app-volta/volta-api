@@ -1,6 +1,7 @@
 package com.volta.api.database.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.HashSet;
@@ -16,13 +17,21 @@ import java.util.UUID;
 public class Area {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(
+            columnDefinition = "UUID DEFAULT gen_random_uuid()",
+            updatable = false,
+            nullable = false,
+            unique = true
+    )
     private UUID id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @Column(name = "sector_name")
+    @NotNull
+    @Column(name = "sector_name", length = 100, nullable = false)
     private String sectorName;
 
     @Column(name = "location_description")
