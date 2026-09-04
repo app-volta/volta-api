@@ -1,13 +1,13 @@
 package com.volta.api.database.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -15,15 +15,24 @@ import java.util.UUID;
 public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(
+            columnDefinition = "UUID DEFAULT gen_random_uuid()",
+            updatable = false,
+            nullable = false,
+            unique = true
+    )
     private UUID id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "incident_id")
+    @JoinColumn(name = "incident_id", nullable = false)
     private Incident incident;
 
-    @Column(name = "file_url")
+    @NotNull
+    @Column(name = "file_url", length = 500, nullable = false)
     private String fileUrl;
 
-    @Column(name = "file_type")
+    @NotNull
+    @Column(name = "file_type", length = 100, nullable = false)
     private String fileType;
 }

@@ -3,18 +3,20 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "message_attachment")
-public class MessageAttachment {
-
+@Builder
+public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -26,15 +28,14 @@ public class MessageAttachment {
     private UUID id;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "message_id", nullable = false)
-    private Message message;
+    @Column(length = 50, unique = true, nullable = false)
+    private String type;
 
-    @NotNull
-    @Column(name = "file_url", length = 500, nullable = false)
-    private String fileUrl;
+    @OneToMany(mappedBy = "role")
+    private Set<Users> users = new HashSet<>();
 
-    @NotNull
-    @Column(name = "file_type", length = 500, nullable = false)
-    private String fileType;
+    @Override
+    public @Nullable String getAuthority() {
+        return type;
+    }
 }

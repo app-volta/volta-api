@@ -3,12 +3,11 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -17,11 +16,17 @@ public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(
+            columnDefinition = "UUID DEFAULT gen_random_uuid()",
+            updatable = false,
+            nullable = false,
+            unique = true
+    )
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     private String type;
 
@@ -32,5 +37,5 @@ public class Notification {
     private boolean read;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }

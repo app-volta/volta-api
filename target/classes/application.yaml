@@ -1,3 +1,21 @@
+server:
+  port: 8080
 spring:
   application:
     name: volta-api
+  datasource:
+    url: jdbc:postgresql://ep-polished-resonance-acijzxdw-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    baseline-on-migrate: true
+jwt:
+  expiration: ${JWT_EXPIRATION}
+  key: ${JWT_KEY}

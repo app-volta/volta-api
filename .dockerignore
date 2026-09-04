@@ -1,0 +1,13 @@
+target/
+.git/
+.gitignore
+.github/
+.idea/
+.vscode/
+*.iml
+.env
+.env.*
+**/application-local.properties
+README.md
+Dockerfile
+.dockerignore
