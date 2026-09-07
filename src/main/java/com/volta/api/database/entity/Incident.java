@@ -28,22 +28,22 @@ public class Incident {
     private UUID id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "area_id", nullable = false)
     private Area area;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "waste_type_id", nullable = false)
     private WasteType wasteType;
 
@@ -76,9 +76,9 @@ public class Incident {
     )
     private LocalDateTime registeredAt;
 
-    @OneToMany(mappedBy = "incident")
+    @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)
     private Set<Attachment> attachments = new HashSet<>();
 
-    @OneToMany(mappedBy = "incident")
+    @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)
     private Set<Collection> collections = new HashSet<>();
 }

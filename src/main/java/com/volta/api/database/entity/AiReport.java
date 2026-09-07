@@ -26,7 +26,7 @@ public class AiReport {
     private UUID id;
 
     @NotNull
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "incident_id", nullable = false)
     private Incident incident;
 

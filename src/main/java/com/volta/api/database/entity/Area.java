@@ -26,7 +26,7 @@ public class Area {
     private UUID id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
@@ -37,7 +37,7 @@ public class Area {
     @Column(name = "location_description")
     private String locationDescription;
 
-    @OneToMany(mappedBy = "area")
+    @OneToMany(mappedBy = "area", fetch = FetchType.LAZY)
     private Set<Incident> incidents = new HashSet<>();
 
 }

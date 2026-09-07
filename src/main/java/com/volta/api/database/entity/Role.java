@@ -31,7 +31,7 @@ public class Role implements GrantedAuthority {
     @Column(length = 50, unique = true, nullable = false)
     private String type;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<Users> users = new HashSet<>();
 
     @Override
