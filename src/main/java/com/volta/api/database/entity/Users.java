@@ -40,8 +40,7 @@ public class Users implements UserDetails {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @NotNull
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String position;
 
     @NotNull

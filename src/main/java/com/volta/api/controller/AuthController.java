@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
-import com.volta.api.dto.LoginRequestDTO;
-import com.volta.api.dto.RegisterRequestDTO;
-import com.volta.api.dto.TokenResponseDTO;
+import com.volta.api.dto.request.LoginRequestDTO;
+import com.volta.api.dto.request.RegisterRequestDTO;
+import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
