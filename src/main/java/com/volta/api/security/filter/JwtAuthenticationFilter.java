@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(auth);
-                } catch (JwtException e) {
+                } catch (JwtException | IllegalArgumentException | NullPointerException e) {
                     // token inválido ou expirado
                 }
             }

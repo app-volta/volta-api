@@ -35,9 +35,14 @@ public class AuthService {
 
     public void register(RegisterRequestDTO dto) throws BadRequestException {
         Users user = userRepository.findByEmail(dto.email()).orElse(null);
+
+        if (dto.companyId() == null){
+            throw new BadRequestException();
+        }
+
         Company company = companyRepository.findById(dto.companyId()).orElse(null);
 
-        if (user == null || company == null){
+        if (user != null || company == null){
             throw new BadRequestException();
         }
 

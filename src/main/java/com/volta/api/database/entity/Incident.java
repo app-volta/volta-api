@@ -3,6 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -69,11 +70,8 @@ public class Incident {
     private String status;
 
     @NotNull
-    @Column(
-            name = "registered_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false
-    )
+    @CreationTimestamp
+    @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;
 
     @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)

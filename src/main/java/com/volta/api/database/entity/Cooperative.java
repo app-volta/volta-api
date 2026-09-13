@@ -42,6 +42,7 @@ public class Cooperative {
     @Column(columnDefinition = "DECIMAL(9,6)", nullable = false)
     private BigDecimal longitude;
 
+    @Builder.Default
     @Column(name = "average_rating", columnDefinition = "NUMERIC(3,2)")
     private BigDecimal averageRating = BigDecimal.valueOf(0);
 
