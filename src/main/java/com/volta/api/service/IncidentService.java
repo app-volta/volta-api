@@ -2,30 +2,36 @@ package com.volta.api.service;
 
 import com.volta.api.database.entity.*;
 import com.volta.api.database.repository.*;
-import com.volta.api.dto.request.RegisterIncidentRequestDTO;
+import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
 import com.volta.api.mapper.IncidentMapper;
 import com.volta.api.security.AuthenticatedUser;
-import com.volta.api.usecase.RegisterIncidentUseCase;
+import com.volta.api.usecase.IncidentUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
-public class RegisterIncidentService implements RegisterIncidentUseCase {
+public class IncidentService implements IncidentUseCase {
 
     private final IncidentRepository incidentRepository;
+
     private final CompanyRepository companyRepository;
+
     private final UserRepository userRepository;
+
     private final AreaRepository areaRepository;
+
     private final WasteTypeRepository wasteTypeRepository;
+
     private final IncidentMapper incidentMapper;
 
-    public IncidentResponseDTO register(RegisterIncidentRequestDTO dto, AuthenticatedUser author){
+    public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author){
 
-
-        Company company = companyRepository.findById(dto.companyId()).orElse(null);
-        Users user = userRepository.findById(dto.userId()).orElse(null);
+        Company company = companyRepository.findById(author.companyId()).orElse(null);
+        Users user = userRepository.findById(author.id()).orElse(null);
         Area area = areaRepository.findById(dto.areaId()).orElse(null);
         WasteType wasteType = wasteTypeRepository.findById(dto.wasteTypeId()).orElse(null);
 
@@ -39,5 +45,10 @@ public class RegisterIncidentService implements RegisterIncidentUseCase {
 
         Incident savedIncident = incidentRepository.save(incident);
         return incidentMapper.toResponse(savedIncident);
+    }
+
+    public IncidentResponseDTO getIncidentById(UUID id){
+        Incident incident = incidentRepository.findById(id).orElse(null);
+        return incidentMapper.toResponse(incident);
     }
 }

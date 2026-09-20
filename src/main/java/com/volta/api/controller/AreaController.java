@@ -1,9 +1,9 @@
 package com.volta.api.controller;
 
-import com.volta.api.dto.request.IncidentRequestDTO;
-import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
-import com.volta.api.service.IncidentService;
+import com.volta.api.service.AreaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,29 +13,29 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/incidents")
-public class IncidentController {
+@RequestMapping("/areas")
+public class AreaController {
 
-    private final IncidentService incidentService;
+    private final AreaService areaService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE')")
-    public ResponseEntity<IncidentResponseDTO> create(
-            @RequestBody IncidentRequestDTO dto,
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AreaResponseDTO> create(
+            @RequestBody AreaRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.register(dto, author));
+        return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto, author));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IncidentResponseDTO> show(
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AreaResponseDTO> show(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
     ){
-        IncidentResponseDTO incident = incidentService.getIncidentById(id);
-        return ResponseEntity.ok(incident);
+        AreaResponseDTO area = areaService.getAreaById(id);
+        return ResponseEntity.ok(area);
     }
 }

@@ -5,7 +5,7 @@ import com.volta.api.database.entity.Company;
 import com.volta.api.database.entity.Incident;
 import com.volta.api.database.entity.Users;
 import com.volta.api.database.entity.WasteType;
-import com.volta.api.dto.request.RegisterIncidentRequestDTO;
+import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class IncidentMapper {
 
     public Incident toEntity(
-            RegisterIncidentRequestDTO dto,
+            IncidentRequestDTO dto,
             Company company,
             Users user,
             Area area,
@@ -30,8 +30,6 @@ public class IncidentMapper {
         incident.setContaminationLevel(dto.contaminationLevel());
         incident.setEstimatedQuantity(dto.estimatedQuantity());
         incident.setPriority(dto.priority());
-        incident.setStatus(dto.status());
-        incident.setRegisteredAt(dto.registeredAt());
 
         return incident;
     }
