@@ -5,5 +5,5 @@ import com.volta.api.dto.request.RegisterIncidentRequestDTO;
 import com.volta.api.security.AuthenticatedUser;
 
 public interface RegisterIncidentUseCase {
-    IncidentResponseDTO execute(RegisterIncidentRequestDTO request, AuthenticatedUser author);
+    IncidentResponseDTO register(RegisterIncidentRequestDTO request, AuthenticatedUser author);
 }

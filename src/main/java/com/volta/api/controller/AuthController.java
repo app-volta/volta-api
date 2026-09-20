@@ -18,12 +18,12 @@ public class AuthController {
     private final AuthService authenticationService;
 
     @PostMapping("/register")
-    public void register(@RequestBody RegisterRequestDTO registerRequestDto) throws Exception{
+    public void register(@RequestBody RegisterRequestDTO registerRequestDto) throws Exception {
         authenticationService.register(registerRequestDto);
     }
 
     @PostMapping("/login")
-    public TokenResponseDTO login(@RequestBody LoginRequestDTO loginRequestDto) throws Exception{
+    public TokenResponseDTO login(@RequestBody LoginRequestDTO loginRequestDto) throws Exception {
         return authenticationService.login(loginRequestDto);
     }
 }
