@@ -10,6 +10,8 @@ import com.volta.api.usecase.IncidentUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,6 +47,16 @@ public class IncidentService implements IncidentUseCase {
 
         Incident savedIncident = incidentRepository.save(incident);
         return incidentMapper.toResponse(savedIncident);
+    }
+
+    public List<IncidentResponseDTO> getIncidents(){
+        List<IncidentResponseDTO> incidents = new ArrayList<>();
+
+        for (Incident incident : incidentRepository.findAll()){
+            incidents.add(incidentMapper.toResponse(incident));
+        }
+
+        return incidents;
     }
 
     public IncidentResponseDTO getIncidentById(UUID id){

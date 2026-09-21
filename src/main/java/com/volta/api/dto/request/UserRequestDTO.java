@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record RegisterRequestDTO (
+public record UserRequestDTO(
         String name,
         String email,
         String password,

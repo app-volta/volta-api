@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -28,6 +29,13 @@ public class IncidentController {
             @AuthenticationPrincipal AuthenticatedUser author
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.register(dto, author));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    public ResponseEntity<List<IncidentResponseDTO>> show(){
+        List<IncidentResponseDTO> incidents = incidentService.getIncidents();
+        return ResponseEntity.ok(incidents);
     }
 
     @GetMapping("/{id}")

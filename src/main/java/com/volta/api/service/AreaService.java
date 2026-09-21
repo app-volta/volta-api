@@ -12,6 +12,8 @@ import com.volta.api.usecase.AreaUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,6 +30,16 @@ public class AreaService implements AreaUseCase {
 
         Area savedArea = areaRepository.save(area);
         return areaMapper.toResponse(savedArea);
+    }
+
+    public List<AreaResponseDTO> getAreas(){
+        List<AreaResponseDTO> areas = new ArrayList<>();
+
+        for (Area area : areaRepository.findAll()) {
+            areas.add(areaMapper.toResponse(area));
+        }
+
+        return areas;
     }
 
     public AreaResponseDTO getAreaById(UUID id){

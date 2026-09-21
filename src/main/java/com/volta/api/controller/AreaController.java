@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,12 +30,16 @@ public class AreaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto, author));
     }
 
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<AreaResponseDTO>> show(){
+        List<AreaResponseDTO> areas = areaService.getAreas();
+        return ResponseEntity.ok(areas);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AreaResponseDTO> show(
-            @PathVariable UUID id,
-            @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    public ResponseEntity<AreaResponseDTO> show(@PathVariable UUID id){
         AreaResponseDTO area = areaService.getAreaById(id);
         return ResponseEntity.ok(area);
     }

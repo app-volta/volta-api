@@ -7,7 +7,7 @@ import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.database.repository.RoleRepository;
 import com.volta.api.database.repository.UserRepository;
 import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.request.RegisterRequestDTO;
+import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.enums.RoleTypeEnum;
 import com.volta.api.security.jwt.TokenProvider;
@@ -33,7 +33,7 @@ public class AuthService {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public void register(RegisterRequestDTO dto) throws BadRequestException {
+    public void register(UserRequestDTO dto) throws BadRequestException {
         Users user = userRepository.findByEmail(dto.email()).orElse(null);
 
         if (dto.companyId() == null){
