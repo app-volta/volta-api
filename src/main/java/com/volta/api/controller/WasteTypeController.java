@@ -32,7 +32,7 @@ public class WasteTypeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WasteTypeResponseDTO> show(UUID id){
+    public ResponseEntity<WasteTypeResponseDTO> show(@PathVariable UUID id){
         WasteTypeResponseDTO wasteType = wasteTypeService.getWasteTypeById(id);
         return ResponseEntity.ok(wasteType);
     }

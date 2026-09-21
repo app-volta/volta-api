@@ -7,6 +7,7 @@ import com.volta.api.database.entity.Users;
 import com.volta.api.database.entity.WasteType;
 import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.enums.IncidentStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,6 +31,7 @@ public class IncidentMapper {
         incident.setContaminationLevel(dto.contaminationLevel());
         incident.setEstimatedQuantity(dto.estimatedQuantity());
         incident.setPriority(dto.priority());
+        incident.setStatus(IncidentStatus.PENDING.name());
 
         return incident;
     }

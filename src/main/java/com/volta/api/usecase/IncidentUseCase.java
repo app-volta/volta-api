@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IncidentUseCase {
     IncidentResponseDTO register(IncidentRequestDTO request, AuthenticatedUser author);
 
-    List<IncidentResponseDTO> getIncidents();
+    List<IncidentResponseDTO> getIncidents(AuthenticatedUser author);
 
-    IncidentResponseDTO getIncidentById(UUID id);
+    IncidentResponseDTO getIncidentById(UUID id, AuthenticatedUser author);
 }

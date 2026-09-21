@@ -33,17 +33,14 @@ public class IncidentController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('EMPLOYEE')")
-    public ResponseEntity<List<IncidentResponseDTO>> show(){
-        List<IncidentResponseDTO> incidents = incidentService.getIncidents();
+    public ResponseEntity<List<IncidentResponseDTO>> show(@AuthenticationPrincipal AuthenticatedUser author){
+        List<IncidentResponseDTO> incidents = incidentService.getIncidents(author);
         return ResponseEntity.ok(incidents);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IncidentResponseDTO> show(
-            @PathVariable UUID id,
-            @AuthenticationPrincipal AuthenticatedUser author
-    ){
-        IncidentResponseDTO incident = incidentService.getIncidentById(id);
+    public ResponseEntity<IncidentResponseDTO> show(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser author){
+        IncidentResponseDTO incident = incidentService.getIncidentById(id, author);
         return ResponseEntity.ok(incident);
     }
 }

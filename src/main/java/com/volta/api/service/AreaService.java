@@ -24,7 +24,7 @@ public class AreaService implements AreaUseCase {
     private final AreaMapper areaMapper;
 
     public AreaResponseDTO register(AreaRequestDTO dto, AuthenticatedUser author){
-        Company company = companyRepository.findById(dto.companyId()).orElse(null);
+        Company company = companyRepository.findById(author.companyId()).orElse(null);
 
         Area area = areaMapper.toEntity(dto, company);
 
