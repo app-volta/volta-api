@@ -7,6 +7,10 @@ spring:
     url: jdbc:postgresql://${DATABASE_HOST}/neondb?sslmode=require&channel_binding=require
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+    hikari:
+      max-lifetime: 600000
+      validation-timeout: 3000
+      idle-timeout: 300000
   jpa:
     hibernate:
       ddl-auto: validate
