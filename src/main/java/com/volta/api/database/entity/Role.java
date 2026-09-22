@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Builder
-public class Role implements GrantedAuthority {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -31,11 +31,7 @@ public class Role implements GrantedAuthority {
     @Column(length = 50, unique = true, nullable = false)
     private String type;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<Users> users = new HashSet<>();
 
-    @Override
-    public @Nullable String getAuthority() {
-        return type;
-    }
 }

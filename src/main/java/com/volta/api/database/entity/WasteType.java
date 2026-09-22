@@ -36,6 +36,6 @@ public class WasteType {
     @Column(name = "default_risk_level", length = 50, nullable = false)
     private String defaultRiskLevel;
 
-    @OneToMany(mappedBy = "wasteType")
+    @OneToMany(mappedBy = "wasteType", fetch = FetchType.LAZY)
     private Set<Incident> incidents = new HashSet<>();
 }

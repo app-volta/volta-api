@@ -42,19 +42,20 @@ public class Cooperative {
     @Column(columnDefinition = "DECIMAL(9,6)", nullable = false)
     private BigDecimal longitude;
 
+    @Builder.Default
     @Column(name = "average_rating", columnDefinition = "NUMERIC(3,2)")
     private BigDecimal averageRating = BigDecimal.valueOf(0);
 
     @Column(length = 500)
     private String specialties;
 
-    @OneToMany(mappedBy = "cooperative")
+    @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Collection> collections = new HashSet<>();
 
-    @OneToMany(mappedBy = "cooperative")
+    @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(mappedBy = "cooperative")
+    @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 
 }

@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
-import com.volta.api.dto.LoginRequestDTO;
-import com.volta.api.dto.RegisterRequestDTO;
-import com.volta.api.dto.TokenResponseDTO;
+import com.volta.api.dto.request.LoginRequestDTO;
+import com.volta.api.dto.request.UserRequestDTO;
+import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +18,12 @@ public class AuthController {
     private final AuthService authenticationService;
 
     @PostMapping("/register")
-    public void register(@RequestBody RegisterRequestDTO registerRequestDto) throws Exception{
+    public void register(@RequestBody UserRequestDTO registerRequestDto) throws Exception {
         authenticationService.register(registerRequestDto);
     }
 
     @PostMapping("/login")
-    public TokenResponseDTO login(@RequestBody LoginRequestDTO loginRequestDto) throws Exception{
+    public TokenResponseDTO login(@RequestBody LoginRequestDTO loginRequestDto) throws Exception {
         return authenticationService.login(loginRequestDto);
     }
 }

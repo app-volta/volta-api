@@ -29,12 +29,12 @@ public class Collection {
     private UUID id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "incident_id", nullable = false)
     private Incident incident;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cooperative_id", nullable = false)
     private Cooperative cooperative;
     @NotNull
@@ -57,12 +57,12 @@ public class Collection {
     @Column(nullable = false)
     private boolean urgent = false;
 
-    @OneToMany(mappedBy = "collection")
+    @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<CollectionStatus> collectionStatuses = new HashSet<>();
 
-    @OneToMany(mappedBy = "collection")
+    @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(mappedBy = "collection")
+    @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 }

@@ -3,6 +3,7 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,7 +27,7 @@ public class AiReport {
     private UUID id;
 
     @NotNull
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "incident_id", nullable = false)
     private Incident incident;
 
@@ -42,10 +43,7 @@ public class AiReport {
     private String reportText;
 
     @NotNull
-    @Column(
-            name = "generated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false
-    )
+    @CreationTimestamp
+    @Column(name = "generated_at", nullable = false)
     private LocalDateTime generatedAt;
 }
