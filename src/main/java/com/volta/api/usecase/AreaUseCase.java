@@ -14,4 +14,6 @@ public interface AreaUseCase {
     List<AreaResponseDTO> getAreas();
 
     AreaResponseDTO getAreaById(UUID id);
+
+    void deleteArea(UUID id);
 }

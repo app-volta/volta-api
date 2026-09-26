@@ -13,4 +13,5 @@ public interface IncidentUseCase {
     List<IncidentResponseDTO> getIncidents(AuthenticatedUser author);
 
     IncidentResponseDTO getIncidentById(UUID id, AuthenticatedUser author);
+
 }

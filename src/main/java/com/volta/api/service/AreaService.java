@@ -9,6 +9,7 @@ import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.mapper.AreaMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.AreaUseCase;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,5 +46,10 @@ public class AreaService implements AreaUseCase {
     public AreaResponseDTO getAreaById(UUID id){
         Area area = areaRepository.findById(id).orElse(null);
         return areaMapper.toResponse(area);
+    }
+
+    @Transactional
+    public void deleteArea(UUID id){
+        areaRepository.deleteById(id);
     }
 }
