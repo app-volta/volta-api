@@ -4,6 +4,7 @@ import com.volta.api.database.entity.*;
 import com.volta.api.database.repository.*;
 import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.IncidentMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.IncidentUseCase;
@@ -32,10 +33,14 @@ public class IncidentService implements IncidentUseCase {
 
     public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author){
 
-        Company company = companyRepository.findById(author.companyId()).orElse(null);
-        Users user = userRepository.findById(author.id()).orElse(null);
-        Area area = areaRepository.findById(dto.areaId()).orElse(null);
-        WasteType wasteType = wasteTypeRepository.findById(dto.wasteTypeId()).orElse(null);
+        Company company = companyRepository.findById(author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company"));
+        Users user = userRepository.findById(author.id())
+                .orElseThrow(() -> new ResourceNotFoundException("User"));
+        Area area = areaRepository.findById(dto.areaId()).
+                orElseThrow(() -> new ResourceNotFoundException("Area"));
+        WasteType wasteType = wasteTypeRepository.findById(dto.wasteTypeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
 
         Incident incident = incidentMapper.toEntity(
                 dto,
@@ -60,7 +65,8 @@ public class IncidentService implements IncidentUseCase {
     }
 
     public IncidentResponseDTO getIncidentById(UUID id, AuthenticatedUser author){
-        Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId()).orElse(null);
+        Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident"));
         return incidentMapper.toResponse(incident);
     }
 }

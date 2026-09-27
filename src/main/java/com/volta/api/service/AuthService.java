@@ -10,9 +10,10 @@ import com.volta.api.dto.request.LoginRequestDTO;
 import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.enums.RoleTypeEnum;
+import com.volta.api.exception.ConflictException;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,21 +34,18 @@ public class AuthService {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public void register(UserRequestDTO dto) throws BadRequestException {
-        Users user = userRepository.findByEmail(dto.email()).orElse(null);
+    public void register(UserRequestDTO dto) {
+        userRepository.findByEmail(dto.email())
+                .ifPresent(u -> {
+                    throw new ConflictException("Email already registered");
+                });
 
-        if (dto.companyId() == null){
-            throw new BadRequestException();
-        }
-
-        Company company = companyRepository.findById(dto.companyId()).orElse(null);
-
-        if (user != null || company == null){
-            throw new BadRequestException();
-        }
+        Company company = companyRepository.findById(dto.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         Role role = roleRepository.findByType(RoleTypeEnum.EMPLOYEE.name())
-                .orElseGet(() -> roleRepository.save(Role.builder()
+                .orElseGet(() -> roleRepository.save(
+                        Role.builder()
                         .type(RoleTypeEnum.EMPLOYEE.name())
                         .build()
                 ));
@@ -66,10 +64,8 @@ public class AuthService {
 
     public TokenResponseDTO login(LoginRequestDTO dto) throws Exception {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
-
-            //authentication provider -> UserDetailsService -> passwordEncoder.matches() -> autenticado
-
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
             String token = tokenProvider.gerarToken(authentication);
             return new TokenResponseDTO(token, expirationTime);
         } catch (Exception exception){

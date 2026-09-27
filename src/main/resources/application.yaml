@@ -24,3 +24,7 @@ spring:
 jwt:
   expiration: ${JWT_EXPIRATION}
   key: ${JWT_KEY}
+admin:
+  email: ${ADMIN_EMAIL:}
+  password: ${ADMIN_PASSWORD:}
+  company-id: ${ADMIN_COMPANY_ID:}

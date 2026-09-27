@@ -6,6 +6,7 @@ import com.volta.api.database.repository.AreaRepository;
 import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.request.AreaRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.AreaMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.AreaUseCase;
@@ -24,7 +25,8 @@ public class AreaService implements AreaUseCase {
     private final AreaMapper areaMapper;
 
     public AreaResponseDTO register(AreaRequestDTO dto, AuthenticatedUser author){
-        Company company = companyRepository.findById(author.companyId()).orElse(null);
+        Company company = companyRepository.findById(author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         Area area = areaMapper.toEntity(dto, company);
 
@@ -43,7 +45,8 @@ public class AreaService implements AreaUseCase {
     }
 
     public AreaResponseDTO getAreaById(UUID id){
-        Area area = areaRepository.findById(id).orElse(null);
+        Area area = areaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Area"));
         return areaMapper.toResponse(area);
     }
 }

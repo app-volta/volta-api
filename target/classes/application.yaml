@@ -10,7 +10,7 @@ spring:
     hikari:
       max-lifetime: 600000
       validation-timeout: 3000
-      idle-timeout: 300000
+      idle-timeout: 30000
   jpa:
     hibernate:
       ddl-auto: validate
@@ -24,3 +24,7 @@ spring:
 jwt:
   expiration: ${JWT_EXPIRATION}
   key: ${JWT_KEY}
+admin:
+  email: ${ADMIN_EMAIL:}
+  password: ${ADMIN_PASSWORD:}
+  company-id: ${ADMIN_COMPANY_ID:}
