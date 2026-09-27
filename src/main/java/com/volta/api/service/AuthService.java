@@ -64,7 +64,8 @@ public class AuthService {
 
     public TokenResponseDTO login(LoginRequestDTO dto) throws Exception {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
             String token = tokenProvider.gerarToken(authentication);
             return new TokenResponseDTO(token, expirationTime);
         } catch (Exception exception){

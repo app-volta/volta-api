@@ -27,6 +27,7 @@ public class AdminBootstrap implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        System.out.println("admin.email=[" + adminProperties.email() + "] company=[" + adminProperties.companyId() + "]");
         if (adminProperties.email().isBlank() || adminProperties.password().isBlank() || adminProperties.companyId().isBlank()) return;
         if (userRepository.findByEmail(adminProperties.email()).isPresent()) return;
 
