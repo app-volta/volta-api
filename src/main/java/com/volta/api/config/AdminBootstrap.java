@@ -27,7 +27,6 @@ public class AdminBootstrap implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        System.out.println("admin.email=[" + adminProperties.email() + "] company=[" + adminProperties.companyId() + "]");
         if (adminProperties.email().isBlank() || adminProperties.password().isBlank() || adminProperties.companyId().isBlank()) return;
         if (userRepository.findByEmail(adminProperties.email()).isPresent()) return;
 
@@ -35,14 +34,20 @@ public class AdminBootstrap implements ApplicationRunner {
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
         Role role = roleRepository.findByType(RoleTypeEnum.ADMIN.name())
                 .orElseGet(() -> roleRepository.save(
-                        Role.builder().type(RoleTypeEnum.ADMIN.name()).build()));
+                        Role.builder()
+                        .type(RoleTypeEnum.ADMIN.name())
+                                .build()
+                        )
+                );
 
-        userRepository.save(Users.builder()
+        userRepository.save(
+                Users.builder()
                 .name("Admin")
                 .email(adminProperties.email())
                 .role(role)
                 .company(company)
                 .passwordHash(passwordEncoder.encode(adminProperties.password()))
-                .build());
+                .build()
+        );
     }
 }
