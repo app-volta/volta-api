@@ -10,6 +10,7 @@ import com.volta.api.dto.request.LoginRequestDTO;
 import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.enums.RoleTypeEnum;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -34,13 +35,15 @@ public class AuthService {
     private long expirationTime;
 
     public void register(UserRequestDTO dto) throws BadRequestException {
-        Users user = userRepository.findByEmail(dto.email()).orElse(null);
+        Users user = userRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new ResourceNotFoundException("User"));
 
         if (dto.companyId() == null){
             throw new BadRequestException();
         }
 
-        Company company = companyRepository.findById(dto.companyId()).orElse(null);
+        Company company = companyRepository.findById(dto.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         if (user != null || company == null){
             throw new BadRequestException();

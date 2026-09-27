@@ -4,6 +4,7 @@ import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.repository.CooperativeRepository;
 import com.volta.api.dto.request.CooperativeRequestDTO;
 import com.volta.api.dto.response.CooperativeResponseDTO;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CooperativeMapper;
 import com.volta.api.usecase.CooperativeUseCase;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,8 @@ public class CooperativeService implements CooperativeUseCase {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public CooperativeResponseDTO getCooperativeById(UUID id){
-        Cooperative cooperative = cooperativeRepository.findById(id).orElse(null);
+        Cooperative cooperative = cooperativeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cooperative"));
         return cooperativeMapper.toResponse(cooperative);
     }
 }

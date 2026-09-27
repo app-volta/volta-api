@@ -4,6 +4,7 @@ import com.volta.api.database.entity.Company;
 import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.request.CompanyRequestDTO;
 import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CompanyMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.CompanyUseCase;
@@ -38,7 +39,8 @@ public class CompanyService implements CompanyUseCase {
     }
 
     public CompanyResponseDTO getCompanyById(UUID id){
-        Company company = companyRepository.findById(id).orElse(null);
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Company"));
         return companyMapper.toResponse(company);
     }
 }

@@ -5,6 +5,7 @@ import com.volta.api.database.entity.WasteType;
 import com.volta.api.database.repository.WasteTypeRepository;
 import com.volta.api.dto.request.WasteTypeRequestDTO;
 import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.WasteTypeMapper;
 import com.volta.api.usecase.WasteTypeUseCase;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,8 @@ public class WasteTypeService implements WasteTypeUseCase {
     }
 
     public WasteTypeResponseDTO getWasteTypeById(UUID id){
-        WasteType wasteType = wasteTypeRepository.findById(id).orElse(null);
+        WasteType wasteType = wasteTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
         return wasteTypeMapper.toResponse(wasteType);
     }
 }
