@@ -4,6 +4,7 @@ import com.volta.api.dto.request.AreaRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.service.AreaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class AreaController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AreaResponseDTO> create(
-            @RequestBody AreaRequestDTO dto,
+            @Valid @RequestBody AreaRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto, author));
