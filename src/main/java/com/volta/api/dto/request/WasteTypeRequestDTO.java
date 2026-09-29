@@ -5,13 +5,13 @@ import jakarta.validation.constraints.Size;
 
 public record WasteTypeRequestDTO(
 
-        @NotBlank
+        @NotBlank(message = "A categoria é obrigatória")
         @Size(max = 100)
         String category,
 
         String description,
 
-        @NotBlank
+        @NotBlank(message = "O nível de risco é obrigatório")
         @Size(max = 50)
         String defaultRiskLevel
 ) {

@@ -19,7 +19,7 @@ public record IncidentRequestDTO(
         @Size(max = 500)
         String photoUrl,
 
-        @NotBlank
+        @NotBlank(message = "A descrição é obrigatória")
         String employeeDescription,
 
         @Size(max = 50)
@@ -29,7 +29,7 @@ public record IncidentRequestDTO(
         @Digits(integer = 10, fraction = 2)
         BigDecimal estimatedQuantity,
 
-        @NotBlank
+        @NotBlank(message = "A prioridade é obrigatória")
         @Size(max = 30)
         String priority
 ) {

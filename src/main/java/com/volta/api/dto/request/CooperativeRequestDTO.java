@@ -6,11 +6,11 @@ import java.math.BigDecimal;
 
 public record CooperativeRequestDTO(
 
-        @NotBlank
+        @NotBlank(message = "O nome é obrigatório")
         @Size(max = 150)
         String name,
 
-        @NotBlank
+        @NotBlank(message = "O CNPJ é obrigatório")
         @Pattern(regexp = "\\b\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}\\b")
         String cnpj,
 
