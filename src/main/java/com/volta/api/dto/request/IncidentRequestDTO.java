@@ -1,6 +1,8 @@
 package com.volta.api.dto.request;
 
 
+import com.volta.api.enums.Priority;
+import com.volta.api.enums.RiskLevel;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
@@ -22,15 +24,13 @@ public record IncidentRequestDTO(
         @NotBlank(message = "A descrição é obrigatória")
         String employeeDescription,
 
-        @Size(max = 50)
-        String contaminationLevel,
+        RiskLevel contaminationLevel,
 
         @PositiveOrZero
         @Digits(integer = 10, fraction = 2)
         BigDecimal estimatedQuantity,
 
-        @NotBlank(message = "A prioridade é obrigatória")
-        @Size(max = 30)
-        String priority
+        @NotNull(message = "A prioridade é obrigatória")
+        Priority priority
 ) {
 }

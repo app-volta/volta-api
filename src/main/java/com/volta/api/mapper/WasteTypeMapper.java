@@ -13,7 +13,7 @@ public class WasteTypeMapper {
 
         wasteType.setCategory(dto.category());
         wasteType.setDescription(dto.description());
-        wasteType.setDefaultRiskLevel(dto.defaultRiskLevel());
+        wasteType.setDefaultRiskLevel(dto.defaultRiskLevel().name());
 
         return wasteType;
     }

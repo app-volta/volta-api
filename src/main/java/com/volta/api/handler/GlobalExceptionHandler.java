@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Data Conflict");
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "CNPJ already registered");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
