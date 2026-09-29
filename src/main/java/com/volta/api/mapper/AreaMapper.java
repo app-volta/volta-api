@@ -19,6 +19,7 @@ public class AreaMapper {
     }
     public AreaResponseDTO toResponse(Area area){
         return new AreaResponseDTO(
+            area.getId(),
             area.getCompany().getId(),
             area.getSectorName(),
             area.getLocationDescription()

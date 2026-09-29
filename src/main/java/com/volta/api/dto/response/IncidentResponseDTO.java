@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record IncidentResponseDTO(
+
+        UUID id,
         UUID companyId,
         UUID userId,
         UUID areaId,

@@ -16,11 +16,34 @@ permissions:
 jobs:
   validate-pr:
     if: github.event_name == 'pull_request'
-    uses: app-volta/DevOps/.github/workflows/reusable-validate-pr.yml@v1
+    uses: app-volta/volta-devops/.github/workflows/reusable-validate-pr.yaml@v1
 
   build-test:
     name: build-test
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: volta_test
+          POSTGRES_USER: volta
+          POSTGRES_PASSWORD: volta
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U volta -d volta_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/volta_test
+      DATABASE_HOST: localhost:5432
+      DATABASE_USERNAME: volta
+      DATABASE_PASSWORD: volta
+      JWT_KEY:
+      JWT_EXPIRATION: "3600000"
 
     steps:
       - name: Checkout do código

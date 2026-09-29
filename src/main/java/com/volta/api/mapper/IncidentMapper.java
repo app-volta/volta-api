@@ -38,6 +38,7 @@ public class IncidentMapper {
 
     public IncidentResponseDTO toResponse(Incident incident) {
         return new IncidentResponseDTO(
+                incident.getId(),
                 incident.getCompany().getId(),
                 incident.getUser().getId(),
                 incident.getArea().getId(),

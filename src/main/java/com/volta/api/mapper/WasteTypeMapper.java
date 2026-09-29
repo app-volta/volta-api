@@ -20,6 +20,7 @@ public class WasteTypeMapper {
 
     public WasteTypeResponseDTO toResponse(WasteType wasteType){
         return new WasteTypeResponseDTO(
+                wasteType.getId(),
                 wasteType.getCategory(),
                 wasteType.getDescription(),
                 wasteType.getDefaultRiskLevel()

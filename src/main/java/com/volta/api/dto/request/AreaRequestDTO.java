@@ -8,7 +8,7 @@ import java.util.UUID;
 public record AreaRequestDTO(
 
         @NotBlank(message = "O nome do setor é obrigatório")
-        @Size(max = 255)
+        @Size(max = 100)
         String sectorName,
 
         @Size(max = 255)

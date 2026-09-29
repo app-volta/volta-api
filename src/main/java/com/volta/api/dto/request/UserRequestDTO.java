@@ -24,7 +24,7 @@ public record UserRequestDTO(
         @Size(min = 8, max = 72)
         String password,
 
-        @Size(max = 150)
+        @Size(max = 100)
         String position,
 
         @NotNull

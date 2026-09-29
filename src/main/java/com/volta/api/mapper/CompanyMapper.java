@@ -20,6 +20,7 @@ public class CompanyMapper {
 
     public CompanyResponseDTO toResponse(Company company){
         return new CompanyResponseDTO(
+                company.getId(),
                 company.getName(),
                 company.getCnpj(),
                 company.getAddress()

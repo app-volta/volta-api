@@ -15,7 +15,6 @@ public class CooperativeMapper {
         cooperative.setCnpj(dto.cnpj());
         cooperative.setLatitude(dto.latitude());
         cooperative.setLongitude(dto.longitude());
-        cooperative.setAverageRating(dto.averageRating());
         cooperative.setSpecialties(dto.specialties());
 
         return cooperative;
@@ -23,6 +22,7 @@ public class CooperativeMapper {
 
     public CooperativeResponseDTO toResponse(Cooperative cooperative){
         return new CooperativeResponseDTO(
+                cooperative.getId(),
                 cooperative.getName(),
                 cooperative.getCnpj(),
                 cooperative.getLatitude(),
