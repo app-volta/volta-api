@@ -37,7 +37,7 @@ public class IncidentService implements IncidentUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
         Users user = userRepository.findById(author.id())
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
-        Area area = areaRepository.findById(dto.areaId()).
+        Area area = areaRepository.findByIdAndCompanyId(dto.areaId(), author.companyId()).
                 orElseThrow(() -> new ResourceNotFoundException("Area"));
         WasteType wasteType = wasteTypeRepository.findById(dto.wasteTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Waste type"));

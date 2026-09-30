@@ -4,6 +4,7 @@ import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.repository.CooperativeRepository;
 import com.volta.api.dto.request.CooperativeRequestDTO;
 import com.volta.api.dto.response.CooperativeResponseDTO;
+import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CooperativeMapper;
 import com.volta.api.usecase.CooperativeUseCase;
@@ -25,6 +26,9 @@ public class CooperativeService implements CooperativeUseCase {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public CooperativeResponseDTO register(CooperativeRequestDTO dto){
+        if (cooperativeRepository.existsByCnpj(dto.cnpj())){
+            throw new ConflictException("CNPJ already registered");
+        }
         Cooperative cooperative = cooperativeMapper.toEntity(dto);
         Cooperative cooperativeSaved = cooperativeRepository.save(cooperative);
         return cooperativeMapper.toResponse(cooperativeSaved);

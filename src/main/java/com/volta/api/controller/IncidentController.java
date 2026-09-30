@@ -4,6 +4,7 @@ import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.service.IncidentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class IncidentController {
     @PostMapping
     @PreAuthorize("hasAuthority('EMPLOYEE')")
     public ResponseEntity<IncidentResponseDTO> create(
-            @RequestBody IncidentRequestDTO dto,
+            @Valid @RequestBody IncidentRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.register(dto, author));
@@ -39,7 +40,10 @@ public class IncidentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IncidentResponseDTO> show(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser author){
+    public ResponseEntity<IncidentResponseDTO> show(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ){
         IncidentResponseDTO incident = incidentService.getIncidentById(id, author);
         return ResponseEntity.ok(incident);
     }

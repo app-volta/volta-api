@@ -3,6 +3,7 @@ package com.volta.api.controller;
 import com.volta.api.dto.request.CooperativeRequestDTO;
 import com.volta.api.dto.response.CooperativeResponseDTO;
 import com.volta.api.service.CooperativeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CooperativeController {
     private final CooperativeService cooperativeService;
 
     @PostMapping
-    public ResponseEntity<CooperativeResponseDTO> create(@RequestBody CooperativeRequestDTO dto){
+    public ResponseEntity<CooperativeResponseDTO> create(@Valid @RequestBody CooperativeRequestDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(cooperativeService.register(dto));
     }
 

@@ -4,6 +4,7 @@ import com.volta.api.database.entity.Company;
 import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.request.CompanyRequestDTO;
 import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CompanyMapper;
 import com.volta.api.security.AuthenticatedUser;
@@ -23,6 +24,9 @@ public class CompanyService implements CompanyUseCase {
     private final CompanyMapper companyMapper;
 
     public CompanyResponseDTO register(CompanyRequestDTO dto){
+        if (companyRepository.existsByCnpj(dto.cnpj())) {
+            throw new ConflictException("CNPJ already registered");
+        }
         Company company = companyMapper.toEntity(dto);
         Company companySaved = companyRepository.save(company);
         return companyMapper.toResponse(companySaved);

@@ -14,12 +14,15 @@ import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +37,12 @@ public class AuthService {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public void register(UserRequestDTO dto) {
+    public void register(UserRequestDTO dto) throws Exception {
         userRepository.findByEmail(dto.email())
                 .ifPresent(u -> {
                     throw new ConflictException("Email already registered");
                 });
+
 
         Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
@@ -64,8 +68,12 @@ public class AuthService {
 
     public TokenResponseDTO login(LoginRequestDTO dto) throws Exception {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
+            Authentication authentication = authenticationManager
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    dto.email(), dto.password()
+                            )
+                    );
             String token = tokenProvider.gerarToken(authentication);
             return new TokenResponseDTO(token, expirationTime);
         } catch (Exception exception){

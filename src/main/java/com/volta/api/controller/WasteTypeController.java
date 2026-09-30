@@ -3,6 +3,7 @@ package com.volta.api.controller;
 import com.volta.api.dto.request.WasteTypeRequestDTO;
 import com.volta.api.dto.response.WasteTypeResponseDTO;
 import com.volta.api.service.WasteTypeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class WasteTypeController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<WasteTypeResponseDTO> create(@RequestBody WasteTypeRequestDTO dto){
+    public ResponseEntity<WasteTypeResponseDTO> create(@Valid @RequestBody WasteTypeRequestDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(wasteTypeService.register(dto));
     }
 

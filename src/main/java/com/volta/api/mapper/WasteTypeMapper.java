@@ -13,13 +13,14 @@ public class WasteTypeMapper {
 
         wasteType.setCategory(dto.category());
         wasteType.setDescription(dto.description());
-        wasteType.setDefaultRiskLevel(dto.defaultRiskLevel());
+        wasteType.setDefaultRiskLevel(dto.defaultRiskLevel().name());
 
         return wasteType;
     }
 
     public WasteTypeResponseDTO toResponse(WasteType wasteType){
         return new WasteTypeResponseDTO(
+                wasteType.getId(),
                 wasteType.getCategory(),
                 wasteType.getDescription(),
                 wasteType.getDefaultRiskLevel()
