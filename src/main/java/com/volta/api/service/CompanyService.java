@@ -7,10 +7,10 @@ import com.volta.api.dto.response.CompanyResponseDTO;
 import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CompanyMapper;
-import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.CompanyUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,5 +46,27 @@ public class CompanyService implements CompanyUseCase {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
         return companyMapper.toResponse(company);
+    }
+
+    @Transactional
+    public CompanyResponseDTO update(UUID id, CompanyRequestDTO dto){
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Company"));
+
+        if (companyRepository.existsByCnpjAndIdNot(dto.cnpj(), id)){
+            throw new ConflictException("CNPJ already registered");
+        }
+
+        companyMapper.updateEntity(company, dto);
+        companyRepository.save(company);
+
+        return companyMapper.toResponse(company);
+    }
+
+    public void delete(UUID id){
+        if (!companyRepository.existsById(id)){
+            throw new ResourceNotFoundException("Company");
+        }
+        companyRepository.deleteById(id);
     }
 }

@@ -7,6 +7,8 @@ import java.util.UUID;
 
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
 
+    boolean existsByCnpjAndIdNot(String cnpj, UUID id);
+
     boolean existsByCnpj(String cnpj);
 
 }

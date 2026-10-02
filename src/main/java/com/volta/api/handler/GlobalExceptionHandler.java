@@ -31,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Data Integrity");
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Operation conflicts with existing data");
     }
 
     @ExceptionHandler(AccessDeniedException.class)

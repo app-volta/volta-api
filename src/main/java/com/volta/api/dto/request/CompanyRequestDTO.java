@@ -18,4 +18,10 @@ public record CompanyRequestDTO(
         @Size(max = 255)
         String address
 ) {
+        public CompanyRequestDTO {
+                if (cnpj != null) {
+                       cnpj = cnpj.replaceAll("\\D", "");
+                }
+
+        }
 }

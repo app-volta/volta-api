@@ -39,4 +39,21 @@ public class CompanyController {
         CompanyResponseDTO company = companyService.getCompanyById(id);
         return ResponseEntity.ok(company);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<CompanyResponseDTO> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody CompanyRequestDTO dto
+    ){
+        CompanyResponseDTO response = companyService.update(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> remove(@PathVariable UUID id){
+        companyService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

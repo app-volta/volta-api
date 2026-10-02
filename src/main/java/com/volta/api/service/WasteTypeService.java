@@ -10,6 +10,7 @@ import com.volta.api.mapper.WasteTypeMapper;
 import com.volta.api.usecase.WasteTypeUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +44,22 @@ public class WasteTypeService implements WasteTypeUseCase {
         WasteType wasteType = wasteTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
         return wasteTypeMapper.toResponse(wasteType);
+    }
+
+    @Transactional
+    public WasteTypeResponseDTO update(UUID id, WasteTypeRequestDTO dto){
+        WasteType wasteType = wasteTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
+        wasteTypeMapper.updateEntity(wasteType, dto);
+        wasteTypeRepository.save(wasteType);
+
+        return wasteTypeMapper.toResponse(wasteType);
+    }
+
+    public void delete(UUID id){
+        if (!wasteTypeRepository.existsById(id)){
+            throw new ResourceNotFoundException("Waste type");
+        }
+        wasteTypeRepository.deleteById(id);
     }
 }

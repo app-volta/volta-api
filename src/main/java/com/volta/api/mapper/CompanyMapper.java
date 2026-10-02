@@ -26,4 +26,10 @@ public class CompanyMapper {
                 company.getAddress()
         );
     }
+
+    public void updateEntity(Company company, CompanyRequestDTO dto){
+        company.setName(dto.name());
+        company.setCnpj(dto.cnpj());
+        company.setAddress(dto.address());
+    }
 }

@@ -14,4 +14,8 @@ public interface WasteTypeUseCase {
 
     WasteTypeResponseDTO getWasteTypeById(UUID id);
 
+    WasteTypeResponseDTO update(UUID id, WasteTypeRequestDTO dto);
+
+    void delete(UUID id);
+
 }
