@@ -42,7 +42,7 @@ jobs:
       DATABASE_HOST: localhost:5432
       DATABASE_USERNAME: volta
       DATABASE_PASSWORD: volta
-      JWT_KEY:
+      JWT_KEY: chave-somente-para-testes-com-mais-de-32-bytes
       JWT_EXPIRATION: "3600000"
 
     steps:

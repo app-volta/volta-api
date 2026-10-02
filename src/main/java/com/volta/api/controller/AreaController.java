@@ -24,11 +24,8 @@ public class AreaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AreaResponseDTO> create(
-            @Valid @RequestBody AreaRequestDTO dto,
-            @AuthenticationPrincipal AuthenticatedUser author
-    ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto, author));
+    public ResponseEntity<AreaResponseDTO> create(@Valid @RequestBody AreaRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto));
     }
 
     @GetMapping
@@ -42,6 +39,13 @@ public class AreaController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AreaResponseDTO> show(@PathVariable UUID id){
         AreaResponseDTO area = areaService.getAreaById(id);
+        return ResponseEntity.ok(area);
+    }
+
+    @GetMapping("/mine")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    public ResponseEntity<List<AreaResponseDTO>> showMine(@AuthenticationPrincipal AuthenticatedUser author){
+        List<AreaResponseDTO> area = areaService.getAreasOfMyCompany(author);
         return ResponseEntity.ok(area);
     }
 }

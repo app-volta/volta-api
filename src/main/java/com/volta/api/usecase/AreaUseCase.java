@@ -9,9 +9,11 @@ import java.util.UUID;
 
 public interface AreaUseCase {
 
-    AreaResponseDTO register(AreaRequestDTO dto, AuthenticatedUser author);
+    AreaResponseDTO register(AreaRequestDTO dto);
 
     List<AreaResponseDTO> getAreas();
 
     AreaResponseDTO getAreaById(UUID id);
+
+    List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author);
 }

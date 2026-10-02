@@ -48,6 +48,30 @@ jobs:
     name: build-test
     needs: setup
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: volta_test
+          POSTGRES_USER: volta
+          POSTGRES_PASSWORD: volta
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U volta -d volta_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/volta_test
+      DATABASE_HOST: localhost:5432
+      DATABASE_USERNAME: volta
+      DATABASE_PASSWORD: volta
+      JWT_KEY: chave-somente-para-testes-com-mais-de-32-bytes
+      JWT_EXPIRATION: "3600000"
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4

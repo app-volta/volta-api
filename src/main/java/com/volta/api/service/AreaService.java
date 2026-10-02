@@ -24,8 +24,8 @@ public class AreaService implements AreaUseCase {
     private final CompanyRepository companyRepository;
     private final AreaMapper areaMapper;
 
-    public AreaResponseDTO register(AreaRequestDTO dto, AuthenticatedUser author){
-        Company company = companyRepository.findById(author.companyId())
+    public AreaResponseDTO register(AreaRequestDTO dto){
+        Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         Area area = areaMapper.toEntity(dto, company);
@@ -48,5 +48,15 @@ public class AreaService implements AreaUseCase {
         Area area = areaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Area"));
         return areaMapper.toResponse(area);
+    }
+
+    public List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author){
+        List<AreaResponseDTO> areas = new ArrayList<>();
+
+        for (Area area : areaRepository.findByCompanyId(author.companyId())) {
+            areas.add(areaMapper.toResponse(area));
+        }
+
+        return areas;
     }
 }
