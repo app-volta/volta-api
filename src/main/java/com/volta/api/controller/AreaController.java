@@ -1,7 +1,7 @@
 package com.volta.api.controller;
 
 import com.volta.api.dto.request.AreaRequestDTO;
-import com.volta.api.dto.request.AreaUpdateRequestDTO;
+import com.volta.api.dto.request.update.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.service.AreaService;

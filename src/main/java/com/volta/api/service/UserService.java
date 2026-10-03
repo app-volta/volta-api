@@ -7,15 +7,23 @@ import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.database.repository.RoleRepository;
 import com.volta.api.database.repository.UserRepository;
 import com.volta.api.dto.request.UserRequestDTO;
+import com.volta.api.dto.request.update.UserRoleUpdateRequestDTO;
+import com.volta.api.dto.request.update.UserUpdateRequestDTO;
 import com.volta.api.dto.response.UserResponseDTO;
 import com.volta.api.enums.RoleTypeEnum;
+import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.UserMapper;
+import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -42,11 +50,7 @@ public class UserService implements UserUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         Role role = roleRepository.findByType(RoleTypeEnum.EMPLOYEE.name())
-                .orElseGet(() -> roleRepository.save(
-                        Role.builder()
-                                .type(RoleTypeEnum.EMPLOYEE.name())
-                                .build()
-                ));
+                .orElseThrow(() -> new  ResourceNotFoundException("Role"));
 
         Users saved = userRepository.save(
                 Users.builder()
@@ -60,5 +64,46 @@ public class UserService implements UserUseCase {
         );
 
         return userMapper.toResponse(saved);
+    }
+
+    public List<UserResponseDTO> getUsers() {
+        List<UserResponseDTO> users = new ArrayList<>();
+
+        for (Users user : userRepository.findAll()) {
+            users.add(userMapper.toResponse(user));
+        }
+
+        return users;
+    }
+
+    public UserResponseDTO getUserById(UUID id) {
+        Users user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User"));
+        return userMapper.toResponse(user);
+    }
+
+    @Transactional
+    public UserResponseDTO update(UUID id, UserUpdateRequestDTO dto) {
+        Users user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User"));
+        userMapper.updateEntity(user, dto);
+        userRepository.save(user);
+        return userMapper.toResponse(user);
+    }
+
+    @Transactional
+    public UserResponseDTO updateRole(UUID id, UserRoleUpdateRequestDTO dto, AuthenticatedUser author) {
+        if (id.equals(author.id())){
+            throw new BusinessRuleException("You cannot change your own role");
+        }
+        Users user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User"));
+
+        Role role = roleRepository.findByType(dto.role().name())
+                .orElseThrow(() -> new ResourceNotFoundException("Role"));
+        user.setRole(role);
+        userRepository.save(user);
+
+        return userMapper.toResponse(user);
     }
 }

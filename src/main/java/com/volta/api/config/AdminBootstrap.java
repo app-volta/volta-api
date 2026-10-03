@@ -33,12 +33,7 @@ public class AdminBootstrap implements ApplicationRunner {
         Company company = companyRepository.findById(UUID.fromString(adminProperties.companyId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
         Role role = roleRepository.findByType(RoleTypeEnum.ADMIN.name())
-                .orElseGet(() -> roleRepository.save(
-                        Role.builder()
-                        .type(RoleTypeEnum.ADMIN.name())
-                                .build()
-                        )
-                );
+                .orElseThrow(() -> new IllegalStateException("Role ADMIN not found"));
 
         userRepository.save(
                 Users.builder()
