@@ -21,6 +21,7 @@ public class CooperativeController {
     private final CooperativeService cooperativeService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CooperativeResponseDTO> create(@Valid @RequestBody CooperativeRequestDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(cooperativeService.register(dto));
     }

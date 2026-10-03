@@ -19,4 +19,6 @@ public interface AreaUseCase {
     List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author);
 
     AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto);
+
+    void delete(UUID id);
 }
