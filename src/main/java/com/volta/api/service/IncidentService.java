@@ -1,15 +1,19 @@
 package com.volta.api.service;
 
 import com.volta.api.database.entity.*;
+import com.volta.api.database.procedure.IncidentProcedure;
 import com.volta.api.database.repository.*;
 import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.enums.IncidentStatus;
+import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.IncidentMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.IncidentUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +34,8 @@ public class IncidentService implements IncidentUseCase {
     private final WasteTypeRepository wasteTypeRepository;
 
     private final IncidentMapper incidentMapper;
+
+    private final IncidentProcedure incidentProcedure;
 
     public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author){
 
@@ -68,5 +74,17 @@ public class IncidentService implements IncidentUseCase {
         Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Incident"));
         return incidentMapper.toResponse(incident);
+    }
+
+    @Transactional
+    public void closeIncident(UUID id, AuthenticatedUser author){
+        Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident"));
+
+        if (IncidentStatus.CLOSED.name().equals(incident.getStatus())) {
+            throw new BusinessRuleException("Incident is already closed");
+        }
+
+        incidentProcedure.closeIncident(id);
     }
 }

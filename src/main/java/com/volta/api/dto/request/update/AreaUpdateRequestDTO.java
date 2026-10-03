@@ -1,4 +1,4 @@
-package com.volta.api.dto.request;
+package com.volta.api.dto.request.update;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

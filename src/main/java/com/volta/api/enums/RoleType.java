@@ -1,6 +1,6 @@
 package com.volta.api.enums;
 
-public enum RoleTypeEnum {
+public enum RoleType {
     ADMIN,
     EMPLOYEE,
     OPERATOR,
