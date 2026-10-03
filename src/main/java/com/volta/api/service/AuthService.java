@@ -3,6 +3,7 @@ package com.volta.api.service;
 import com.volta.api.dto.request.LoginRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.security.jwt.TokenProvider;
+import com.volta.api.usecase.AuthUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements AuthUseCase {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
