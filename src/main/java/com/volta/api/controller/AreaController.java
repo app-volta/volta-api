@@ -1,6 +1,7 @@
 package com.volta.api.controller;
 
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.service.AreaService;
@@ -24,11 +25,8 @@ public class AreaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AreaResponseDTO> create(
-            @Valid @RequestBody AreaRequestDTO dto,
-            @AuthenticationPrincipal AuthenticatedUser author
-    ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto, author));
+    public ResponseEntity<AreaResponseDTO> create(@Valid @RequestBody AreaRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto));
     }
 
     @GetMapping
@@ -43,5 +41,29 @@ public class AreaController {
     public ResponseEntity<AreaResponseDTO> show(@PathVariable UUID id){
         AreaResponseDTO area = areaService.getAreaById(id);
         return ResponseEntity.ok(area);
+    }
+
+    @GetMapping("/mine")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    public ResponseEntity<List<AreaResponseDTO>> showMine(@AuthenticationPrincipal AuthenticatedUser author){
+        List<AreaResponseDTO> area = areaService.getAreasOfMyCompany(author);
+        return ResponseEntity.ok(area);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AreaResponseDTO> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody AreaUpdateRequestDTO dto
+    ){
+        AreaResponseDTO response = areaService.update(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> remove(@PathVariable UUID id){
+        areaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

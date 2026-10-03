@@ -29,4 +29,9 @@ public record CooperativeRequestDTO(
         @Size(max = 500)
         String specialties
 ) {
+        public CooperativeRequestDTO {
+                if (cnpj != null) {
+                        cnpj = cnpj.replaceAll("\\D", "");
+                }
+        }
 }

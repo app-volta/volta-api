@@ -28,7 +28,9 @@ public class IncidentMapper {
         incident.setWasteType(wasteType);
         incident.setPhotoUrl(dto.photoUrl());
         incident.setEmployeeDescription(dto.employeeDescription());
-        incident.setContaminationLevel(dto.contaminationLevel().name());
+        incident.setContaminationLevel(
+                dto.contaminationLevel() != null ? dto.contaminationLevel().name() : null
+        );
         incident.setEstimatedQuantity(dto.estimatedQuantity());
         incident.setPriority(dto.priority().name());
         incident.setStatus(IncidentStatus.PENDING.name());

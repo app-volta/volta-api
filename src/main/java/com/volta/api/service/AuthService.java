@@ -1,83 +1,33 @@
 package com.volta.api.service;
 
-import com.volta.api.database.entity.Company;
-import com.volta.api.database.entity.Role;
-import com.volta.api.database.entity.Users;
-import com.volta.api.database.repository.CompanyRepository;
-import com.volta.api.database.repository.RoleRepository;
-import com.volta.api.database.repository.UserRepository;
 import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
-import com.volta.api.enums.RoleTypeEnum;
-import com.volta.api.exception.ConflictException;
-import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final CompanyRepository companyRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public void register(UserRequestDTO dto) throws Exception {
-        userRepository.findByEmail(dto.email())
-                .ifPresent(u -> {
-                    throw new ConflictException("Email already registered");
-                });
-
-
-        Company company = companyRepository.findById(dto.companyId())
-                .orElseThrow(() -> new ResourceNotFoundException("Company"));
-
-        Role role = roleRepository.findByType(RoleTypeEnum.EMPLOYEE.name())
-                .orElseGet(() -> roleRepository.save(
-                        Role.builder()
-                        .type(RoleTypeEnum.EMPLOYEE.name())
-                        .build()
-                ));
-
-        userRepository.save(
-                Users.builder()
-                        .name(dto.name())
-                        .email(dto.email())
-                        .position(dto.position())
-                        .role(role)
-                        .company(company)
-                        .passwordHash(passwordEncoder.encode(dto.password()))
-                        .build()
-        );
-    }
-
-    public TokenResponseDTO login(LoginRequestDTO dto) throws Exception {
-        try {
-            Authentication authentication = authenticationManager
-                    .authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    dto.email(), dto.password()
-                            )
-                    );
-            String token = tokenProvider.gerarToken(authentication);
-            return new TokenResponseDTO(token, expirationTime);
-        } catch (Exception exception){
-            throw exception;
-        }
+    public TokenResponseDTO login(LoginRequestDTO dto){
+        Authentication authentication = authenticationManager
+                .authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                dto.email(),
+                                dto.password()
+                        )
+                );
+        String token = tokenProvider.gerarToken(authentication);
+        return new TokenResponseDTO(token, expirationTime);
     }
 }

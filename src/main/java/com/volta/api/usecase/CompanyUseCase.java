@@ -14,4 +14,8 @@ public interface CompanyUseCase {
 
     CompanyResponseDTO getCompanyById(UUID id);
 
+    CompanyResponseDTO update(UUID id, CompanyRequestDTO dto);
+
+    void delete(UUID id);
+
 }

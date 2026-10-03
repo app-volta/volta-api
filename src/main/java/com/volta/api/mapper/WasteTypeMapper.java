@@ -26,4 +26,10 @@ public class WasteTypeMapper {
                 wasteType.getDefaultRiskLevel()
         );
     }
+
+    public void updateEntity(WasteType wasteType, WasteTypeRequestDTO dto){
+        wasteType.setCategory(dto.category());
+        wasteType.setDescription(dto.description());
+        wasteType.setDefaultRiskLevel(dto.defaultRiskLevel().name());
+    }
 }

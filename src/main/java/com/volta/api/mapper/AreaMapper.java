@@ -3,6 +3,7 @@ package com.volta.api.mapper;
 import com.volta.api.database.entity.Area;
 import com.volta.api.database.entity.Company;
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import org.springframework.stereotype.Component;
 
@@ -24,5 +25,10 @@ public class AreaMapper {
             area.getSectorName(),
             area.getLocationDescription()
         );
+    }
+
+    public void updateEntity(Area area, AreaUpdateRequestDTO dto){
+        area.setSectorName(dto.sectorName());
+        area.setLocationDescription(dto.locationDescription());
     }
 }

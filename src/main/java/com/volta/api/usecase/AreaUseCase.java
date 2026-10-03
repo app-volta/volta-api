@@ -1,6 +1,7 @@
 package com.volta.api.usecase;
 
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
@@ -9,9 +10,15 @@ import java.util.UUID;
 
 public interface AreaUseCase {
 
-    AreaResponseDTO register(AreaRequestDTO dto, AuthenticatedUser author);
+    AreaResponseDTO register(AreaRequestDTO dto);
 
     List<AreaResponseDTO> getAreas();
 
     AreaResponseDTO getAreaById(UUID id);
+
+    List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author);
+
+    AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto);
+
+    void delete(UUID id);
 }

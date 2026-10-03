@@ -5,6 +5,7 @@ import com.volta.api.database.entity.Company;
 import com.volta.api.database.repository.AreaRepository;
 import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.AreaMapper;
@@ -12,6 +13,7 @@ import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.AreaUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,8 @@ public class AreaService implements AreaUseCase {
     private final CompanyRepository companyRepository;
     private final AreaMapper areaMapper;
 
-    public AreaResponseDTO register(AreaRequestDTO dto, AuthenticatedUser author){
-        Company company = companyRepository.findById(author.companyId())
+    public AreaResponseDTO register(AreaRequestDTO dto){
+        Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         Area area = areaMapper.toEntity(dto, company);
@@ -48,5 +50,32 @@ public class AreaService implements AreaUseCase {
         Area area = areaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Area"));
         return areaMapper.toResponse(area);
+    }
+
+    public List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author){
+        List<AreaResponseDTO> areas = new ArrayList<>();
+
+        for (Area area : areaRepository.findByCompanyId(author.companyId())) {
+            areas.add(areaMapper.toResponse(area));
+        }
+
+        return areas;
+    }
+
+    @Transactional
+    public AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto){
+        Area area = areaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Area"));
+
+        areaMapper.updateEntity(area, dto);
+        areaRepository.save(area);
+        return areaMapper.toResponse(area);
+    }
+
+    public void delete(UUID id){
+        if (!areaRepository.existsById(id)){
+            throw new ResourceNotFoundException("Area");
+        }
+        areaRepository.deleteById(id);
     }
 }
