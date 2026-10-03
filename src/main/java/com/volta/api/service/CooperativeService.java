@@ -11,6 +11,7 @@ import com.volta.api.usecase.CooperativeUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class CooperativeService implements CooperativeUseCase {
 
     private final CooperativeMapper cooperativeMapper;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     public CooperativeResponseDTO register(CooperativeRequestDTO dto){
         if (cooperativeRepository.existsByCnpj(dto.cnpj())){
             throw new ConflictException("CNPJ already registered");
@@ -34,7 +35,6 @@ public class CooperativeService implements CooperativeUseCase {
         return cooperativeMapper.toResponse(cooperativeSaved);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     public List<CooperativeResponseDTO> getCooperatives(){
         List<CooperativeResponseDTO> cooperatives = new ArrayList<>();
 
@@ -45,10 +45,31 @@ public class CooperativeService implements CooperativeUseCase {
         return cooperatives;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     public CooperativeResponseDTO getCooperativeById(UUID id){
         Cooperative cooperative = cooperativeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cooperative"));
         return cooperativeMapper.toResponse(cooperative);
+    }
+
+    @Transactional
+    public CooperativeResponseDTO update(UUID id, CooperativeRequestDTO dto){
+        Cooperative cooperative = cooperativeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cooperative"));
+
+        if (cooperativeRepository.existsByCnpjAndIdNot(dto.cnpj(), id)){
+            throw new ConflictException("CNPJ already registered");
+        }
+
+        cooperativeMapper.toEntity(cooperative, dto);
+        cooperativeRepository.save(cooperative);
+        return cooperativeMapper.toResponse(cooperative);
+    }
+
+    public void delete(UUID id){
+        if (!cooperativeRepository.existsById(id)){
+            throw new ResourceNotFoundException("Cooperative");
+        }
+
+        cooperativeRepository.deleteById(id);
     }
 }

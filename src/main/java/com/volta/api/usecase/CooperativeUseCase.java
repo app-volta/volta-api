@@ -14,4 +14,7 @@ public interface CooperativeUseCase {
 
     CooperativeResponseDTO getCooperativeById(UUID id);
 
+    CooperativeResponseDTO update(UUID id, CooperativeRequestDTO dto);
+
+    void delete(UUID id);
 }

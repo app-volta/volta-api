@@ -9,4 +9,6 @@ public interface CooperativeRepository extends JpaRepository<Cooperative, UUID> 
 
     boolean existsByCnpj(String cnpj);
 
+    boolean existsByCnpjAndIdNot(String cnpj, UUID id);
+
 }
