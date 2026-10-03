@@ -4,7 +4,7 @@ import com.volta.api.dto.request.AreaRequestDTO;
 import com.volta.api.dto.request.update.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
-import com.volta.api.service.AreaService;
+import com.volta.api.usecase.AreaUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,32 +21,32 @@ import java.util.UUID;
 @RequestMapping("/areas")
 public class AreaController {
 
-    private final AreaService areaService;
+    private final AreaUseCase areaUseCase;
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AreaResponseDTO> create(@Valid @RequestBody AreaRequestDTO dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(areaService.register(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(areaUseCase.register(dto));
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<AreaResponseDTO>> show(){
-        List<AreaResponseDTO> areas = areaService.getAreas();
+        List<AreaResponseDTO> areas = areaUseCase.getAreas();
         return ResponseEntity.ok(areas);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AreaResponseDTO> show(@PathVariable UUID id){
-        AreaResponseDTO area = areaService.getAreaById(id);
+        AreaResponseDTO area = areaUseCase.getAreaById(id);
         return ResponseEntity.ok(area);
     }
 
     @GetMapping("/mine")
     @PreAuthorize("hasAuthority('EMPLOYEE')")
     public ResponseEntity<List<AreaResponseDTO>> showMine(@AuthenticationPrincipal AuthenticatedUser author){
-        List<AreaResponseDTO> area = areaService.getAreasOfMyCompany(author);
+        List<AreaResponseDTO> area = areaUseCase.getAreasOfMyCompany(author);
         return ResponseEntity.ok(area);
     }
 
@@ -56,14 +56,14 @@ public class AreaController {
             @PathVariable UUID id,
             @Valid @RequestBody AreaUpdateRequestDTO dto
     ){
-        AreaResponseDTO response = areaService.update(id, dto);
+        AreaResponseDTO response = areaUseCase.update(id, dto);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> remove(@PathVariable UUID id){
-        areaService.delete(id);
+        areaUseCase.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

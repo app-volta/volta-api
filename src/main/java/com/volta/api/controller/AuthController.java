@@ -1,9 +1,8 @@
 package com.volta.api.controller;
 
 import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
-import com.volta.api.service.AuthService;
+import com.volta.api.usecase.AuthUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authenticationService;
+    private final AuthUseCase authUseCase;
 
     @PostMapping("/login")
-    public TokenResponseDTO login(@Valid @RequestBody LoginRequestDTO loginRequestDto) throws Exception {
-        return authenticationService.login(loginRequestDto);
+    public TokenResponseDTO login(@Valid @RequestBody LoginRequestDTO loginRequestDto) {
+        return authUseCase.login(loginRequestDto);
     }
 }
