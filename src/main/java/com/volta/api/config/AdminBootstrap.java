@@ -6,7 +6,7 @@ import com.volta.api.database.entity.Users;
 import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.database.repository.RoleRepository;
 import com.volta.api.database.repository.UserRepository;
-import com.volta.api.enums.RoleTypeEnum;
+import com.volta.api.enums.RoleType;
 import com.volta.api.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -32,7 +32,7 @@ public class AdminBootstrap implements ApplicationRunner {
 
         Company company = companyRepository.findById(UUID.fromString(adminProperties.companyId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
-        Role role = roleRepository.findByType(RoleTypeEnum.ADMIN.name())
+        Role role = roleRepository.findByType(RoleType.ADMIN.name())
                 .orElseThrow(() -> new IllegalStateException("Role ADMIN not found"));
 
         userRepository.save(

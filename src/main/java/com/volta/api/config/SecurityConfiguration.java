@@ -37,7 +37,10 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth ->
-                    auth.requestMatchers("/auth/**").permitAll()
+                    auth.requestMatchers(
+                            "/auth/**",
+                            "/actuator/health/**"
+                            ).permitAll()
                             .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

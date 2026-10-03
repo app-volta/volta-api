@@ -41,11 +41,22 @@ public class IncidentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public ResponseEntity<IncidentResponseDTO> show(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
     ){
         IncidentResponseDTO incident = incidentUseCase.getIncidentById(id, author);
         return ResponseEntity.ok(incident);
+    }
+
+    @PatchMapping("/{id}/close")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public ResponseEntity<Void> closeIncident(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ){
+        incidentUseCase.closeIncident(id, author);
+        return ResponseEntity.noContent().build();
     }
 }

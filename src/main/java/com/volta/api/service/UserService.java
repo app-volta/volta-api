@@ -10,7 +10,7 @@ import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.request.update.UserRoleUpdateRequestDTO;
 import com.volta.api.dto.request.update.UserUpdateRequestDTO;
 import com.volta.api.dto.response.UserResponseDTO;
-import com.volta.api.enums.RoleTypeEnum;
+import com.volta.api.enums.RoleType;
 import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
@@ -49,7 +49,7 @@ public class UserService implements UserUseCase {
         Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
-        Role role = roleRepository.findByType(RoleTypeEnum.EMPLOYEE.name())
+        Role role = roleRepository.findByType(RoleType.EMPLOYEE.name())
                 .orElseThrow(() -> new  ResourceNotFoundException("Role"));
 
         Users saved = userRepository.save(
