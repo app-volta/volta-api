@@ -1,6 +1,7 @@
 package com.volta.api.controller;
 
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.service.AreaService;
@@ -47,5 +48,22 @@ public class AreaController {
     public ResponseEntity<List<AreaResponseDTO>> showMine(@AuthenticationPrincipal AuthenticatedUser author){
         List<AreaResponseDTO> area = areaService.getAreasOfMyCompany(author);
         return ResponseEntity.ok(area);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AreaResponseDTO> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody AreaUpdateRequestDTO dto
+    ){
+        AreaResponseDTO response = areaService.update(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> remove(@PathVariable UUID id){
+        areaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

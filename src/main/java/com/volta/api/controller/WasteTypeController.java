@@ -49,6 +49,7 @@ public class WasteTypeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> remove(@PathVariable UUID id){
         wasteTypeService.delete(id);
         return ResponseEntity.noContent().build();

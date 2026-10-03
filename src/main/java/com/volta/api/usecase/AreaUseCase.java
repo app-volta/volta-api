@@ -1,6 +1,7 @@
 package com.volta.api.usecase;
 
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
@@ -16,4 +17,6 @@ public interface AreaUseCase {
     AreaResponseDTO getAreaById(UUID id);
 
     List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author);
+
+    AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto);
 }

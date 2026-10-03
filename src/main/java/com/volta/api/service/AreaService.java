@@ -5,6 +5,7 @@ import com.volta.api.database.entity.Company;
 import com.volta.api.database.repository.AreaRepository;
 import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.request.AreaRequestDTO;
+import com.volta.api.dto.request.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.AreaMapper;
@@ -12,6 +13,7 @@ import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.AreaUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,5 +60,22 @@ public class AreaService implements AreaUseCase {
         }
 
         return areas;
+    }
+
+    @Transactional
+    public AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto){
+        Area area = areaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Area"));
+
+        areaMapper.updateEntity(area, dto);
+        areaRepository.save(area);
+        return areaMapper.toResponse(area);
+    }
+
+    public void delete(UUID id){
+        if (!areaRepository.existsById(id)){
+            throw new ResourceNotFoundException("Area");
+        }
+        areaRepository.deleteById(id);
     }
 }

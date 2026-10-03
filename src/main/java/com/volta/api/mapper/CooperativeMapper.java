@@ -32,7 +32,7 @@ public class CooperativeMapper {
         );
     }
 
-    public void toEntity(Cooperative cooperative, CooperativeRequestDTO dto){
+    public void updateEntity(Cooperative cooperative, CooperativeRequestDTO dto){
         cooperative.setName(dto.name());
         cooperative.setCnpj(dto.cnpj());
         cooperative.setLatitude(dto.latitude());

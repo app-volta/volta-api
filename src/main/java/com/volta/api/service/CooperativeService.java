@@ -9,7 +9,6 @@ import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CooperativeMapper;
 import com.volta.api.usecase.CooperativeUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +59,7 @@ public class CooperativeService implements CooperativeUseCase {
             throw new ConflictException("CNPJ already registered");
         }
 
-        cooperativeMapper.toEntity(cooperative, dto);
+        cooperativeMapper.updateEntity(cooperative, dto);
         cooperativeRepository.save(cooperative);
         return cooperativeMapper.toResponse(cooperative);
     }
@@ -69,7 +68,6 @@ public class CooperativeService implements CooperativeUseCase {
         if (!cooperativeRepository.existsById(id)){
             throw new ResourceNotFoundException("Cooperative");
         }
-
         cooperativeRepository.deleteById(id);
     }
 }
