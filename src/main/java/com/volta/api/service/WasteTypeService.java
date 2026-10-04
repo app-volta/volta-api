@@ -1,6 +1,5 @@
 package com.volta.api.service;
 
-import com.volta.api.database.entity.Company;
 import com.volta.api.database.entity.WasteType;
 import com.volta.api.database.repository.WasteTypeRepository;
 import com.volta.api.dto.request.WasteTypeRequestDTO;
@@ -24,30 +23,30 @@ public class WasteTypeService implements WasteTypeUseCase {
 
     private final WasteTypeMapper wasteTypeMapper;
 
-    public WasteTypeResponseDTO register(WasteTypeRequestDTO dto){
+    public WasteTypeResponseDTO register(WasteTypeRequestDTO dto) {
         WasteType wasteType = wasteTypeMapper.toEntity(dto);
         WasteType wasteTypeSaved = wasteTypeRepository.save(wasteType);
         return wasteTypeMapper.toResponse(wasteTypeSaved);
     }
 
-    public List<WasteTypeResponseDTO> getWasteTypes(){
+    public List<WasteTypeResponseDTO> getWasteTypes() {
         List<WasteTypeResponseDTO> wasteTypes = new ArrayList<>();
 
-        for (WasteType wasteType : wasteTypeRepository.findAll()){
+        for (WasteType wasteType : wasteTypeRepository.findAll()) {
             wasteTypes.add(wasteTypeMapper.toResponse(wasteType));
         }
 
         return wasteTypes;
     }
 
-    public WasteTypeResponseDTO getWasteTypeById(UUID id){
+    public WasteTypeResponseDTO getWasteTypeById(UUID id) {
         WasteType wasteType = wasteTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
         return wasteTypeMapper.toResponse(wasteType);
     }
 
     @Transactional
-    public WasteTypeResponseDTO update(UUID id, WasteTypeRequestDTO dto){
+    public WasteTypeResponseDTO update(UUID id, WasteTypeRequestDTO dto) {
         WasteType wasteType = wasteTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
         wasteTypeMapper.updateEntity(wasteType, dto);
@@ -56,8 +55,8 @@ public class WasteTypeService implements WasteTypeUseCase {
         return wasteTypeMapper.toResponse(wasteType);
     }
 
-    public void delete(UUID id){
-        if (!wasteTypeRepository.existsById(id)){
+    public void delete(UUID id) {
+        if (!wasteTypeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Waste type");
         }
         wasteTypeRepository.deleteById(id);

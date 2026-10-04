@@ -1,6 +1,8 @@
 package com.volta.api.controller;
 
+import com.volta.api.dto.request.IncidentFilterDTO;
 import com.volta.api.dto.request.IncidentRequestDTO;
+import com.volta.api.dto.response.AiReportResponseDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
@@ -29,23 +31,26 @@ public class IncidentController {
     public ResponseEntity<IncidentResponseDTO> create(
             @Valid @RequestBody IncidentRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(incidentUseCase.register(dto, author));
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE')")
-    public ResponseEntity<List<IncidentResponseDTO>> show(@AuthenticationPrincipal AuthenticatedUser author){
-        List<IncidentResponseDTO> incidents = incidentUseCase.getIncidents(author);
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
+    public ResponseEntity<List<IncidentResponseDTO>> show(
+            @ModelAttribute IncidentFilterDTO filter,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ) {
+        List<IncidentResponseDTO> incidents = incidentUseCase.getIncidents(filter, author);
         return ResponseEntity.ok(incidents);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<IncidentResponseDTO> show(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         IncidentResponseDTO incident = incidentUseCase.getIncidentById(id, author);
         return ResponseEntity.ok(incident);
     }
@@ -55,8 +60,18 @@ public class IncidentController {
     public ResponseEntity<Void> closeIncident(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         incidentUseCase.closeIncident(id, author);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/ai-report")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
+    public ResponseEntity<AiReportResponseDTO> showAiReport(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ) {
+        AiReportResponseDTO aiReport = incidentUseCase.getAiReport(id, author);
+        return ResponseEntity.ok(aiReport);
     }
 }

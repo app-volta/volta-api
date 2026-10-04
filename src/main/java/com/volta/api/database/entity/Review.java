@@ -46,7 +46,6 @@ public class Review {
 
     private String comment;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "reviewed_at", nullable = false)
     private LocalDateTime reviewedAt;

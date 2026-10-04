@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AreaMapper {
-    public Area toEntity(AreaRequestDTO dto, Company company){
+    public Area toEntity(AreaRequestDTO dto, Company company) {
         Area area = new Area();
 
         area.setCompany(company);
@@ -18,16 +18,17 @@ public class AreaMapper {
 
         return area;
     }
-    public AreaResponseDTO toResponse(Area area){
+
+    public AreaResponseDTO toResponse(Area area) {
         return new AreaResponseDTO(
-            area.getId(),
-            area.getCompany().getId(),
-            area.getSectorName(),
-            area.getLocationDescription()
+                area.getId(),
+                area.getCompany().getId(),
+                area.getSectorName(),
+                area.getLocationDescription()
         );
     }
 
-    public void updateEntity(Area area, AreaUpdateRequestDTO dto){
+    public void updateEntity(Area area, AreaUpdateRequestDTO dto) {
         area.setSectorName(dto.sectorName());
         area.setLocationDescription(dto.locationDescription());
     }

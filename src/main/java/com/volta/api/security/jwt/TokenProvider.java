@@ -22,12 +22,12 @@ public class TokenProvider {
     private String key;
 
     //gerar um token
-    public String gerarToken(Authentication authentication){
+    public String gerarToken(Authentication authentication) {
         AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
         return buildToken(user);
     }
 
-    private String buildToken(AuthenticatedUser user){
+    private String buildToken(AuthenticatedUser user) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + expirationTime);
 
@@ -42,12 +42,12 @@ public class TokenProvider {
                 .compact();
     }
 
-    private SecretKey getSigningKey(){
+    private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(key.getBytes());
     }
 
     //validar um token
-    public boolean isTokenValid(String token){
+    public boolean isTokenValid(String token) {
         try {
             getClaims(token);
             return true;
@@ -57,11 +57,11 @@ public class TokenProvider {
     }
 
     //extrair informações do token
-    public String getUsername(String token){
+    public String getUsername(String token) {
         return getClaims(token).getSubject();
     }
 
-    public Claims getClaims(String token){
+    public Claims getClaims(String token) {
         //validar assinatura
         //validar expiração
         return Jwts.parser()

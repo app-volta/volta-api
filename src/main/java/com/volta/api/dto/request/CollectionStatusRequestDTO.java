@@ -9,4 +9,5 @@ public record CollectionStatusRequestDTO(
         CollectionStatusType status,
 
         String observation
-) {}
+) {
+}

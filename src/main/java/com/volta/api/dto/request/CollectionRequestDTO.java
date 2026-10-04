@@ -19,4 +19,5 @@ public record CollectionRequestDTO(
         String collectionType,
 
         boolean urgent
-) {}
+) {
+}

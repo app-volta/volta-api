@@ -9,4 +9,5 @@ public record CollectionScheduleRequestDTO(
         @NotNull
         @Future
         LocalDateTime scheduledAt
-) {}
+) {
+}

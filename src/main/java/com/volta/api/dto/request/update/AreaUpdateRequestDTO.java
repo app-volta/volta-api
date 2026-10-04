@@ -11,4 +11,5 @@ public record AreaUpdateRequestDTO(
 
         @Size(max = 255)
         String locationDescription
-) {}
+) {
+}

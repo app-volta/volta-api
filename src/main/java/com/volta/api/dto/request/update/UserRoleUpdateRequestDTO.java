@@ -8,4 +8,5 @@ public record UserRoleUpdateRequestDTO(
         @NotNull(message = "The role is mandatory")
         RoleType role
 
-) {}
+) {
+}

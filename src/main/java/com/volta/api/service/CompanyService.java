@@ -23,7 +23,7 @@ public class CompanyService implements CompanyUseCase {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
 
-    public CompanyResponseDTO register(CompanyRequestDTO dto){
+    public CompanyResponseDTO register(CompanyRequestDTO dto) {
         if (companyRepository.existsByCnpj(dto.cnpj())) {
             throw new ConflictException("CNPJ already registered");
         }
@@ -32,28 +32,28 @@ public class CompanyService implements CompanyUseCase {
         return companyMapper.toResponse(companySaved);
     }
 
-    public List<CompanyResponseDTO> getCompanies(){
+    public List<CompanyResponseDTO> getCompanies() {
         List<CompanyResponseDTO> companies = new ArrayList<>();
 
-        for (Company company : companyRepository.findAll()){
+        for (Company company : companyRepository.findAll()) {
             companies.add(companyMapper.toResponse(company));
         }
 
         return companies;
     }
 
-    public CompanyResponseDTO getCompanyById(UUID id){
+    public CompanyResponseDTO getCompanyById(UUID id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
         return companyMapper.toResponse(company);
     }
 
     @Transactional
-    public CompanyResponseDTO update(UUID id, CompanyRequestDTO dto){
+    public CompanyResponseDTO update(UUID id, CompanyRequestDTO dto) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
-        if (companyRepository.existsByCnpjAndIdNot(dto.cnpj(), id)){
+        if (companyRepository.existsByCnpjAndIdNot(dto.cnpj(), id)) {
             throw new ConflictException("CNPJ already registered");
         }
 
@@ -63,8 +63,8 @@ public class CompanyService implements CompanyUseCase {
         return companyMapper.toResponse(company);
     }
 
-    public void delete(UUID id){
-        if (!companyRepository.existsById(id)){
+    public void delete(UUID id) {
+        if (!companyRepository.existsById(id)) {
             throw new ResourceNotFoundException("Company");
         }
         companyRepository.deleteById(id);

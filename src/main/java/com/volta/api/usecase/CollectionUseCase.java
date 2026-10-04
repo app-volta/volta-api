@@ -3,7 +3,9 @@ package com.volta.api.usecase;
 import com.volta.api.dto.request.CollectionRequestDTO;
 import com.volta.api.dto.request.CollectionScheduleRequestDTO;
 import com.volta.api.dto.request.CollectionStatusRequestDTO;
+import com.volta.api.dto.response.CollectionCompletionTimeResponseDTO;
 import com.volta.api.dto.response.CollectionResponseDTO;
+import com.volta.api.dto.response.CollectionStatusResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
 import java.util.List;
@@ -20,4 +22,8 @@ public interface CollectionUseCase {
     void schedule(UUID id, CollectionScheduleRequestDTO dto, AuthenticatedUser author);
 
     void updateStatus(UUID id, CollectionStatusRequestDTO dto, AuthenticatedUser author);
+
+    CollectionCompletionTimeResponseDTO getCompletionTime(UUID id, AuthenticatedUser author);
+
+    List<CollectionStatusResponseDTO> getCollectionStatus(UUID collectionId, AuthenticatedUser author);
 }

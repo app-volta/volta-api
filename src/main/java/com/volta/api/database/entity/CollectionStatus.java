@@ -35,7 +35,6 @@ public class CollectionStatus {
     @Column(length = 50, nullable = false)
     private String status;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "changed_at", nullable = false)
     private LocalDateTime changedAt;

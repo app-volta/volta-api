@@ -26,19 +26,26 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO dto){
+    public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userUseCase.register(dto));
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> show(){
+    public ResponseEntity<List<UserResponseDTO>> show() {
         List<UserResponseDTO> users = userUseCase.getUsers();
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserResponseDTO> showById(@PathVariable UUID id) {
+        UserResponseDTO user = userUseCase.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> showMe(@AuthenticationPrincipal AuthenticatedUser author){
+    public ResponseEntity<UserResponseDTO> showMe(@AuthenticationPrincipal AuthenticatedUser author) {
         UserResponseDTO user = userUseCase.getUserById(author.id());
         return ResponseEntity.ok(user);
     }
@@ -47,7 +54,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> update(
             @Valid @RequestBody UserUpdateRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         UserResponseDTO response = userUseCase.update(author.id(), dto);
         return ResponseEntity.ok(response);
     }
@@ -58,7 +65,7 @@ public class UserController {
             @PathVariable UUID id,
             @Valid @RequestBody UserRoleUpdateRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         UserResponseDTO response = userUseCase.updateRole(id, dto, author);
         return ResponseEntity.ok(response);
     }

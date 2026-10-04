@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WasteTypeMapper {
 
-    public WasteType toEntity(WasteTypeRequestDTO dto){
+    public WasteType toEntity(WasteTypeRequestDTO dto) {
         WasteType wasteType = new WasteType();
 
         wasteType.setCategory(dto.category());
@@ -18,7 +18,7 @@ public class WasteTypeMapper {
         return wasteType;
     }
 
-    public WasteTypeResponseDTO toResponse(WasteType wasteType){
+    public WasteTypeResponseDTO toResponse(WasteType wasteType) {
         return new WasteTypeResponseDTO(
                 wasteType.getId(),
                 wasteType.getCategory(),
@@ -27,7 +27,7 @@ public class WasteTypeMapper {
         );
     }
 
-    public void updateEntity(WasteType wasteType, WasteTypeRequestDTO dto){
+    public void updateEntity(WasteType wasteType, WasteTypeRequestDTO dto) {
         wasteType.setCategory(dto.category());
         wasteType.setDescription(dto.description());
         wasteType.setDefaultRiskLevel(dto.defaultRiskLevel().name());

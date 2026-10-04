@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -21,18 +22,18 @@ public class WasteTypeController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<WasteTypeResponseDTO> create(@Valid @RequestBody WasteTypeRequestDTO dto){
+    public ResponseEntity<WasteTypeResponseDTO> create(@Valid @RequestBody WasteTypeRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(wasteTypeUseCase.register(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<WasteTypeResponseDTO>> show(){
+    public ResponseEntity<List<WasteTypeResponseDTO>> show() {
         List<WasteTypeResponseDTO> wasteTypes = wasteTypeUseCase.getWasteTypes();
         return ResponseEntity.ok(wasteTypes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WasteTypeResponseDTO> show(@PathVariable UUID id){
+    public ResponseEntity<WasteTypeResponseDTO> show(@PathVariable UUID id) {
         WasteTypeResponseDTO wasteType = wasteTypeUseCase.getWasteTypeById(id);
         return ResponseEntity.ok(wasteType);
     }
@@ -42,14 +43,14 @@ public class WasteTypeController {
     public ResponseEntity<WasteTypeResponseDTO> update(
             @PathVariable UUID id,
             @Valid @RequestBody WasteTypeRequestDTO dto
-    ){
+    ) {
         WasteTypeResponseDTO response = wasteTypeUseCase.update(id, dto);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> remove(@PathVariable UUID id){
+    public ResponseEntity<Void> remove(@PathVariable UUID id) {
         wasteTypeUseCase.delete(id);
         return ResponseEntity.noContent().build();
     }

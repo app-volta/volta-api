@@ -47,7 +47,6 @@ public class EsgMetric {
     @Column(name = "recycling_percentage", columnDefinition = "DECIMAL(5,2)", nullable = false)
     private BigDecimal recyclingPercentage = BigDecimal.valueOf(0);
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "calculated_at", nullable = false)
     private LocalDateTime calculatedAt;
