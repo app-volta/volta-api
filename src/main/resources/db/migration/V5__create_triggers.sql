@@ -1,4 +1,103 @@
 -- ============================================================
+-- 1. TABELA DE AUDITORIA
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS audit_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    table_name VARCHAR(100) NOT NULL,
+    record_id UUID,
+    operation VARCHAR(10) NOT NULL,
+    old_data JSONB,
+    new_data JSONB,
+    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    database_user VARCHAR(100) NOT NULL DEFAULT CURRENT_USER
+    );
+
+
+-- ============================================================
+-- 2. FUNCTION GENÉRICA DE AUDITORIA
+-- ============================================================
+-- Essa função será reutilizada por várias triggers.
+--
+-- Registra:
+-- INSERT -> apenas new_data
+-- UPDATE -> old_data e new_data
+-- DELETE -> apenas old_data
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION audit_changes()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    IF TG_OP = 'INSERT' THEN
+
+        INSERT INTO audit_log (
+            table_name,
+            record_id,
+            operation,
+            old_data,
+            new_data
+        )
+        VALUES (
+            TG_TABLE_NAME,
+            NEW.id,
+            TG_OP,
+            NULL,
+            to_jsonb(NEW)
+        );
+
+RETURN NEW;
+
+
+ELSIF TG_OP = 'UPDATE' THEN
+
+        INSERT INTO audit_log (
+            table_name,
+            record_id,
+            operation,
+            old_data,
+            new_data
+        )
+        VALUES (
+            TG_TABLE_NAME,
+            NEW.id,
+            TG_OP,
+            to_jsonb(OLD),
+            to_jsonb(NEW)
+        );
+
+RETURN NEW;
+
+
+ELSIF TG_OP = 'DELETE' THEN
+
+        INSERT INTO audit_log (
+            table_name,
+            record_id,
+            operation,
+            old_data,
+            new_data
+        )
+        VALUES (
+            TG_TABLE_NAME,
+            OLD.id,
+            TG_OP,
+            to_jsonb(OLD),
+            NULL
+        );
+
+RETURN OLD;
+
+END IF;
+
+RETURN NULL;
+
+END;
+$$;
+
+-- ============================================================
 -- 3. TRIGGER - INCIDENT
 -- ============================================================
 
