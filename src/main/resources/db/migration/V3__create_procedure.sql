@@ -13,8 +13,7 @@
 -- );
 -- ============================================================
 
-CREATE
-OR REPLACE PROCEDURE update_collection_status(
+CREATE OR REPLACE PROCEDURE update_collection_status(
     p_collection_id UUID,
     p_new_status VARCHAR(50),
     p_observation TEXT DEFAULT NULL
@@ -24,8 +23,7 @@ AS $$
 BEGIN
 
     -- Verifica se a coleta existe
-    IF
-NOT EXISTS (
+    IF NOT EXISTS (
         SELECT 1
         FROM collection
         WHERE id = p_collection_id
@@ -43,14 +41,18 @@ WHERE id = p_collection_id;
 
 
 -- Registra a alteração no histórico
-INSERT INTO collection_status (collection_id,
-                               status,
-                               changed_at,
-                               observation)
-VALUES (p_collection_id,
-        p_new_status,
-        CURRENT_TIMESTAMP,
-        p_observation);
+INSERT INTO collection_status (
+    collection_id,
+    status,
+    changed_at,
+    observation
+)
+VALUES (
+           p_collection_id,
+           p_new_status,
+           CURRENT_TIMESTAMP,
+           p_observation
+       );
 
 END;
 $$;
@@ -74,8 +76,7 @@ $$;
 -- );
 -- ============================================================
 
-CREATE
-OR REPLACE PROCEDURE schedule_collection(
+CREATE OR REPLACE PROCEDURE schedule_collection(
     p_collection_id UUID,
     p_scheduled_at TIMESTAMP
 )
@@ -93,8 +94,7 @@ WHERE id = p_collection_id;
 
 
 -- Verifica se a coleta existe
-IF
-NOT FOUND THEN
+IF NOT FOUND THEN
         RAISE EXCEPTION
             'Collection with id % not found.',
             p_collection_id;
@@ -102,8 +102,7 @@ END IF;
 
 
     -- Garante coerência com a constraint do schema
-    IF
-p_scheduled_at < v_requested_at THEN
+    IF p_scheduled_at < v_requested_at THEN
         RAISE EXCEPTION
             'Scheduled date cannot be earlier than requested date.';
 END IF;
@@ -111,20 +110,25 @@ END IF;
 
     -- Atualiza a coleta
 UPDATE collection
-SET scheduled_at   = p_scheduled_at,
+SET
+    scheduled_at = p_scheduled_at,
     current_status = 'SCHEDULED'
 WHERE id = p_collection_id;
 
 
 -- Registra o histórico
-INSERT INTO collection_status (collection_id,
-                               status,
-                               changed_at,
-                               observation)
-VALUES (p_collection_id,
-        'SCHEDULED',
-        CURRENT_TIMESTAMP,
-        'Collection scheduled through procedure.');
+INSERT INTO collection_status (
+    collection_id,
+    status,
+    changed_at,
+    observation
+)
+VALUES (
+           p_collection_id,
+           'SCHEDULED',
+           CURRENT_TIMESTAMP,
+           'Collection scheduled through procedure.'
+       );
 
 END;
 $$;
@@ -144,8 +148,7 @@ $$;
 -- );
 -- ============================================================
 
-CREATE
-OR REPLACE PROCEDURE close_incident(
+CREATE OR REPLACE PROCEDURE close_incident(
     p_incident_id UUID
 )
 LANGUAGE plpgsql
@@ -162,8 +165,7 @@ WHERE id = p_incident_id;
 
 
 -- Verifica se a ocorrência existe
-IF
-NOT FOUND THEN
+IF NOT FOUND THEN
         RAISE EXCEPTION
             'Incident with id % not found.',
             p_incident_id;
@@ -177,18 +179,22 @@ WHERE id = p_incident_id;
 
 
 -- Notifica o usuário responsável
-INSERT INTO notification (user_id,
-                          type,
-                          title,
-                          message,
-                          read,
-                          created_at)
-VALUES (v_user_id,
-        'INCIDENT',
-        'Ocorrência encerrada',
-        'A ocorrência foi encerrada com sucesso.',
-        FALSE,
-        CURRENT_TIMESTAMP);
+INSERT INTO notification (
+    user_id,
+    type,
+    title,
+    message,
+    read,
+    created_at
+)
+VALUES (
+           v_user_id,
+           'INCIDENT',
+           'Ocorrência encerrada',
+           'A ocorrência foi encerrada com sucesso.',
+           FALSE,
+           CURRENT_TIMESTAMP
+       );
 
 END;
 $$;
