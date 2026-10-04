@@ -42,7 +42,6 @@ public class AiReport {
     @Column(name = "report_text")
     private String reportText;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "generated_at", nullable = false)
     private LocalDateTime generatedAt;

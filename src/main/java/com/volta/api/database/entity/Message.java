@@ -45,7 +45,6 @@ public class Message {
     @Column(nullable = false)
     private boolean reported = false;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "sent_at", nullable = false)
     private LocalDateTime sentAt;

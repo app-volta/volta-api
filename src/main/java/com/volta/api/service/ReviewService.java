@@ -51,7 +51,7 @@ public class ReviewService implements ReviewUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
 
         Review review = reviewMapper.toEntity(dto, collection, user);
-        Review saved = reviewRepository.save(review);
+        Review saved = reviewRepository.saveAndFlush(review);
 
         return reviewMapper.toResponse(saved);
     }

@@ -63,7 +63,7 @@ public class IncidentService implements IncidentUseCase {
                 wasteType
         );
 
-        Incident savedIncident = incidentRepository.save(incident);
+        Incident savedIncident = incidentRepository.saveAndFlush(incident);
         return incidentMapper.toResponse(savedIncident);
     }
 

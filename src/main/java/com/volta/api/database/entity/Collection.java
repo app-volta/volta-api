@@ -37,7 +37,6 @@ public class Collection {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cooperative_id", nullable = false)
     private Cooperative cooperative;
-    @NotNull
     @CreationTimestamp
     @Column(name = "requested_at")
     private LocalDateTime requestedAt;

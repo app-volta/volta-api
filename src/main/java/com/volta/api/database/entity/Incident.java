@@ -69,7 +69,6 @@ public class Incident {
     @Column(length = 50, nullable = false)
     private String status;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;

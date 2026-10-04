@@ -60,7 +60,7 @@ public class EsgService implements EsgUseCase {
         BigDecimal percentage = esgFunction.calculateRecyclingPercentage(dto.totalWasteKg(), dto.totalRecycledKg());
 
         EsgMetric esgMetric = esgMetricMapper.toEntity(dto, company, percentage);
-        EsgMetric saved = esgMetricRepository.save(esgMetric);
+        EsgMetric saved = esgMetricRepository.saveAndFlush(esgMetric);
 
         return esgMetricMapper.toResponse(saved);
     }

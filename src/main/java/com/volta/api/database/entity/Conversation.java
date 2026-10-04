@@ -42,7 +42,6 @@ public class Conversation {
     @JoinColumn(name = "collection_id", nullable = false)
     private Collection collection;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
