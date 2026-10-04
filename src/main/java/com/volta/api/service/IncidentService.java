@@ -3,11 +3,14 @@ package com.volta.api.service;
 import com.volta.api.database.entity.*;
 import com.volta.api.database.procedure.IncidentProcedure;
 import com.volta.api.database.repository.*;
+import com.volta.api.dto.request.IncidentFilterDTO;
 import com.volta.api.dto.request.IncidentRequestDTO;
+import com.volta.api.dto.response.AiReportResponseDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
 import com.volta.api.enums.IncidentStatus;
 import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;
+import com.volta.api.mapper.AiReportMapper;
 import com.volta.api.mapper.IncidentMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.IncidentUseCase;
@@ -37,6 +40,10 @@ public class IncidentService implements IncidentUseCase {
 
     private final IncidentProcedure incidentProcedure;
 
+    private final AiReportRepository aiReportRepository;
+
+    private final AiReportMapper aiReportMapper;
+
     public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author){
 
         Company company = companyRepository.findById(author.companyId())
@@ -60,10 +67,17 @@ public class IncidentService implements IncidentUseCase {
         return incidentMapper.toResponse(savedIncident);
     }
 
-    public List<IncidentResponseDTO> getIncidents(AuthenticatedUser author){
+    public List<IncidentResponseDTO> getIncidents(IncidentFilterDTO filter, AuthenticatedUser author){
         List<IncidentResponseDTO> incidents = new ArrayList<>();
 
-        for (Incident incident : incidentRepository.findByCompanyId(author.companyId())){
+        List<Incident> found = incidentRepository.search(
+                author.companyId(),
+                filter.status(),
+                filter.priority(),
+                filter.areaId()
+        );
+
+        for (Incident incident : found){
             incidents.add(incidentMapper.toResponse(incident));
         }
 
@@ -86,5 +100,15 @@ public class IncidentService implements IncidentUseCase {
         }
 
         incidentProcedure.closeIncident(id);
+    }
+
+    public AiReportResponseDTO getAiReport(UUID id, AuthenticatedUser author){
+        incidentRepository.findByIdAndCompanyId(id, author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident"));
+
+        AiReport aiReport = aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(id)
+                .orElseThrow(() -> new ResourceNotFoundException("AI report"));
+
+        return aiReportMapper.toResponse(aiReport);
     }
 }

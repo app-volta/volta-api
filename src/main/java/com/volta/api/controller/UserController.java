@@ -37,6 +37,13 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserResponseDTO> showById(@PathVariable UUID id){
+        UserResponseDTO user = userUseCase.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> showMe(@AuthenticationPrincipal AuthenticatedUser author){
         UserResponseDTO user = userUseCase.getUserById(author.id());

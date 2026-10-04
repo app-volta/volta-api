@@ -1,6 +1,8 @@
 package com.volta.api.controller;
 
+import com.volta.api.dto.request.IncidentFilterDTO;
 import com.volta.api.dto.request.IncidentRequestDTO;
+import com.volta.api.dto.response.AiReportResponseDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
@@ -35,8 +37,11 @@ public class IncidentController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('EMPLOYEE')")
-    public ResponseEntity<List<IncidentResponseDTO>> show(@AuthenticationPrincipal AuthenticatedUser author){
-        List<IncidentResponseDTO> incidents = incidentUseCase.getIncidents(author);
+    public ResponseEntity<List<IncidentResponseDTO>> show(
+            @ModelAttribute IncidentFilterDTO filter,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ){
+        List<IncidentResponseDTO> incidents = incidentUseCase.getIncidents(filter, author);
         return ResponseEntity.ok(incidents);
     }
 
@@ -58,5 +63,15 @@ public class IncidentController {
     ){
         incidentUseCase.closeIncident(id, author);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/ai-report")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
+    public ResponseEntity<AiReportResponseDTO> showAiReport(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ){
+        AiReportResponseDTO aiReport = incidentUseCase.getAiReport(id, author);
+        return ResponseEntity.ok(aiReport);
     }
 }

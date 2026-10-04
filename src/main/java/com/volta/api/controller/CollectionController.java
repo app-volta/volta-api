@@ -5,6 +5,7 @@ import com.volta.api.dto.request.CollectionScheduleRequestDTO;
 import com.volta.api.dto.request.CollectionStatusRequestDTO;
 import com.volta.api.dto.response.CollectionCompletionTimeResponseDTO;
 import com.volta.api.dto.response.CollectionResponseDTO;
+import com.volta.api.dto.response.CollectionStatusResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.CollectionUseCase;
 import jakarta.validation.Valid;
@@ -80,5 +81,15 @@ public class CollectionController {
     ) {
         collectionUseCase.updateStatus(id, dto, author);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<CollectionStatusResponseDTO>> show(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ){
+        List<CollectionStatusResponseDTO> collectionStatuses = collectionUseCase.getCollectionStatus(id, author);
+        return ResponseEntity.ok(collectionStatuses);
     }
 }
