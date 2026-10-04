@@ -36,7 +36,7 @@ public class IncidentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<List<IncidentResponseDTO>> show(
             @ModelAttribute IncidentFilterDTO filter,
             @AuthenticationPrincipal AuthenticatedUser author
@@ -46,7 +46,7 @@ public class IncidentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<IncidentResponseDTO> show(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author

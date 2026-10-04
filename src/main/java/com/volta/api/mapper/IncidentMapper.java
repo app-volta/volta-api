@@ -44,7 +44,7 @@ public class IncidentMapper {
                 incident.getCompany().getId(),
                 incident.getUser().getId(),
                 incident.getArea().getId(),
-                incident.getWasteType().getId(),
+                incident.getWasteType() != null ? incident.getWasteType().getId() : null,
                 incident.getPhotoUrl(),
                 incident.getEmployeeDescription(),
                 incident.getContaminationLevel(),
