@@ -3,6 +3,7 @@ package com.volta.api.service;
 import com.volta.api.database.entity.Collection;
 import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.entity.Incident;
+import com.volta.api.database.function.CollectionFunction;
 import com.volta.api.database.procedure.CollectionProcedure;
 import com.volta.api.database.repository.CollectionRepository;
 import com.volta.api.database.repository.CooperativeRepository;
@@ -10,6 +11,7 @@ import com.volta.api.database.repository.IncidentRepository;
 import com.volta.api.dto.request.CollectionRequestDTO;
 import com.volta.api.dto.request.CollectionScheduleRequestDTO;
 import com.volta.api.dto.request.CollectionStatusRequestDTO;
+import com.volta.api.dto.response.CollectionCompletionTimeResponseDTO;
 import com.volta.api.dto.response.CollectionResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.exception.BusinessRuleException;
@@ -20,7 +22,6 @@ import com.volta.api.usecase.CollectionUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class CollectionService implements CollectionUseCase {
 
     private final CollectionRepository collectionRepository;
     private final CollectionProcedure collectionProcedure;
+    private final CollectionFunction collectionFunction;
     private final IncidentRepository incidentRepository;
     private final CooperativeRepository cooperativeRepository;
     private final CollectionMapper collectionMapper;
@@ -64,8 +66,6 @@ public class CollectionService implements CollectionUseCase {
         return collections;
     }
 
-    
-
     public CollectionResponseDTO getCollectionById(UUID id, AuthenticatedUser author){
         Collection collection = findOwnedCollection(id, author);
         return collectionMapper.toResponse(collection);
@@ -88,6 +88,19 @@ public class CollectionService implements CollectionUseCase {
         }
 
         collectionProcedure.updateCollectionStatus(id, dto.status().name(), dto.observation());
+    }
+
+    public CollectionCompletionTimeResponseDTO getCompletionTime(UUID id, AuthenticatedUser author) {
+        Collection collection = findOwnedCollection(id, author);
+
+        if (!CollectionStatusType.COMPLETED.name().equals(collection.getCurrentStatus())) {
+            throw new BusinessRuleException("Collection is not completed yet");
+        }
+
+        return new CollectionCompletionTimeResponseDTO(
+                id,
+                collectionFunction.calculateCollectionCompletionHours(id)
+        );
     }
 
     private Collection findOwnedCollection(UUID id, AuthenticatedUser author) {

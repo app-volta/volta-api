@@ -3,6 +3,7 @@ package com.volta.api.controller;
 import com.volta.api.dto.request.CollectionRequestDTO;
 import com.volta.api.dto.request.CollectionScheduleRequestDTO;
 import com.volta.api.dto.request.CollectionStatusRequestDTO;
+import com.volta.api.dto.response.CollectionCompletionTimeResponseDTO;
 import com.volta.api.dto.response.CollectionResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.CollectionUseCase;
@@ -47,6 +48,16 @@ public class CollectionController {
     ){
         CollectionResponseDTO collection = collectionUseCase.getCollectionById(id, author);
         return ResponseEntity.ok(collection);
+    }
+
+    @GetMapping("/{id}/completion-time")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public ResponseEntity<CollectionCompletionTimeResponseDTO> showCompletionTime(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ){
+        CollectionCompletionTimeResponseDTO completionTime = collectionUseCase.getCompletionTime(id, author);
+        return ResponseEntity.ok(completionTime);
     }
 
     @PatchMapping("/{id}/schedule")
