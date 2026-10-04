@@ -20,7 +20,7 @@ public class AuthService implements AuthUseCase {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public TokenResponseDTO login(LoginRequestDTO dto){
+    public TokenResponseDTO login(LoginRequestDTO dto) {
         Authentication authentication = authenticationManager
                 .authenticate(
                         new UsernamePasswordAuthenticationToken(

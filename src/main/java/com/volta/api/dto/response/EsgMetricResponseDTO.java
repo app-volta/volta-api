@@ -12,4 +12,5 @@ public record EsgMetricResponseDTO(
         BigDecimal totalRecycledKg,
         BigDecimal recyclingPercentage,
         LocalDateTime calculatedAt
-) {}
+) {
+}

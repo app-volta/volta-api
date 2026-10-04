@@ -18,6 +18,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+
     @Override
     public void handle(
             HttpServletRequest request,

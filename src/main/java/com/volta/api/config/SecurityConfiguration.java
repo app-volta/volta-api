@@ -37,23 +37,23 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth ->
-                    auth.requestMatchers(
-                            "/auth/**",
-                            "/actuator/health/**"
-                            ).permitAll()
-                            .anyRequest().authenticated()
+                        auth.requestMatchers(
+                                        "/auth/**",
+                                        "/actuator/health/**"
+                                ).permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration){
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

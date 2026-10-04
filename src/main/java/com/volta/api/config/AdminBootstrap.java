@@ -27,7 +27,8 @@ public class AdminBootstrap implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (adminProperties.email().isBlank() || adminProperties.password().isBlank() || adminProperties.companyId().isBlank()) return;
+        if (adminProperties.email().isBlank() || adminProperties.password().isBlank() || adminProperties.companyId().isBlank())
+            return;
         if (userRepository.findByEmail(adminProperties.email()).isPresent()) return;
 
         Company company = companyRepository.findById(UUID.fromString(adminProperties.companyId()))
@@ -37,12 +38,12 @@ public class AdminBootstrap implements ApplicationRunner {
 
         userRepository.save(
                 Users.builder()
-                .name("Admin")
-                .email(adminProperties.email())
-                .role(role)
-                .company(company)
-                .passwordHash(passwordEncoder.encode(adminProperties.password()))
-                .build()
+                        .name("Admin")
+                        .email(adminProperties.email())
+                        .role(role)
+                        .company(company)
+                        .passwordHash(passwordEncoder.encode(adminProperties.password()))
+                        .build()
         );
     }
 }

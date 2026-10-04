@@ -11,4 +11,5 @@ public record ReviewResponseDTO(
         int stars,
         String comment,
         LocalDateTime reviewedAt
-) {}
+) {
+}

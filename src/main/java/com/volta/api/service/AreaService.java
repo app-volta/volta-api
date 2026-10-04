@@ -26,7 +26,7 @@ public class AreaService implements AreaUseCase {
     private final CompanyRepository companyRepository;
     private final AreaMapper areaMapper;
 
-    public AreaResponseDTO register(AreaRequestDTO dto){
+    public AreaResponseDTO register(AreaRequestDTO dto) {
         Company company = companyRepository.findById(dto.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
@@ -36,7 +36,7 @@ public class AreaService implements AreaUseCase {
         return areaMapper.toResponse(savedArea);
     }
 
-    public List<AreaResponseDTO> getAreas(){
+    public List<AreaResponseDTO> getAreas() {
         List<AreaResponseDTO> areas = new ArrayList<>();
 
         for (Area area : areaRepository.findAll()) {
@@ -46,13 +46,13 @@ public class AreaService implements AreaUseCase {
         return areas;
     }
 
-    public AreaResponseDTO getAreaById(UUID id){
+    public AreaResponseDTO getAreaById(UUID id) {
         Area area = areaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Area"));
         return areaMapper.toResponse(area);
     }
 
-    public List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author){
+    public List<AreaResponseDTO> getAreasOfMyCompany(AuthenticatedUser author) {
         List<AreaResponseDTO> areas = new ArrayList<>();
 
         for (Area area : areaRepository.findByCompanyId(author.companyId())) {
@@ -63,7 +63,7 @@ public class AreaService implements AreaUseCase {
     }
 
     @Transactional
-    public AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto){
+    public AreaResponseDTO update(UUID id, AreaUpdateRequestDTO dto) {
         Area area = areaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Area"));
 
@@ -72,8 +72,8 @@ public class AreaService implements AreaUseCase {
         return areaMapper.toResponse(area);
     }
 
-    public void delete(UUID id){
-        if (!areaRepository.existsById(id)){
+    public void delete(UUID id) {
+        if (!areaRepository.existsById(id)) {
             throw new ResourceNotFoundException("Area");
         }
         areaRepository.deleteById(id);

@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +51,7 @@ public class UserService implements UserUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
         Role role = roleRepository.findByType(RoleType.EMPLOYEE.name())
-                .orElseThrow(() -> new  ResourceNotFoundException("Role"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role"));
 
         Users saved = userRepository.save(
                 Users.builder()
@@ -93,7 +94,7 @@ public class UserService implements UserUseCase {
 
     @Transactional
     public UserResponseDTO updateRole(UUID id, UserRoleUpdateRequestDTO dto, AuthenticatedUser author) {
-        if (id.equals(author.id())){
+        if (id.equals(author.id())) {
             throw new BusinessRuleException("You cannot change your own role");
         }
         Users user = userRepository.findById(id)

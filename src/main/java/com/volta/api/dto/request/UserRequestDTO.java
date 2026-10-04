@@ -29,4 +29,5 @@ public record UserRequestDTO(
 
         @NotNull
         UUID companyId
-){}
+) {
+}

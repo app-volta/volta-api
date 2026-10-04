@@ -25,27 +25,27 @@ public class AreaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AreaResponseDTO> create(@Valid @RequestBody AreaRequestDTO dto){
+    public ResponseEntity<AreaResponseDTO> create(@Valid @RequestBody AreaRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(areaUseCase.register(dto));
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<AreaResponseDTO>> show(){
+    public ResponseEntity<List<AreaResponseDTO>> show() {
         List<AreaResponseDTO> areas = areaUseCase.getAreas();
         return ResponseEntity.ok(areas);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AreaResponseDTO> show(@PathVariable UUID id){
+    public ResponseEntity<AreaResponseDTO> show(@PathVariable UUID id) {
         AreaResponseDTO area = areaUseCase.getAreaById(id);
         return ResponseEntity.ok(area);
     }
 
     @GetMapping("/mine")
     @PreAuthorize("hasAuthority('EMPLOYEE')")
-    public ResponseEntity<List<AreaResponseDTO>> showMine(@AuthenticationPrincipal AuthenticatedUser author){
+    public ResponseEntity<List<AreaResponseDTO>> showMine(@AuthenticationPrincipal AuthenticatedUser author) {
         List<AreaResponseDTO> area = areaUseCase.getAreasOfMyCompany(author);
         return ResponseEntity.ok(area);
     }
@@ -55,14 +55,14 @@ public class AreaController {
     public ResponseEntity<AreaResponseDTO> update(
             @PathVariable UUID id,
             @Valid @RequestBody AreaUpdateRequestDTO dto
-    ){
+    ) {
         AreaResponseDTO response = areaUseCase.update(id, dto);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> remove(@PathVariable UUID id){
+    public ResponseEntity<Void> remove(@PathVariable UUID id) {
         areaUseCase.delete(id);
         return ResponseEntity.noContent().build();
     }

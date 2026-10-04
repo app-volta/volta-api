@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    public UserResponseDTO toResponse(Users user){
+    public UserResponseDTO toResponse(Users user) {
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),
@@ -18,7 +18,7 @@ public class UserMapper {
         );
     }
 
-    public void updateEntity(Users user, UserUpdateRequestDTO dto){
+    public void updateEntity(Users user, UserUpdateRequestDTO dto) {
         user.setName(dto.name());
         user.setPosition(dto.position());
     }

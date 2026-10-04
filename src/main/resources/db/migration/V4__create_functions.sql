@@ -9,7 +9,8 @@
 -- Resultado: 75.00
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION calculate_recycling_percentage(
+CREATE
+OR REPLACE FUNCTION calculate_recycling_percentage(
     p_total_waste NUMERIC,
     p_total_recycled NUMERIC
 )
@@ -17,7 +18,8 @@ RETURNS NUMERIC
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_total_waste IS NULL
+    IF
+p_total_waste IS NULL
        OR p_total_recycled IS NULL
        OR p_total_waste <= 0 THEN
         RETURN 0;
@@ -46,7 +48,8 @@ $$;
 -- );
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION calculate_collection_completion_hours(
+CREATE
+OR REPLACE FUNCTION calculate_collection_completion_hours(
     p_collection_id UUID
 )
 RETURNS NUMERIC
@@ -54,7 +57,8 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 v_requested_at TIMESTAMP;
-    v_completed_at TIMESTAMP;
+    v_completed_at
+TIMESTAMP;
 BEGIN
 
 SELECT MIN(changed_at)
@@ -69,7 +73,8 @@ FROM collection_status
 WHERE collection_id = p_collection_id
   AND status = 'COMPLETED';
 
-IF v_requested_at IS NULL
+IF
+v_requested_at IS NULL
        OR v_completed_at IS NULL THEN
         RETURN NULL;
 END IF;
@@ -79,7 +84,7 @@ RETURN ROUND(
                 EXTRACT(
                         EPOCH FROM (v_completed_at - v_requested_at)
                     ) / 3600
-            )::NUMERIC,
+            ):: NUMERIC,
         2
     );
 
@@ -102,7 +107,8 @@ $$;
 -- );
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION calculate_company_esg_score(
+CREATE
+OR REPLACE FUNCTION calculate_company_esg_score(
     p_company_id UUID
 )
 RETURNS NUMERIC
@@ -116,8 +122,7 @@ SELECT recycling_percentage
 INTO v_score
 FROM esg_metric
 WHERE company_id = p_company_id
-ORDER BY calculated_at DESC
-    LIMIT 1;
+ORDER BY calculated_at DESC LIMIT 1;
 
 RETURN COALESCE(v_score, 0);
 

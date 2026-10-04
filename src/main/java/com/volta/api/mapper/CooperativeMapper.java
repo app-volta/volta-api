@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CooperativeMapper {
 
-    public Cooperative toEntity(CooperativeRequestDTO dto){
+    public Cooperative toEntity(CooperativeRequestDTO dto) {
         Cooperative cooperative = new Cooperative();
 
         cooperative.setName(dto.name());
@@ -20,7 +20,7 @@ public class CooperativeMapper {
         return cooperative;
     }
 
-    public CooperativeResponseDTO toResponse(Cooperative cooperative){
+    public CooperativeResponseDTO toResponse(Cooperative cooperative) {
         return new CooperativeResponseDTO(
                 cooperative.getId(),
                 cooperative.getName(),
@@ -32,7 +32,7 @@ public class CooperativeMapper {
         );
     }
 
-    public void updateEntity(Cooperative cooperative, CooperativeRequestDTO dto){
+    public void updateEntity(Cooperative cooperative, CooperativeRequestDTO dto) {
         cooperative.setName(dto.name());
         cooperative.setCnpj(dto.cnpj());
         cooperative.setLatitude(dto.latitude());

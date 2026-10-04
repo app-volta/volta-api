@@ -25,8 +25,8 @@ public class CooperativeService implements CooperativeUseCase {
     private final CooperativeMapper cooperativeMapper;
 
 
-    public CooperativeResponseDTO register(CooperativeRequestDTO dto){
-        if (cooperativeRepository.existsByCnpj(dto.cnpj())){
+    public CooperativeResponseDTO register(CooperativeRequestDTO dto) {
+        if (cooperativeRepository.existsByCnpj(dto.cnpj())) {
             throw new ConflictException("CNPJ already registered");
         }
         Cooperative cooperative = cooperativeMapper.toEntity(dto);
@@ -34,7 +34,7 @@ public class CooperativeService implements CooperativeUseCase {
         return cooperativeMapper.toResponse(cooperativeSaved);
     }
 
-    public List<CooperativeResponseDTO> getCooperatives(){
+    public List<CooperativeResponseDTO> getCooperatives() {
         List<CooperativeResponseDTO> cooperatives = new ArrayList<>();
 
         for (Cooperative cooperative : cooperativeRepository.findAll()) {
@@ -44,18 +44,18 @@ public class CooperativeService implements CooperativeUseCase {
         return cooperatives;
     }
 
-    public CooperativeResponseDTO getCooperativeById(UUID id){
+    public CooperativeResponseDTO getCooperativeById(UUID id) {
         Cooperative cooperative = cooperativeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cooperative"));
         return cooperativeMapper.toResponse(cooperative);
     }
 
     @Transactional
-    public CooperativeResponseDTO update(UUID id, CooperativeRequestDTO dto){
+    public CooperativeResponseDTO update(UUID id, CooperativeRequestDTO dto) {
         Cooperative cooperative = cooperativeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cooperative"));
 
-        if (cooperativeRepository.existsByCnpjAndIdNot(dto.cnpj(), id)){
+        if (cooperativeRepository.existsByCnpjAndIdNot(dto.cnpj(), id)) {
             throw new ConflictException("CNPJ already registered");
         }
 
@@ -64,8 +64,8 @@ public class CooperativeService implements CooperativeUseCase {
         return cooperativeMapper.toResponse(cooperative);
     }
 
-    public void delete(UUID id){
-        if (!cooperativeRepository.existsById(id)){
+    public void delete(UUID id) {
+        if (!cooperativeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Cooperative");
         }
         cooperativeRepository.deleteById(id);

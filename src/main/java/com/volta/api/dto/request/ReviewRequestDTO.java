@@ -14,4 +14,5 @@ public record ReviewRequestDTO(
 
         @Size(max = 2000)
         String comment
-) {}
+) {
+}

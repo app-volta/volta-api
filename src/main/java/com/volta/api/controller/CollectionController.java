@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -30,13 +31,13 @@ public class CollectionController {
     public ResponseEntity<CollectionResponseDTO> create(
             @Valid @RequestBody CollectionRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(collectionUseCase.register(dto, author));
     }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<CollectionResponseDTO>> show(@AuthenticationPrincipal AuthenticatedUser author){
+    public ResponseEntity<List<CollectionResponseDTO>> show(@AuthenticationPrincipal AuthenticatedUser author) {
         List<CollectionResponseDTO> collections = collectionUseCase.getCollections(author);
         return ResponseEntity.ok(collections);
     }
@@ -46,7 +47,7 @@ public class CollectionController {
     public ResponseEntity<CollectionResponseDTO> showById(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         CollectionResponseDTO collection = collectionUseCase.getCollectionById(id, author);
         return ResponseEntity.ok(collection);
     }
@@ -56,7 +57,7 @@ public class CollectionController {
     public ResponseEntity<CollectionCompletionTimeResponseDTO> showCompletionTime(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         CollectionCompletionTimeResponseDTO completionTime = collectionUseCase.getCompletionTime(id, author);
         return ResponseEntity.ok(completionTime);
     }
@@ -88,7 +89,7 @@ public class CollectionController {
     public ResponseEntity<List<CollectionStatusResponseDTO>> show(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         List<CollectionStatusResponseDTO> collectionStatuses = collectionUseCase.getCollectionStatus(id, author);
         return ResponseEntity.ok(collectionStatuses);
     }

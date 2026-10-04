@@ -18,5 +18,5 @@ public record IncidentResponseDTO(
         String priority,
         String status,
         LocalDateTime registeredAt
-        ) {
+) {
 }

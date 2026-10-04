@@ -28,13 +28,13 @@ public class EsgController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
     public ResponseEntity<RecyclingPercentageResponseDTO> calculateRecyclingPercentage(
             @Valid @RequestBody RecyclingPercentageRequestDTO dto
-    ){
+    ) {
         return ResponseEntity.ok(esgUseCase.calculateRecyclingPercentage(dto));
     }
 
     @GetMapping("/score")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<EsgScoreResponseDTO> showScore(@AuthenticationPrincipal AuthenticatedUser author){
+    public ResponseEntity<EsgScoreResponseDTO> showScore(@AuthenticationPrincipal AuthenticatedUser author) {
         EsgScoreResponseDTO score = esgUseCase.getCompanyScore(author);
         return ResponseEntity.ok(score);
     }
@@ -44,13 +44,13 @@ public class EsgController {
     public ResponseEntity<EsgMetricResponseDTO> createMetric(
             @Valid @RequestBody EsgMetricRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(esgUseCase.registerMetric(dto, author));
     }
 
     @GetMapping("/metrics")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<EsgMetricResponseDTO>> showMetrics(@AuthenticationPrincipal AuthenticatedUser author){
+    public ResponseEntity<List<EsgMetricResponseDTO>> showMetrics(@AuthenticationPrincipal AuthenticatedUser author) {
         List<EsgMetricResponseDTO> metrics = esgUseCase.getMetrics(author);
         return ResponseEntity.ok(metrics);
     }

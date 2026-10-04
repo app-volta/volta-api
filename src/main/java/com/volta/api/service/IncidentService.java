@@ -44,7 +44,7 @@ public class IncidentService implements IncidentUseCase {
 
     private final AiReportMapper aiReportMapper;
 
-    public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author){
+    public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author) {
 
         Company company = companyRepository.findById(author.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
@@ -67,7 +67,7 @@ public class IncidentService implements IncidentUseCase {
         return incidentMapper.toResponse(savedIncident);
     }
 
-    public List<IncidentResponseDTO> getIncidents(IncidentFilterDTO filter, AuthenticatedUser author){
+    public List<IncidentResponseDTO> getIncidents(IncidentFilterDTO filter, AuthenticatedUser author) {
         List<IncidentResponseDTO> incidents = new ArrayList<>();
 
         List<Incident> found = incidentRepository.search(
@@ -77,21 +77,21 @@ public class IncidentService implements IncidentUseCase {
                 filter.areaId()
         );
 
-        for (Incident incident : found){
+        for (Incident incident : found) {
             incidents.add(incidentMapper.toResponse(incident));
         }
 
         return incidents;
     }
 
-    public IncidentResponseDTO getIncidentById(UUID id, AuthenticatedUser author){
+    public IncidentResponseDTO getIncidentById(UUID id, AuthenticatedUser author) {
         Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Incident"));
         return incidentMapper.toResponse(incident);
     }
 
     @Transactional
-    public void closeIncident(UUID id, AuthenticatedUser author){
+    public void closeIncident(UUID id, AuthenticatedUser author) {
         Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Incident"));
 
@@ -102,7 +102,7 @@ public class IncidentService implements IncidentUseCase {
         incidentProcedure.closeIncident(id);
     }
 
-    public AiReportResponseDTO getAiReport(UUID id, AuthenticatedUser author){
+    public AiReportResponseDTO getAiReport(UUID id, AuthenticatedUser author) {
         incidentRepository.findByIdAndCompanyId(id, author.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Incident"));
 

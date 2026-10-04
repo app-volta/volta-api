@@ -26,6 +26,7 @@ import com.volta.api.usecase.CollectionUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,27 +63,27 @@ public class CollectionService implements CollectionUseCase {
         return collectionMapper.toResponse(saved);
     }
 
-    public List<CollectionResponseDTO> getCollections(AuthenticatedUser author){
+    public List<CollectionResponseDTO> getCollections(AuthenticatedUser author) {
         List<CollectionResponseDTO> collections = new ArrayList<>();
 
-        for (Collection collection : collectionRepository.findByIncidentCompanyId(author.companyId())){
+        for (Collection collection : collectionRepository.findByIncidentCompanyId(author.companyId())) {
             collections.add(collectionMapper.toResponse(collection));
         }
 
         return collections;
     }
 
-    public CollectionResponseDTO getCollectionById(UUID id, AuthenticatedUser author){
+    public CollectionResponseDTO getCollectionById(UUID id, AuthenticatedUser author) {
         Collection collection = findOwnedCollection(id, author);
         return collectionMapper.toResponse(collection);
     }
 
-    public List<CollectionStatusResponseDTO> getCollectionStatus(UUID collectionId, AuthenticatedUser author){
+    public List<CollectionStatusResponseDTO> getCollectionStatus(UUID collectionId, AuthenticatedUser author) {
         findOwnedCollection(collectionId, author);
 
         List<CollectionStatusResponseDTO> collectionStatuses = new ArrayList<>();
 
-        for (CollectionStatus collectionStatus : collectionStatusRepository.findByCollectionIdOrderByChangedAtAsc(collectionId)){
+        for (CollectionStatus collectionStatus : collectionStatusRepository.findByCollectionIdOrderByChangedAtAsc(collectionId)) {
             collectionStatuses.add(collectionStatusMapper.toResponse(collectionStatus));
         }
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.security.access.AccessDeniedException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ProblemDetail handleAuthentication(AuthenticationException exception){
+    public ProblemDetail handleAuthentication(AuthenticationException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
 

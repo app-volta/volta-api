@@ -6,4 +6,5 @@ public record IncidentFilterDTO(
         String status,
         String priority,
         UUID areaId
-) {}
+) {
+}

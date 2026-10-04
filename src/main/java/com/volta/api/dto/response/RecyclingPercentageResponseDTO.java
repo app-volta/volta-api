@@ -6,4 +6,5 @@ public record RecyclingPercentageResponseDTO(
         BigDecimal totalWasteKg,
         BigDecimal totalRecycledKg,
         BigDecimal recyclingPercentage
-) {}
+) {
+}

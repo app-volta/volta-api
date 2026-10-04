@@ -12,4 +12,5 @@ public record CollectionResponseDTO(
         String currentStatus,
         String collectionType,
         boolean urgent
-) {}
+) {
+}

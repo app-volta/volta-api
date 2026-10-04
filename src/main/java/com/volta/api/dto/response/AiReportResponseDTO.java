@@ -11,4 +11,5 @@ public record AiReportResponseDTO(
         String recommendations,
         String reportText,
         LocalDateTime generatedAt
-) {}
+) {
+}

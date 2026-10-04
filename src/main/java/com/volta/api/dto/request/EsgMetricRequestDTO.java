@@ -23,4 +23,5 @@ public record EsgMetricRequestDTO(
         @PositiveOrZero
         @Digits(integer = 12, fraction = 2)
         BigDecimal totalRecycledKg
-) {}
+) {
+}

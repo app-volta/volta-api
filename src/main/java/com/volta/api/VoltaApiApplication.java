@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties(AdminProperties.class)
 public class VoltaApiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(VoltaApiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(VoltaApiApplication.class, args);
+    }
 
 }

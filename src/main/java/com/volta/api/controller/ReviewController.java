@@ -27,13 +27,13 @@ public class ReviewController {
             @PathVariable UUID collectionId,
             @Valid @RequestBody ReviewRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewUseCase.register(collectionId, dto, author));
     }
 
     @GetMapping("/cooperatives/{cooperativeId}/reviews")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<ReviewResponseDTO>> showByCooperative(@PathVariable UUID cooperativeId){
+    public ResponseEntity<List<ReviewResponseDTO>> showByCooperative(@PathVariable UUID cooperativeId) {
         List<ReviewResponseDTO> reviews = reviewUseCase.getReviewsByCooperative(cooperativeId);
         return ResponseEntity.ok(reviews);
     }

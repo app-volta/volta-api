@@ -10,4 +10,5 @@ public record CollectionStatusResponseDTO(
         String status,
         LocalDateTime changedAt,
         String observation
-) {}
+) {
+}
