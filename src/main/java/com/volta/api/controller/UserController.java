@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.UserControllerDocs;
 import com.volta.api.dto.request.UserRequestDTO;
 import com.volta.api.dto.request.update.UserRoleUpdateRequestDTO;
 import com.volta.api.dto.request.update.UserUpdateRequestDTO;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserControllerDocs {
 
     private final UserUseCase userUseCase;
 

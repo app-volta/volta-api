@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.WasteTypeControllerDocs;
 import com.volta.api.dto.request.WasteTypeRequestDTO;
 import com.volta.api.dto.response.WasteTypeResponseDTO;
 import com.volta.api.usecase.WasteTypeUseCase;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/waste-types")
-public class WasteTypeController {
+public class WasteTypeController implements WasteTypeControllerDocs {
 
     private final WasteTypeUseCase wasteTypeUseCase;
 

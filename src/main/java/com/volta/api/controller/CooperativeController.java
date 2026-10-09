@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.CooperativeControllerDocs;
 import com.volta.api.dto.request.CooperativeRequestDTO;
 import com.volta.api.dto.response.CooperativeResponseDTO;
 import com.volta.api.usecase.CooperativeUseCase;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cooperatives")
-public class CooperativeController {
+public class CooperativeController implements CooperativeControllerDocs {
 
     private final CooperativeUseCase cooperativeUseCase;
 

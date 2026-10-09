@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.EsgControllerDocs;
 import com.volta.api.dto.request.EsgMetricRequestDTO;
 import com.volta.api.dto.request.RecyclingPercentageRequestDTO;
 import com.volta.api.dto.response.EsgMetricResponseDTO;
@@ -20,7 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/esg")
-public class EsgController {
+public class EsgController implements EsgControllerDocs {
 
     private final EsgUseCase esgUseCase;
 

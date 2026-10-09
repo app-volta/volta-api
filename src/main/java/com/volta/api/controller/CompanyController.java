@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.CompanyControllerDocs;
 import com.volta.api.dto.request.CompanyRequestDTO;
 import com.volta.api.dto.response.CompanyResponseDTO;
 import com.volta.api.usecase.CompanyUseCase;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/companies")
-public class CompanyController {
+public class CompanyController implements CompanyControllerDocs {
 
     private final CompanyUseCase companyUseCase;
 

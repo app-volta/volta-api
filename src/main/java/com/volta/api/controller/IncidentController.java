@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.IncidentControllerDocs;
 import com.volta.api.dto.request.IncidentFilterDTO;
 import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.AiReportResponseDTO;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/incidents")
-public class IncidentController {
+public class IncidentController implements IncidentControllerDocs {
 
     private final IncidentUseCase incidentUseCase;
 

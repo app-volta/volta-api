@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.CollectionControllerDocs;
 import com.volta.api.dto.request.CollectionRequestDTO;
 import com.volta.api.dto.request.CollectionScheduleRequestDTO;
 import com.volta.api.dto.request.CollectionStatusRequestDTO;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/collections")
-public class CollectionController {
+public class CollectionController implements CollectionControllerDocs {
 
     private final CollectionUseCase collectionUseCase;
 

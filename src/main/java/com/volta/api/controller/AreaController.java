@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.AreaControllerDocs;
 import com.volta.api.dto.request.AreaRequestDTO;
 import com.volta.api.dto.request.update.AreaUpdateRequestDTO;
 import com.volta.api.dto.response.AreaResponseDTO;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/areas")
-public class AreaController {
+public class AreaController implements AreaControllerDocs {
 
     private final AreaUseCase areaUseCase;
 

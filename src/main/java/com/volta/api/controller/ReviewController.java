@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.ReviewControllerDocs;
 import com.volta.api.dto.request.ReviewRequestDTO;
 import com.volta.api.dto.response.ReviewResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class ReviewController {
+public class ReviewController implements ReviewControllerDocs {
 
     private final ReviewUseCase reviewUseCase;
 

@@ -28,3 +28,14 @@ admin:
   email: ${ADMIN_EMAIL:}
   password: ${ADMIN_PASSWORD:}
   company-id: ${ADMIN_COMPANY_ID:}
+swagger:
+  username: ${SWAGGER_USERNAME}
+  password: ${SWAGGER_PASSWORD}
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+    persist-authorization: true

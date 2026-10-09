@@ -1,5 +1,6 @@
 package com.volta.api.controller;
 
+import com.volta.api.controller.docs.AuthControllerDocs;
 import com.volta.api.dto.request.LoginRequestDTO;
 import com.volta.api.dto.response.TokenResponseDTO;
 import com.volta.api.usecase.AuthUseCase;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthControllerDocs {
 
     private final AuthUseCase authUseCase;
 
