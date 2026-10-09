@@ -21,7 +21,9 @@ public interface IncidentControllerDocs {
 
     @Operation(
             summary = "Registra um incidente",
-            description = "Registra um incidente em uma área da empresa do funcionário. O incidente nasce com status PENDING. "
+            description = "Registra um incidente em uma área da empresa do funcionário. O incidente nasce com status PENDING.\n\n"
+                    + "**Regras:** sem nível de contaminação informado, assume o risco padrão do tipo de resíduo. "
+                    + "Se o resíduo é perigoso ou a contaminação é HIGH, a prioridade é elevada para no mínimo HIGH.\n\n"
                     + "**Acesso:** EMPLOYEE."
     )
     @ApiResponses({
@@ -52,11 +54,17 @@ public interface IncidentControllerDocs {
             @Parameter(hidden = true) AuthenticatedUser author
     );
 
-    @Operation(summary = "Encerra um incidente", description = "Muda o status do incidente para CLOSED. **Acesso:** ADMIN, MANAGER.")
+    @Operation(
+            summary = "Encerra um incidente",
+            description = "Muda o status do incidente para CLOSED.\n\n"
+                    + "**Regras:** não é possível encerrar com coleta em andamento. Incidente com resíduo perigoso só pode ser "
+                    + "encerrado depois de uma coleta concluída (PNRS, art. 27, §1º).\n\n"
+                    + "**Acesso:** ADMIN, MANAGER."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Incidente encerrado"),
             @ApiResponse(responseCode = "404", description = "Incidente não encontrado"),
-            @ApiResponse(responseCode = "422", description = "Incidente já está encerrado")
+            @ApiResponse(responseCode = "422", description = "Incidente já encerrado, com coleta ativa ou resíduo perigoso sem coleta concluída")
     })
     ResponseEntity<Void> closeIncident(
             @Parameter(description = "ID do incidente") UUID id,

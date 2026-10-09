@@ -30,7 +30,7 @@ public record IncidentRequestDTO(
         @NotBlank(message = "A descrição é obrigatória")
         String employeeDescription,
 
-        @Schema(description = "Nível de contaminação percebido", example = "MEDIUM")
+        @Schema(description = "Nível de contaminação percebido. Se omitido, assume o risco padrão do tipo de resíduo", example = "MEDIUM")
         RiskLevel contaminationLevel,
 
         @Schema(description = "Quantidade estimada de resíduo, em kg", example = "25.50")
@@ -38,7 +38,7 @@ public record IncidentRequestDTO(
         @Digits(integer = 10, fraction = 2)
         BigDecimal estimatedQuantity,
 
-        @Schema(description = "Prioridade do incidente", example = "HIGH")
+        @Schema(description = "Prioridade do incidente. É elevada para HIGH quando o resíduo é perigoso ou a contaminação é HIGH", example = "HIGH")
         @NotNull(message = "A prioridade é obrigatória")
         Priority priority
 ) {

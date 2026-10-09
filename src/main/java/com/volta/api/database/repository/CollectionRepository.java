@@ -13,4 +13,8 @@ public interface CollectionRepository extends JpaRepository<Collection, UUID> {
 
     Optional<Collection> findByIdAndIncidentCompanyId(UUID id, UUID companyId);
 
+    boolean existsByIncidentIdAndCurrentStatusIn(UUID incidentId, List<String> statuses);
+
+    boolean existsByIncidentIdAndCurrentStatus(UUID incidentId, String status);
+
 }

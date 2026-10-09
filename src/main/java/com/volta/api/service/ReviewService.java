@@ -1,6 +1,7 @@
 package com.volta.api.service;
 
 import com.volta.api.database.entity.Collection;
+import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.entity.Review;
 import com.volta.api.database.entity.Users;
 import com.volta.api.database.repository.CollectionRepository;
@@ -20,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +56,8 @@ public class ReviewService implements ReviewUseCase {
         Review review = reviewMapper.toEntity(dto, collection, user);
         Review saved = reviewRepository.saveAndFlush(review);
 
+        updateAverageRating(collection.getCooperative());
+
         return reviewMapper.toResponse(saved);
     }
 
@@ -68,5 +73,15 @@ public class ReviewService implements ReviewUseCase {
         }
 
         return reviews;
+    }
+
+    private void updateAverageRating(Cooperative cooperative) {
+        Double average = reviewRepository.findAverageStarsByCooperativeId(cooperative.getId());
+        BigDecimal averageRating = average == null
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(average).setScale(2, RoundingMode.HALF_UP);
+
+        cooperative.setAverageRating(averageRating);
+        cooperativeRepository.save(cooperative);
     }
 }

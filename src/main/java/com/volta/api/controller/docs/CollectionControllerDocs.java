@@ -22,13 +22,21 @@ public interface CollectionControllerDocs {
 
     @Operation(
             summary = "Solicita uma coleta",
-            description = "Cria uma coleta para um incidente da empresa do usuário. A coleta nasce com status REQUESTED. "
+            description = "Cria uma coleta para um incidente da empresa do usuário. A coleta nasce com status REQUESTED.\n\n"
+                    + "**Regras:**\n"
+                    + "- O incidente não pode estar encerrado e só pode ter uma coleta ativa por vez;\n"
+                    + "- A cooperativa precisa ter a categoria do resíduo nas especialidades (CONAMA 275/2001);\n"
+                    + "- Resíduo perigoso (NBR 10004 Classe I) exige cooperativa com a especialidade PERIGOSO;\n"
+                    + "- Resíduo RADIOATIVO não pode ser destinado a cooperativas;\n"
+                    + "- Incidente CRITICAL gera coleta urgente.\n\n"
                     + "**Acesso:** ADMIN, MANAGER."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Coleta solicitada"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Incidente ou cooperativa não encontrados")
+            @ApiResponse(responseCode = "404", description = "Incidente ou cooperativa não encontrados"),
+            @ApiResponse(responseCode = "409", description = "Incidente já possui uma coleta ativa"),
+            @ApiResponse(responseCode = "422", description = "Incidente encerrado ou cooperativa incompatível com o resíduo")
     })
     ResponseEntity<CollectionResponseDTO> create(CollectionRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
 
@@ -66,13 +74,16 @@ public interface CollectionControllerDocs {
 
     @Operation(
             summary = "Agenda uma coleta",
-            description = "Define a data da coleta e muda o status para SCHEDULED. **Acesso:** ADMIN, MANAGER."
+            description = "Define a data da coleta e muda o status para SCHEDULED. Também permite reagendar.\n\n"
+                    + "**Prazo máximo, contado da solicitação:** urgente ou CRITICAL 24 h, HIGH 72 h, MEDIUM 7 dias, LOW 15 dias. "
+                    + "Se o prazo já venceu, a coleta deve ser agendada em até 24 h.\n\n"
+                    + "**Acesso:** ADMIN, MANAGER."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Coleta agendada"),
             @ApiResponse(responseCode = "400", description = "Data inválida ou no passado"),
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada"),
-            @ApiResponse(responseCode = "422", description = "Coleta já finalizada (COMPLETED ou CANCELED)")
+            @ApiResponse(responseCode = "422", description = "Status atual não permite agendamento ou data fora do prazo")
     })
     ResponseEntity<Void> schedule(
             @Parameter(description = "ID da coleta") UUID id,
@@ -82,14 +93,17 @@ public interface CollectionControllerDocs {
 
     @Operation(
             summary = "Atualiza o status de uma coleta",
-            description = "Registra um novo status no histórico da coleta. Para agendar, use `PATCH /collections/{id}/schedule`. "
+            description = "Registra um novo status no histórico da coleta. Para agendar, use `PATCH /collections/{id}/schedule`.\n\n"
+                    + "**Transições permitidas:** REQUESTED → SCHEDULED/CANCELED; SCHEDULED → IN_PROGRESS/CANCELED; "
+                    + "IN_PROGRESS → COMPLETED. COMPLETED e CANCELED são finais.\n\n"
+                    + "Cancelar exige observação. Concluir a coleta encerra automaticamente o incidente.\n\n"
                     + "**Acesso:** ADMIN, MANAGER."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Status atualizado"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou cancelamento sem observação"),
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada"),
-            @ApiResponse(responseCode = "422", description = "Coleta já finalizada ou status SCHEDULED informado")
+            @ApiResponse(responseCode = "422", description = "Transição de status não permitida")
     })
     ResponseEntity<Void> updateStatus(
             @Parameter(description = "ID da coleta") UUID id,

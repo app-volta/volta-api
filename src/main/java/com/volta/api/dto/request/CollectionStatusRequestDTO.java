@@ -11,7 +11,7 @@ public record CollectionStatusRequestDTO(
         @NotNull
         CollectionStatusType status,
 
-        @Schema(description = "Observação sobre a mudança de status", example = "Equipe a caminho do local")
+        @Schema(description = "Observação sobre a mudança de status. Obrigatória para CANCELED", example = "Equipe a caminho do local")
         String observation
 ) {
 }

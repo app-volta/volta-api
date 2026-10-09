@@ -1,8 +1,8 @@
 package com.volta.api.dto.request;
 
+import com.volta.api.validation.Cnpj;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Dados para cadastro ou atualização de empresa")
@@ -13,9 +13,12 @@ public record CompanyRequestDTO(
         @Size(max = 150)
         String name,
 
-        @Schema(description = "CNPJ, com ou sem máscara", example = "12.345.678/0001-90")
+        @Schema(
+                description = "CNPJ numérico ou alfanumérico, com ou sem máscara. Os dígitos verificadores são validados",
+                example = "11.222.333/0001-81"
+        )
         @NotBlank(message = "O CNPJ é obrigatório")
-        @Pattern(regexp = "\\b\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}\\b")
+        @Cnpj
         String cnpj,
 
         @Schema(description = "Endereço da empresa", example = "Av. Paulista, 1000 - São Paulo/SP")
@@ -25,7 +28,7 @@ public record CompanyRequestDTO(
 ) {
     public CompanyRequestDTO {
         if (cnpj != null) {
-            cnpj = cnpj.replaceAll("\\D", "");
+            cnpj = cnpj.replaceAll("[^0-9A-Za-z]", "").toUpperCase();
         }
 
     }

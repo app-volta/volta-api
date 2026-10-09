@@ -15,10 +15,15 @@ import java.util.UUID;
 @Tag(name = "Tipos de resíduo", description = "Catálogo de categorias de resíduo e seu nível de risco padrão")
 public interface WasteTypeControllerDocs {
 
-    @Operation(summary = "Cadastra um tipo de resíduo", description = "**Acesso:** ADMIN.")
+    @Operation(
+            summary = "Cadastra um tipo de resíduo",
+            description = "Categorias PERIGOSO, SAUDE e RADIOATIVO exigem nível de risco HIGH (NBR 10004 Classe I). "
+                    + "**Acesso:** ADMIN."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Tipo de resíduo cadastrado"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "422", description = "Categoria perigosa sem nível de risco HIGH")
     })
     ResponseEntity<WasteTypeResponseDTO> create(WasteTypeRequestDTO dto);
 
@@ -33,11 +38,16 @@ public interface WasteTypeControllerDocs {
     })
     ResponseEntity<WasteTypeResponseDTO> show(@Parameter(description = "ID do tipo de resíduo") UUID id);
 
-    @Operation(summary = "Atualiza um tipo de resíduo", description = "**Acesso:** ADMIN.")
+    @Operation(
+            summary = "Atualiza um tipo de resíduo",
+            description = "Categorias PERIGOSO, SAUDE e RADIOATIVO exigem nível de risco HIGH (NBR 10004 Classe I). "
+                    + "**Acesso:** ADMIN."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Tipo de resíduo atualizado"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Tipo de resíduo não encontrado")
+            @ApiResponse(responseCode = "404", description = "Tipo de resíduo não encontrado"),
+            @ApiResponse(responseCode = "422", description = "Categoria perigosa sem nível de risco HIGH")
     })
     ResponseEntity<WasteTypeResponseDTO> update(@Parameter(description = "ID do tipo de resíduo") UUID id, WasteTypeRequestDTO dto);
 

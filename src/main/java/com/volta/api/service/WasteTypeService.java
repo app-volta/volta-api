@@ -4,6 +4,8 @@ import com.volta.api.database.entity.WasteType;
 import com.volta.api.database.repository.WasteTypeRepository;
 import com.volta.api.dto.request.WasteTypeRequestDTO;
 import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.enums.RiskLevel;
+import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.WasteTypeMapper;
 import com.volta.api.usecase.WasteTypeUseCase;
@@ -24,6 +26,8 @@ public class WasteTypeService implements WasteTypeUseCase {
     private final WasteTypeMapper wasteTypeMapper;
 
     public WasteTypeResponseDTO register(WasteTypeRequestDTO dto) {
+        validateRiskLevel(dto);
+
         WasteType wasteType = wasteTypeMapper.toEntity(dto);
         WasteType wasteTypeSaved = wasteTypeRepository.save(wasteType);
         return wasteTypeMapper.toResponse(wasteTypeSaved);
@@ -49,6 +53,7 @@ public class WasteTypeService implements WasteTypeUseCase {
     public WasteTypeResponseDTO update(UUID id, WasteTypeRequestDTO dto) {
         WasteType wasteType = wasteTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
+        validateRiskLevel(dto);
         wasteTypeMapper.updateEntity(wasteType, dto);
         wasteTypeRepository.save(wasteType);
 
@@ -60,5 +65,11 @@ public class WasteTypeService implements WasteTypeUseCase {
             throw new ResourceNotFoundException("Waste type");
         }
         wasteTypeRepository.deleteById(id);
+    }
+
+    private void validateRiskLevel(WasteTypeRequestDTO dto) {
+        if (dto.category().isHazardous() && dto.defaultRiskLevel() != RiskLevel.HIGH) {
+            throw new BusinessRuleException("Category " + dto.category().name() + " requires HIGH risk level");
+        }
     }
 }

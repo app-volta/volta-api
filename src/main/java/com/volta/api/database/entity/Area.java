@@ -37,6 +37,7 @@ public class Area {
     @Column(name = "location_description")
     private String locationDescription;
 
+    @Builder.Default
     @OneToMany(mappedBy = "area", fetch = FetchType.LAZY)
     private Set<Incident> incidents = new HashSet<>();
 

@@ -19,7 +19,8 @@ public interface ReviewControllerDocs {
     @Operation(
             summary = "Avalia uma coleta",
             description = "Registra a avaliação da cooperativa responsável pela coleta. "
-                    + "Só coletas COMPLETED podem ser avaliadas, e apenas uma vez. **Acesso:** ADMIN, MANAGER."
+                    + "Só coletas COMPLETED podem ser avaliadas, e apenas uma vez. A nota média da cooperativa é recalculada. "
+                    + "**Acesso:** ADMIN, MANAGER."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Avaliação registrada"),

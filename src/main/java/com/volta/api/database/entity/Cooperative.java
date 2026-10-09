@@ -49,12 +49,15 @@ public class Cooperative {
     @Column(length = 500)
     private String specialties;
 
+    @Builder.Default
     @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Collection> collections = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Conversation> conversations = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 

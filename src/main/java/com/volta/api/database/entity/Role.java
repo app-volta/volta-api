@@ -31,6 +31,7 @@ public class Role {
     @Column(length = 50, unique = true, nullable = false)
     private String type;
 
+    @Builder.Default
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<Users> users = new HashSet<>();
 

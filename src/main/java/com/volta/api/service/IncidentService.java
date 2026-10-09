@@ -7,7 +7,10 @@ import com.volta.api.dto.request.IncidentFilterDTO;
 import com.volta.api.dto.request.IncidentRequestDTO;
 import com.volta.api.dto.response.AiReportResponseDTO;
 import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.enums.IncidentStatus;
+import com.volta.api.enums.Priority;
+import com.volta.api.enums.RiskLevel;
 import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.AiReportMapper;
@@ -44,6 +47,8 @@ public class IncidentService implements IncidentUseCase {
 
     private final AiReportMapper aiReportMapper;
 
+    private final CollectionRepository collectionRepository;
+
     public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author) {
 
         Company company = companyRepository.findById(author.companyId())
@@ -62,6 +67,11 @@ public class IncidentService implements IncidentUseCase {
                 area,
                 wasteType
         );
+
+        if (incident.getContaminationLevel() == null) {
+            incident.setContaminationLevel(wasteType.getDefaultRiskLevel());
+        }
+        incident.setPriority(resolvePriority(dto.priority(), incident.getContaminationLevel(), wasteType).name());
 
         Incident savedIncident = incidentRepository.saveAndFlush(incident);
         return incidentMapper.toResponse(savedIncident);
@@ -99,7 +109,27 @@ public class IncidentService implements IncidentUseCase {
             throw new BusinessRuleException("Incident is already closed");
         }
 
+        if (collectionRepository.existsByIncidentIdAndCurrentStatusIn(id, CollectionStatusType.ACTIVE_STATUSES)) {
+            throw new BusinessRuleException("Incident has an active collection and will be closed when it is completed");
+        }
+
+        WasteType wasteType = incident.getWasteType();
+        boolean hazardous = wasteType != null && RiskLevel.isHazardous(wasteType.getDefaultRiskLevel());
+        if (hazardous && !collectionRepository.existsByIncidentIdAndCurrentStatus(id, CollectionStatusType.COMPLETED.name())) {
+            throw new BusinessRuleException("Hazardous waste incidents can only be closed after a completed collection");
+        }
+
         incidentProcedure.closeIncident(id);
+    }
+    private Priority resolvePriority(Priority informed, String contaminationLevel, WasteType wasteType) {
+        boolean highRisk = RiskLevel.isHazardous(wasteType.getDefaultRiskLevel())
+                || RiskLevel.isHazardous(contaminationLevel);
+
+        if (highRisk && informed.isLowerThan(Priority.HIGH)) {
+            return Priority.HIGH;
+        }
+
+        return informed;
     }
 
     public AiReportResponseDTO getAiReport(UUID id, AuthenticatedUser author) {

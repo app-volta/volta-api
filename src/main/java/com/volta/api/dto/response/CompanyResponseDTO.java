@@ -10,7 +10,7 @@ public record CompanyResponseDTO(
         UUID id,
         @Schema(description = "Nome da empresa", example = "Volta Indústria LTDA")
         String name,
-        @Schema(description = "CNPJ sem máscara", example = "12345678000190")
+        @Schema(description = "CNPJ sem máscara", example = "11222333000181")
         String cnpj,
         @Schema(description = "Endereço", example = "Av. Paulista, 1000 - São Paulo/SP")
         String address
