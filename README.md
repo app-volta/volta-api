@@ -16,7 +16,6 @@ As regras de negócio seguem a legislação ambiental brasileira: Política Naci
 - [Como executar](#como-executar)
 - [Documentação da API (Swagger)](#documentação-da-api-swagger)
 - [Autenticação e perfis de acesso](#autenticação-e-perfis-de-acesso)
-- [Endpoints](#endpoints)
 - [Regras de negócio](#regras-de-negócio)
 - [Banco de dados](#banco-de-dados)
 - [Tratamento de erros](#tratamento-de-erros)
@@ -180,7 +179,7 @@ GET /actuator/health
 
 ## Documentação da API (Swagger)
 
-A documentação é gerada automaticamente pelo springdoc-openapi e descreve todos os endpoints, parâmetros, corpos de requisição, respostas e códigos de erro, em português.
+A documentação é gerada automaticamente pelo springdoc-openapi e é a referência oficial dos endpoints: rotas, perfis de acesso, parâmetros, corpos de requisição, respostas e códigos de erro, em português.
 
 | Recurso | URL |
 |---|---|
@@ -214,71 +213,6 @@ O token carrega o ID do usuário, a empresa e o perfil. Todas as consultas são 
 | `MANAGER` | Gestor da empresa: coletas, encerramento de incidentes, avaliações e ESG |
 | `EMPLOYEE` | Funcionário: registra incidentes e consulta as áreas da própria empresa |
 | `OPERATOR` | Reservado para uso futuro |
-
----
-
-## Endpoints
-
-| Método | Rota | Descrição | Perfis |
-|---|---|---|---|
-| **Autenticação** | | | |
-| POST | `/auth/login` | Realiza login e retorna o token JWT | Público |
-| **Usuários** | | | |
-| POST | `/users` | Cadastra um usuário | ADMIN |
-| GET | `/users` | Lista os usuários | ADMIN |
-| GET | `/users/{id}` | Busca um usuário | ADMIN |
-| GET | `/users/me` | Consulta o próprio perfil | Autenticado |
-| PUT | `/users/me` | Atualiza o próprio perfil | Autenticado |
-| PATCH | `/users/{id}/role` | Altera o perfil de acesso de um usuário | ADMIN |
-| **Empresas** | | | |
-| POST | `/companies` | Cadastra uma empresa | ADMIN |
-| GET | `/companies` | Lista as empresas | ADMIN |
-| GET | `/companies/{id}` | Busca uma empresa | ADMIN |
-| PUT | `/companies/{id}` | Atualiza uma empresa | ADMIN |
-| DELETE | `/companies/{id}` | Remove uma empresa | ADMIN |
-| **Áreas** | | | |
-| POST | `/areas` | Cadastra uma área | ADMIN |
-| GET | `/areas` | Lista as áreas | ADMIN |
-| GET | `/areas/{id}` | Busca uma área | ADMIN |
-| GET | `/areas/mine` | Lista as áreas da própria empresa | EMPLOYEE |
-| PUT | `/areas/{id}` | Atualiza uma área | ADMIN |
-| DELETE | `/areas/{id}` | Remove uma área | ADMIN |
-| **Tipos de resíduo** | | | |
-| POST | `/waste-types` | Cadastra um tipo de resíduo | ADMIN |
-| GET | `/waste-types` | Lista os tipos de resíduo | Autenticado |
-| GET | `/waste-types/{id}` | Busca um tipo de resíduo | Autenticado |
-| PUT | `/waste-types/{id}` | Atualiza um tipo de resíduo | ADMIN |
-| DELETE | `/waste-types/{id}` | Remove um tipo de resíduo | ADMIN |
-| **Cooperativas** | | | |
-| POST | `/cooperatives` | Cadastra uma cooperativa | ADMIN |
-| GET | `/cooperatives` | Lista as cooperativas | ADMIN |
-| GET | `/cooperatives/{id}` | Busca uma cooperativa | ADMIN |
-| PUT | `/cooperatives/{id}` | Atualiza uma cooperativa | ADMIN |
-| DELETE | `/cooperatives/{id}` | Remove uma cooperativa | ADMIN |
-| **Incidentes** | | | |
-| POST | `/incidents` | Registra um incidente | EMPLOYEE |
-| GET | `/incidents` | Lista os incidentes, com filtros por `status`, `priority` e `areaId` | ADMIN, MANAGER, EMPLOYEE |
-| GET | `/incidents/{id}` | Busca um incidente | ADMIN, MANAGER, EMPLOYEE |
-| PATCH | `/incidents/{id}/close` | Encerra um incidente | ADMIN, MANAGER |
-| GET | `/incidents/{id}/ai-report` | Consulta o relatório de IA do incidente | ADMIN, MANAGER, EMPLOYEE |
-| **Coletas** | | | |
-| POST | `/collections` | Solicita uma coleta | ADMIN, MANAGER |
-| GET | `/collections` | Lista as coletas da empresa | ADMIN, MANAGER |
-| GET | `/collections/{id}` | Busca uma coleta | ADMIN, MANAGER |
-| PATCH | `/collections/{id}/schedule` | Agenda ou reagenda uma coleta | ADMIN, MANAGER |
-| PATCH | `/collections/{id}/status` | Atualiza o status de uma coleta | ADMIN, MANAGER |
-| GET | `/collections/{id}/history` | Histórico de status da coleta | ADMIN, MANAGER |
-| GET | `/collections/{id}/completion-time` | Tempo de conclusão da coleta, em horas | ADMIN, MANAGER |
-| **Avaliações** | | | |
-| POST | `/collections/{collectionId}/review` | Avalia a cooperativa de uma coleta concluída | ADMIN, MANAGER |
-| GET | `/cooperatives/{cooperativeId}/reviews` | Lista as avaliações de uma cooperativa | ADMIN, MANAGER |
-| **ESG** | | | |
-| POST | `/esg/recycling-percentage` | Simula o percentual de reciclagem | ADMIN, MANAGER |
-| GET | `/esg/score` | Consulta o score ESG da empresa | ADMIN, MANAGER |
-| POST | `/esg/metrics` | Registra a métrica ESG de um mês | ADMIN, MANAGER |
-| GET | `/esg/metrics` | Lista as métricas ESG da empresa | ADMIN, MANAGER |
-
-O detalhamento de parâmetros, exemplos e respostas de cada endpoint está no [Swagger](#documentação-da-api-swagger).
 
 ---
 
