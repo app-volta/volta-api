@@ -12,7 +12,6 @@ import com.volta.api.usecase.CollectionUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,69 +28,70 @@ public class CollectionController implements CollectionControllerDocs {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<CollectionResponseDTO> create(
+    @ResponseStatus(HttpStatus.CREATED)
+    public CollectionResponseDTO create(
             @Valid @RequestBody CollectionRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(collectionUseCase.register(dto, author));
+        return collectionUseCase.register(dto, author);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<CollectionResponseDTO>> show(@AuthenticationPrincipal AuthenticatedUser author) {
+    public List<CollectionResponseDTO> show(@AuthenticationPrincipal AuthenticatedUser author) {
         List<CollectionResponseDTO> collections = collectionUseCase.getCollections(author);
-        return ResponseEntity.ok(collections);
+        return collections;
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<CollectionResponseDTO> showById(
+    public CollectionResponseDTO showById(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         CollectionResponseDTO collection = collectionUseCase.getCollectionById(id, author);
-        return ResponseEntity.ok(collection);
+        return collection;
     }
 
     @GetMapping("/{id}/completion-time")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<CollectionCompletionTimeResponseDTO> showCompletionTime(
+    public CollectionCompletionTimeResponseDTO showCompletionTime(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         CollectionCompletionTimeResponseDTO completionTime = collectionUseCase.getCompletionTime(id, author);
-        return ResponseEntity.ok(completionTime);
+        return completionTime;
     }
 
     @PatchMapping("/{id}/schedule")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> schedule(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void schedule(
             @PathVariable UUID id,
             @Valid @RequestBody CollectionScheduleRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         collectionUseCase.schedule(id, dto, author);
-        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> updateStatus(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(
             @PathVariable UUID id,
             @Valid @RequestBody CollectionStatusRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         collectionUseCase.updateStatus(id, dto, author);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/history")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<CollectionStatusResponseDTO>> show(
+    public List<CollectionStatusResponseDTO> show(
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         List<CollectionStatusResponseDTO> collectionStatuses = collectionUseCase.getCollectionStatus(id, author);
-        return ResponseEntity.ok(collectionStatuses);
+        return collectionStatuses;
     }
 }

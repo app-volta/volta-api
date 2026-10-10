@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -28,14 +27,14 @@ public interface EsgControllerDocs {
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "422", description = "Total reciclado maior que o total de resíduos")
     })
-    ResponseEntity<RecyclingPercentageResponseDTO> calculateRecyclingPercentage(RecyclingPercentageRequestDTO dto);
+    RecyclingPercentageResponseDTO calculateRecyclingPercentage(RecyclingPercentageRequestDTO dto);
 
     @Operation(
             summary = "Consulta o score ESG da empresa",
             description = "Calcula o score ESG da empresa do usuário autenticado. **Acesso:** ADMIN, MANAGER."
     )
     @ApiResponse(responseCode = "200", description = "Score ESG da empresa")
-    ResponseEntity<EsgScoreResponseDTO> showScore(@Parameter(hidden = true) AuthenticatedUser author);
+    EsgScoreResponseDTO showScore(@Parameter(hidden = true) AuthenticatedUser author);
 
     @Operation(
             summary = "Registra a métrica ESG de um período",
@@ -49,7 +48,7 @@ public interface EsgControllerDocs {
             @ApiResponse(responseCode = "409", description = "Já existe métrica para este período"),
             @ApiResponse(responseCode = "422", description = "Total reciclado maior que o total de resíduos")
     })
-    ResponseEntity<EsgMetricResponseDTO> createMetric(EsgMetricRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
+    EsgMetricResponseDTO createMetric(EsgMetricRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
 
     @Operation(
             summary = "Lista as métricas ESG da empresa",
@@ -57,5 +56,5 @@ public interface EsgControllerDocs {
                     + "**Acesso:** ADMIN, MANAGER."
     )
     @ApiResponse(responseCode = "200", description = "Lista de métricas")
-    ResponseEntity<List<EsgMetricResponseDTO>> showMetrics(@Parameter(hidden = true) AuthenticatedUser author);
+    List<EsgMetricResponseDTO> showMetrics(@Parameter(hidden = true) AuthenticatedUser author);
 }

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +30,7 @@ public interface IncidentControllerDocs {
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "404", description = "Área ou tipo de resíduo não encontrados")
     })
-    ResponseEntity<IncidentResponseDTO> create(IncidentRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
+    IncidentResponseDTO create(IncidentRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
 
     @Operation(
             summary = "Lista os incidentes da empresa",
@@ -39,7 +38,7 @@ public interface IncidentControllerDocs {
                     + "**Acesso:** ADMIN, MANAGER, EMPLOYEE."
     )
     @ApiResponse(responseCode = "200", description = "Lista de incidentes")
-    ResponseEntity<List<IncidentResponseDTO>> show(
+    List<IncidentResponseDTO> show(
             @ParameterObject IncidentFilterDTO filter,
             @Parameter(hidden = true) AuthenticatedUser author
     );
@@ -49,7 +48,7 @@ public interface IncidentControllerDocs {
             @ApiResponse(responseCode = "200", description = "Incidente encontrado"),
             @ApiResponse(responseCode = "404", description = "Incidente não encontrado")
     })
-    ResponseEntity<IncidentResponseDTO> show(
+    IncidentResponseDTO show(
             @Parameter(description = "ID do incidente") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );
@@ -66,7 +65,7 @@ public interface IncidentControllerDocs {
             @ApiResponse(responseCode = "404", description = "Incidente não encontrado"),
             @ApiResponse(responseCode = "422", description = "Incidente já encerrado, com coleta ativa ou resíduo perigoso sem coleta concluída")
     })
-    ResponseEntity<Void> closeIncident(
+    void closeIncident(
             @Parameter(description = "ID do incidente") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );
@@ -79,7 +78,7 @@ public interface IncidentControllerDocs {
             @ApiResponse(responseCode = "200", description = "Relatório encontrado"),
             @ApiResponse(responseCode = "404", description = "Incidente ou relatório não encontrados")
     })
-    ResponseEntity<AiReportResponseDTO> showAiReport(
+    AiReportResponseDTO showAiReport(
             @Parameter(description = "ID do incidente") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );

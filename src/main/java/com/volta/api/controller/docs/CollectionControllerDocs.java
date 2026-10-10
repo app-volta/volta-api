@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,21 +37,21 @@ public interface CollectionControllerDocs {
             @ApiResponse(responseCode = "409", description = "Incidente já possui uma coleta ativa"),
             @ApiResponse(responseCode = "422", description = "Incidente encerrado ou cooperativa incompatível com o resíduo")
     })
-    ResponseEntity<CollectionResponseDTO> create(CollectionRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
+    CollectionResponseDTO create(CollectionRequestDTO dto, @Parameter(hidden = true) AuthenticatedUser author);
 
     @Operation(
             summary = "Lista as coletas da empresa",
             description = "Retorna as coletas da empresa do usuário autenticado. **Acesso:** ADMIN, MANAGER."
     )
     @ApiResponse(responseCode = "200", description = "Lista de coletas")
-    ResponseEntity<List<CollectionResponseDTO>> show(@Parameter(hidden = true) AuthenticatedUser author);
+    List<CollectionResponseDTO> show(@Parameter(hidden = true) AuthenticatedUser author);
 
     @Operation(summary = "Busca uma coleta pelo ID", description = "**Acesso:** ADMIN, MANAGER.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Coleta encontrada"),
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada")
     })
-    ResponseEntity<CollectionResponseDTO> showById(
+    CollectionResponseDTO showById(
             @Parameter(description = "ID da coleta") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );
@@ -67,7 +66,7 @@ public interface CollectionControllerDocs {
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada"),
             @ApiResponse(responseCode = "422", description = "Coleta ainda não foi concluída")
     })
-    ResponseEntity<CollectionCompletionTimeResponseDTO> showCompletionTime(
+    CollectionCompletionTimeResponseDTO showCompletionTime(
             @Parameter(description = "ID da coleta") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );
@@ -85,7 +84,7 @@ public interface CollectionControllerDocs {
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada"),
             @ApiResponse(responseCode = "422", description = "Status atual não permite agendamento ou data fora do prazo")
     })
-    ResponseEntity<Void> schedule(
+    void schedule(
             @Parameter(description = "ID da coleta") UUID id,
             CollectionScheduleRequestDTO dto,
             @Parameter(hidden = true) AuthenticatedUser author
@@ -105,7 +104,7 @@ public interface CollectionControllerDocs {
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada"),
             @ApiResponse(responseCode = "422", description = "Transição de status não permitida")
     })
-    ResponseEntity<Void> updateStatus(
+    void updateStatus(
             @Parameter(description = "ID da coleta") UUID id,
             CollectionStatusRequestDTO dto,
             @Parameter(hidden = true) AuthenticatedUser author
@@ -119,7 +118,7 @@ public interface CollectionControllerDocs {
             @ApiResponse(responseCode = "200", description = "Histórico da coleta"),
             @ApiResponse(responseCode = "404", description = "Coleta não encontrada")
     })
-    ResponseEntity<List<CollectionStatusResponseDTO>> show(
+    List<CollectionStatusResponseDTO> show(
             @Parameter(description = "ID da coleta") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );

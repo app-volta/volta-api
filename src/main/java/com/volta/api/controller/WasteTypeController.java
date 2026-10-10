@@ -7,7 +7,6 @@ import com.volta.api.usecase.WasteTypeUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,36 +22,37 @@ public class WasteTypeController implements WasteTypeControllerDocs {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<WasteTypeResponseDTO> create(@Valid @RequestBody WasteTypeRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(wasteTypeUseCase.register(dto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public WasteTypeResponseDTO create(@Valid @RequestBody WasteTypeRequestDTO dto) {
+        return wasteTypeUseCase.register(dto);
     }
 
     @GetMapping
-    public ResponseEntity<List<WasteTypeResponseDTO>> show() {
+    public List<WasteTypeResponseDTO> show() {
         List<WasteTypeResponseDTO> wasteTypes = wasteTypeUseCase.getWasteTypes();
-        return ResponseEntity.ok(wasteTypes);
+        return wasteTypes;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WasteTypeResponseDTO> show(@PathVariable UUID id) {
+    public WasteTypeResponseDTO show(@PathVariable UUID id) {
         WasteTypeResponseDTO wasteType = wasteTypeUseCase.getWasteTypeById(id);
-        return ResponseEntity.ok(wasteType);
+        return wasteType;
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<WasteTypeResponseDTO> update(
+    public WasteTypeResponseDTO update(
             @PathVariable UUID id,
             @Valid @RequestBody WasteTypeRequestDTO dto
     ) {
         WasteTypeResponseDTO response = wasteTypeUseCase.update(id, dto);
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> remove(@PathVariable UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remove(@PathVariable UUID id) {
         wasteTypeUseCase.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

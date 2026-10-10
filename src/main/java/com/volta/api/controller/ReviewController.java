@@ -8,7 +8,6 @@ import com.volta.api.usecase.ReviewUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,18 +23,19 @@ public class ReviewController implements ReviewControllerDocs {
 
     @PostMapping("/collections/{collectionId}/review")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<ReviewResponseDTO> create(
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReviewResponseDTO create(
             @PathVariable UUID collectionId,
             @Valid @RequestBody ReviewRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(reviewUseCase.register(collectionId, dto, author));
+        return reviewUseCase.register(collectionId, dto, author);
     }
 
     @GetMapping("/cooperatives/{cooperativeId}/reviews")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<ReviewResponseDTO>> showByCooperative(@PathVariable UUID cooperativeId) {
+    public List<ReviewResponseDTO> showByCooperative(@PathVariable UUID cooperativeId) {
         List<ReviewResponseDTO> reviews = reviewUseCase.getReviewsByCooperative(cooperativeId);
-        return ResponseEntity.ok(reviews);
+        return reviews;
     }
 }

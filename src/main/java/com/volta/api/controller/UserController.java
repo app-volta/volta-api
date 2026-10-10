@@ -10,7 +10,6 @@ import com.volta.api.usecase.UserUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,47 +26,48 @@ public class UserController implements UserControllerDocs {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userUseCase.register(dto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponseDTO create(@Valid @RequestBody UserRequestDTO dto) {
+        return userUseCase.register(dto);
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> show() {
+    public List<UserResponseDTO> show() {
         List<UserResponseDTO> users = userUseCase.getUsers();
-        return ResponseEntity.ok(users);
+        return users;
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDTO> showById(@PathVariable UUID id) {
+    public UserResponseDTO showById(@PathVariable UUID id) {
         UserResponseDTO user = userUseCase.getUserById(id);
-        return ResponseEntity.ok(user);
+        return user;
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> showMe(@AuthenticationPrincipal AuthenticatedUser author) {
+    public UserResponseDTO showMe(@AuthenticationPrincipal AuthenticatedUser author) {
         UserResponseDTO user = userUseCase.getUserById(author.id());
-        return ResponseEntity.ok(user);
+        return user;
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserResponseDTO> update(
+    public UserResponseDTO update(
             @Valid @RequestBody UserUpdateRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         UserResponseDTO response = userUseCase.update(author.id(), dto);
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @PatchMapping("/{id}/role")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDTO> updateRole(
+    public UserResponseDTO updateRole(
             @PathVariable UUID id,
             @Valid @RequestBody UserRoleUpdateRequestDTO dto,
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         UserResponseDTO response = userUseCase.updateRole(id, dto, author);
-        return ResponseEntity.ok(response);
+        return response;
     }
 }
