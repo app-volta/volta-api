@@ -28,7 +28,7 @@ public class AuthService implements AuthUseCase {
                                 dto.password()
                         )
                 );
-        String token = tokenProvider.gerarToken(authentication);
+        String token = tokenProvider.generateToken(authentication);
         return new TokenResponseDTO(token, expirationTime);
     }
 }

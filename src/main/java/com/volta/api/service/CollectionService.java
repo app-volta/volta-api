@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.temporal.ChronoUnit;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class CollectionService implements CollectionUseCase {
     private final CollectionMapper collectionMapper;
     private final CollectionStatusRepository collectionStatusRepository;
     private final CollectionStatusMapper collectionStatusMapper;
+    private final Clock clock;
 
     @Transactional
     public CollectionResponseDTO register(CollectionRequestDTO dto, AuthenticatedUser author) {
@@ -207,7 +209,7 @@ public class CollectionService implements CollectionUseCase {
                 ? Priority.URGENT_SCHEDULING_DEADLINE
                 : Priority.valueOf(collection.getIncident().getPriority()).getSchedulingDeadline();
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         LocalDateTime limit = collection.getRequestedAt().plus(deadline);
         if (limit.isBefore(now)) {
             limit = now.plus(Priority.URGENT_SCHEDULING_DEADLINE);

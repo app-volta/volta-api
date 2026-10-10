@@ -22,7 +22,7 @@ public class TokenProvider {
     private String key;
 
     //gerar um token
-    public String gerarToken(Authentication authentication) {
+    public String generateToken(Authentication authentication) {
         AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
         return buildToken(user);
     }
