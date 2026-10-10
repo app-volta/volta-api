@@ -2,7 +2,7 @@ package com.volta.api.support;
 
 import com.volta.api.database.entity.Company;
 import com.volta.api.database.entity.Role;
-import com.volta.api.dto.request.UserRequestDTO;
+import com.volta.api.dto.user.UserRequestDTO;
 import com.volta.api.security.AuthenticatedUser;
 
 import java.util.UUID;

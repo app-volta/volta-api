@@ -8,8 +8,8 @@ import com.volta.api.database.repository.CollectionRepository;
 import com.volta.api.database.repository.CooperativeRepository;
 import com.volta.api.database.repository.ReviewRepository;
 import com.volta.api.database.repository.UserRepository;
-import com.volta.api.dto.request.ReviewRequestDTO;
-import com.volta.api.dto.response.ReviewResponseDTO;
+import com.volta.api.dto.review.ReviewRequestDTO;
+import com.volta.api.dto.review.ReviewResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ConflictException;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -77,9 +76,13 @@ public class ReviewService implements ReviewUseCase {
 
     private void updateAverageRating(Cooperative cooperative) {
         Double average = reviewRepository.findAverageStarsByCooperativeId(cooperative.getId());
-        BigDecimal averageRating = average == null
-                ? BigDecimal.ZERO
-                : BigDecimal.valueOf(average).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal averageRating;
+
+        if (average == null){
+            averageRating = BigDecimal.ZERO;
+        } else {
+            averageRating = new BigDecimal(average.toString());
+        }
 
         cooperative.setAverageRating(averageRating);
         cooperativeRepository.save(cooperative);

@@ -1,7 +1,7 @@
 package com.volta.api.support;
 
 import com.volta.api.database.entity.WasteType;
-import com.volta.api.dto.request.WasteTypeRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
 import com.volta.api.enums.RiskLevel;
 import com.volta.api.enums.WasteCategory;
 

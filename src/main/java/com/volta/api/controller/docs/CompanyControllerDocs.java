@@ -1,7 +1,7 @@
 package com.volta.api.controller.docs;
 
-import com.volta.api.dto.request.CompanyRequestDTO;
-import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.dto.company.CompanyRequestDTO;
+import com.volta.api.dto.company.CompanyResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

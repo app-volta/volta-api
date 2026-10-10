@@ -1,9 +1,9 @@
 package com.volta.api.controller.docs;
 
-import com.volta.api.dto.request.UserRequestDTO;
-import com.volta.api.dto.request.update.UserRoleUpdateRequestDTO;
-import com.volta.api.dto.request.update.UserUpdateRequestDTO;
-import com.volta.api.dto.response.UserResponseDTO;
+import com.volta.api.dto.user.UserRequestDTO;
+import com.volta.api.dto.user.UserRoleUpdateRequestDTO;
+import com.volta.api.dto.user.UserUpdateRequestDTO;
+import com.volta.api.dto.user.UserResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

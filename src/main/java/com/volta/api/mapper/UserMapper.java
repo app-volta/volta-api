@@ -1,8 +1,8 @@
 package com.volta.api.mapper;
 
 import com.volta.api.database.entity.Users;
-import com.volta.api.dto.request.update.UserUpdateRequestDTO;
-import com.volta.api.dto.response.UserResponseDTO;
+import com.volta.api.dto.user.UserUpdateRequestDTO;
+import com.volta.api.dto.user.UserResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,11 +1,11 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.EsgControllerDocs;
-import com.volta.api.dto.request.EsgMetricRequestDTO;
-import com.volta.api.dto.request.RecyclingPercentageRequestDTO;
-import com.volta.api.dto.response.EsgMetricResponseDTO;
-import com.volta.api.dto.response.EsgScoreResponseDTO;
-import com.volta.api.dto.response.RecyclingPercentageResponseDTO;
+import com.volta.api.dto.esg.EsgMetricRequestDTO;
+import com.volta.api.dto.esg.RecyclingPercentageRequestDTO;
+import com.volta.api.dto.esg.EsgMetricResponseDTO;
+import com.volta.api.dto.esg.EsgScoreResponseDTO;
+import com.volta.api.dto.esg.RecyclingPercentageResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.EsgUseCase;
 import jakarta.validation.Valid;

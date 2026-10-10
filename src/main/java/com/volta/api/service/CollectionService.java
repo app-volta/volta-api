@@ -12,12 +12,12 @@ import com.volta.api.database.repository.CollectionRepository;
 import com.volta.api.database.repository.CollectionStatusRepository;
 import com.volta.api.database.repository.CooperativeRepository;
 import com.volta.api.database.repository.IncidentRepository;
-import com.volta.api.dto.request.CollectionRequestDTO;
-import com.volta.api.dto.request.CollectionScheduleRequestDTO;
-import com.volta.api.dto.request.CollectionStatusRequestDTO;
-import com.volta.api.dto.response.CollectionCompletionTimeResponseDTO;
-import com.volta.api.dto.response.CollectionResponseDTO;
-import com.volta.api.dto.response.CollectionStatusResponseDTO;
+import com.volta.api.dto.collection.CollectionRequestDTO;
+import com.volta.api.dto.collection.CollectionScheduleRequestDTO;
+import com.volta.api.dto.collection.CollectionStatusRequestDTO;
+import com.volta.api.dto.collection.CollectionCompletionTimeResponseDTO;
+import com.volta.api.dto.collection.CollectionResponseDTO;
+import com.volta.api.dto.collection.CollectionStatusResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.enums.IncidentStatus;
 import com.volta.api.enums.Priority;
@@ -34,10 +34,10 @@ import com.volta.api.usecase.CollectionUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.temporal.ChronoUnit;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +46,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CollectionService implements CollectionUseCase {
+
+    private static final DateTimeFormatter DEADLINE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     private final CollectionRepository collectionRepository;
     private final CollectionProcedure collectionProcedure;
@@ -77,7 +79,6 @@ public class CollectionService implements CollectionUseCase {
 
         Collection collection = collectionMapper.toEntity(dto, incident, cooperative);
 
-        // Incidente crítico sempre gera coleta urgente
         if (Priority.CRITICAL.name().equals(incident.getPriority())) {
             collection.setUrgent(true);
         }
@@ -176,8 +177,6 @@ public class CollectionService implements CollectionUseCase {
             throw new BusinessRuleException("Invalid status transition from " + current.name() + " to " + next.name());
         }
     }
-
-    // NBR 10004 + PNRS (arts. 37 e 38): resíduo perigoso só pode ir para quem está habilitado a recebê-lo
     private void validateCooperativeCompatibility(WasteType wasteType, Cooperative cooperative) {
         if (wasteType == null) {
             throw new BusinessRuleException("Incident has no waste type to be collected");
@@ -203,21 +202,24 @@ public class CollectionService implements CollectionUseCase {
         }
     }
 
-    // Prazo de agendamento conforme a prioridade do incidente; se já venceu, o agendamento entra em regime de urgência
     private void validateSchedulingDeadline(Collection collection, LocalDateTime scheduledAt) {
-        Duration deadline = collection.isUrgent()
-                ? Priority.URGENT_SCHEDULING_DEADLINE
-                : Priority.valueOf(collection.getIncident().getPriority()).getSchedulingDeadline();
+        Duration deadline;
+        if (collection.isUrgent()){
+            deadline = Priority.URGENT_SCHEDULING_DEADLINE;
+        } else {
+            deadline = Priority.valueOf(collection.getIncident().getPriority()).getSchedulingDeadline();
+        }
 
         LocalDateTime now = LocalDateTime.now(clock);
         LocalDateTime limit = collection.getRequestedAt().plus(deadline);
+
         if (limit.isBefore(now)) {
             limit = now.plus(Priority.URGENT_SCHEDULING_DEADLINE);
         }
 
         if (scheduledAt.isAfter(limit)) {
             throw new BusinessRuleException(
-                    "Collection must be scheduled until " + limit.truncatedTo(ChronoUnit.MINUTES)
+                    "Collection must be scheduled until " + DEADLINE_FORMAT.format(limit)
             );
         }
     }

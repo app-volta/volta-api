@@ -1,12 +1,11 @@
 package com.volta.api.enums;
 
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-// Categorias e cores da coleta seletiva definidas pela Resolução CONAMA 275/2001
 public enum WasteCategory {
     PAPEL("Azul", false),
     PLASTICO("Vermelho", false),
@@ -41,9 +40,12 @@ public enum WasteCategory {
         }
 
         String normalized = normalize(value);
-        return Arrays.stream(values())
-                .filter(category -> category.name().equals(normalized))
-                .findFirst();
+        for (WasteCategory category : values()) {
+            if (category.name().equals(normalized)) {
+                return Optional.of(category);
+            }
+        }
+        return Optional.empty();
     }
 
     public static Set<WasteCategory> fromList(String values) {
@@ -59,12 +61,12 @@ public enum WasteCategory {
         return categories;
     }
 
-    // "Não reciclável" -> "NAO_RECICLAVEL"
+    // Não reciclável -> NAO_RECICLAVEL
     public static String normalize(String value) {
         return Normalizer.normalize(value, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "")
                 .trim()
                 .replaceAll("[\\s-]+", "_")
-                .toUpperCase();
+                .toUpperCase(Locale.ROOT);
     }
 }

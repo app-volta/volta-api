@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.CooperativeControllerDocs;
-import com.volta.api.dto.request.CooperativeRequestDTO;
-import com.volta.api.dto.response.CooperativeResponseDTO;
+import com.volta.api.dto.cooperative.CooperativeRequestDTO;
+import com.volta.api.dto.cooperative.CooperativeResponseDTO;
 import com.volta.api.usecase.CooperativeUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

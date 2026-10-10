@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.AuthControllerDocs;
-import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.response.TokenResponseDTO;
+import com.volta.api.dto.auth.LoginRequestDTO;
+import com.volta.api.dto.auth.TokenResponseDTO;
 import com.volta.api.usecase.AuthUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

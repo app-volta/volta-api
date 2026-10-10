@@ -3,8 +3,8 @@ package com.volta.api.mapper;
 import com.volta.api.database.entity.Collection;
 import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.entity.Incident;
-import com.volta.api.dto.request.CollectionRequestDTO;
-import com.volta.api.dto.response.CollectionResponseDTO;
+import com.volta.api.dto.collection.CollectionRequestDTO;
+import com.volta.api.dto.collection.CollectionResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import org.springframework.stereotype.Component;
 

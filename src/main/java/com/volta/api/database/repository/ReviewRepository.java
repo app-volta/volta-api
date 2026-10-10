@@ -14,6 +14,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
     boolean existsByCollectionId(UUID collectionId);
 
-    @Query("SELECT AVG(r.stars) FROM Review r WHERE r.cooperative.id = :cooperativeId")
+    @Query("SELECT ROUND(AVG(r.stars), 2) FROM Review r WHERE r.cooperative.id = :cooperativeId")
     Double findAverageStarsByCooperativeId(@Param("cooperativeId") UUID cooperativeId);
 }

@@ -1,8 +1,8 @@
 package com.volta.api.mapper;
 
 import com.volta.api.database.entity.Company;
-import com.volta.api.dto.request.CompanyRequestDTO;
-import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.dto.company.CompanyRequestDTO;
+import com.volta.api.dto.company.CompanyResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

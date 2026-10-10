@@ -1,10 +1,10 @@
 package com.volta.api.dto;
 
-import com.volta.api.dto.request.CollectionRequestDTO;
-import com.volta.api.dto.request.CollectionScheduleRequestDTO;
-import com.volta.api.dto.request.CollectionStatusRequestDTO;
-import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.request.WasteTypeRequestDTO;
+import com.volta.api.dto.collection.CollectionRequestDTO;
+import com.volta.api.dto.collection.CollectionScheduleRequestDTO;
+import com.volta.api.dto.collection.CollectionStatusRequestDTO;
+import com.volta.api.dto.auth.LoginRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.enums.RiskLevel;
 import com.volta.api.enums.WasteCategory;

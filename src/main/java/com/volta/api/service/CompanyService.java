@@ -2,8 +2,8 @@ package com.volta.api.service;
 
 import com.volta.api.database.entity.Company;
 import com.volta.api.database.repository.CompanyRepository;
-import com.volta.api.dto.request.CompanyRequestDTO;
-import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.dto.company.CompanyRequestDTO;
+import com.volta.api.dto.company.CompanyResponseDTO;
 import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CompanyMapper;

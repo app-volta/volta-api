@@ -1,7 +1,7 @@
 package com.volta.api.controller.docs;
 
-import com.volta.api.dto.request.CooperativeRequestDTO;
-import com.volta.api.dto.response.CooperativeResponseDTO;
+import com.volta.api.dto.cooperative.CooperativeRequestDTO;
+import com.volta.api.dto.cooperative.CooperativeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

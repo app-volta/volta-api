@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -95,6 +96,20 @@ class WasteCategoryTest {
     void fromList_nullOrEmpty_returnsEmptySet() {
         assertThat(WasteCategory.fromList(null)).isEmpty();
         assertThat(WasteCategory.fromList("")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("normalize não depende do idioma do sistema")
+    void normalize_turkishDefaultLocale_stillReturnsCategoryName() {
+        Locale original = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+
+            assertThat(WasteCategory.normalize("plastico")).isEqualTo("PLASTICO");
+            assertThat(WasteCategory.from("organico")).contains(WasteCategory.ORGANICO);
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 
     @Test

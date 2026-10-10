@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.ReviewControllerDocs;
-import com.volta.api.dto.request.ReviewRequestDTO;
-import com.volta.api.dto.response.ReviewResponseDTO;
+import com.volta.api.dto.review.ReviewRequestDTO;
+import com.volta.api.dto.review.ReviewResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.ReviewUseCase;
 import jakarta.validation.Valid;

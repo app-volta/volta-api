@@ -1,7 +1,7 @@
 package com.volta.api.controller.docs;
 
-import com.volta.api.dto.request.WasteTypeRequestDTO;
-import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

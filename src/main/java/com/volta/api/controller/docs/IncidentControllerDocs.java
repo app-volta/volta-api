@@ -1,9 +1,9 @@
 package com.volta.api.controller.docs;
 
-import com.volta.api.dto.request.IncidentFilterDTO;
-import com.volta.api.dto.request.IncidentRequestDTO;
-import com.volta.api.dto.response.AiReportResponseDTO;
-import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.dto.incident.IncidentFilterDTO;
+import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.report.AiReportResponseDTO;
+import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

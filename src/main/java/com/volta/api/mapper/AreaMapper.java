@@ -2,9 +2,9 @@ package com.volta.api.mapper;
 
 import com.volta.api.database.entity.Area;
 import com.volta.api.database.entity.Company;
-import com.volta.api.dto.request.AreaRequestDTO;
-import com.volta.api.dto.request.update.AreaUpdateRequestDTO;
-import com.volta.api.dto.response.AreaResponseDTO;
+import com.volta.api.dto.area.AreaRequestDTO;
+import com.volta.api.dto.area.AreaUpdateRequestDTO;
+import com.volta.api.dto.area.AreaResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

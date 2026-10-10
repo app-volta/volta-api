@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.CompanyControllerDocs;
-import com.volta.api.dto.request.CompanyRequestDTO;
-import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.dto.company.CompanyRequestDTO;
+import com.volta.api.dto.company.CompanyResponseDTO;
 import com.volta.api.usecase.CompanyUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

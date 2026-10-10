@@ -2,7 +2,7 @@ package com.volta.api.service;
 
 import com.volta.api.database.entity.WasteType;
 import com.volta.api.database.repository.WasteTypeRepository;
-import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.dto.wastetype.WasteTypeResponseDTO;
 import com.volta.api.enums.RiskLevel;
 import com.volta.api.enums.WasteCategory;
 import com.volta.api.exception.BusinessRuleException;

@@ -1,10 +1,10 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.UserControllerDocs;
-import com.volta.api.dto.request.UserRequestDTO;
-import com.volta.api.dto.request.update.UserRoleUpdateRequestDTO;
-import com.volta.api.dto.request.update.UserUpdateRequestDTO;
-import com.volta.api.dto.response.UserResponseDTO;
+import com.volta.api.dto.user.UserRequestDTO;
+import com.volta.api.dto.user.UserRoleUpdateRequestDTO;
+import com.volta.api.dto.user.UserUpdateRequestDTO;
+import com.volta.api.dto.user.UserResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.UserUseCase;
 import jakarta.validation.Valid;

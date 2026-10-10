@@ -2,8 +2,8 @@ package com.volta.api.service;
 
 import com.volta.api.database.entity.WasteType;
 import com.volta.api.database.repository.WasteTypeRepository;
-import com.volta.api.dto.request.WasteTypeRequestDTO;
-import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeResponseDTO;
 import com.volta.api.enums.RiskLevel;
 import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;

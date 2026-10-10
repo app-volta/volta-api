@@ -1,8 +1,8 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.WasteTypeControllerDocs;
-import com.volta.api.dto.request.WasteTypeRequestDTO;
-import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeResponseDTO;
 import com.volta.api.usecase.WasteTypeUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

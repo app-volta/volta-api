@@ -1,7 +1,7 @@
 package com.volta.api.mapper;
 
 import com.volta.api.database.entity.CollectionStatus;
-import com.volta.api.dto.response.CollectionStatusResponseDTO;
+import com.volta.api.dto.collection.CollectionStatusResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

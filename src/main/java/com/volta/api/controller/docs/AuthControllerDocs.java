@@ -1,7 +1,7 @@
 package com.volta.api.controller.docs;
 
-import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.response.TokenResponseDTO;
+import com.volta.api.dto.auth.LoginRequestDTO;
+import com.volta.api.dto.auth.TokenResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

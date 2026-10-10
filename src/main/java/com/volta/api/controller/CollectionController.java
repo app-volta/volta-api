@@ -1,12 +1,12 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.CollectionControllerDocs;
-import com.volta.api.dto.request.CollectionRequestDTO;
-import com.volta.api.dto.request.CollectionScheduleRequestDTO;
-import com.volta.api.dto.request.CollectionStatusRequestDTO;
-import com.volta.api.dto.response.CollectionCompletionTimeResponseDTO;
-import com.volta.api.dto.response.CollectionResponseDTO;
-import com.volta.api.dto.response.CollectionStatusResponseDTO;
+import com.volta.api.dto.collection.CollectionRequestDTO;
+import com.volta.api.dto.collection.CollectionScheduleRequestDTO;
+import com.volta.api.dto.collection.CollectionStatusRequestDTO;
+import com.volta.api.dto.collection.CollectionCompletionTimeResponseDTO;
+import com.volta.api.dto.collection.CollectionResponseDTO;
+import com.volta.api.dto.collection.CollectionStatusResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.CollectionUseCase;
 import jakarta.validation.Valid;

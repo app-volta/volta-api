@@ -1,10 +1,10 @@
 package com.volta.api.controller;
 
 import com.volta.api.controller.docs.IncidentControllerDocs;
-import com.volta.api.dto.request.IncidentFilterDTO;
-import com.volta.api.dto.request.IncidentRequestDTO;
-import com.volta.api.dto.response.AiReportResponseDTO;
-import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.dto.incident.IncidentFilterDTO;
+import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.report.AiReportResponseDTO;
+import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
 import com.volta.api.usecase.IncidentUseCase;

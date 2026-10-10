@@ -1,7 +1,7 @@
 package com.volta.api.service;
 
-import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.response.TokenResponseDTO;
+import com.volta.api.dto.auth.LoginRequestDTO;
+import com.volta.api.dto.auth.TokenResponseDTO;
 import com.volta.api.security.jwt.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
