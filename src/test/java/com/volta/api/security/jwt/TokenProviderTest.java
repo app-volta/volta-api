@@ -4,17 +4,18 @@ import com.volta.api.security.AuthenticatedUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("TokenProvider")
 class TokenProviderTest {
@@ -26,9 +27,7 @@ class TokenProviderTest {
 
     @BeforeEach
     void setUp() {
-        tokenProvider = new TokenProvider();
-        ReflectionTestUtils.setField(tokenProvider, "key", TEST_KEY);
-        ReflectionTestUtils.setField(tokenProvider, "expirationTime", 3_600_000L);
+        tokenProvider = new TokenProvider(TEST_KEY, 3_600_000L);
 
         user = new AuthenticatedUser(
                 UUID.randomUUID(), "ana@volta.com", "any-hash", UUID.randomUUID(), "ADMIN");
@@ -77,8 +76,8 @@ class TokenProviderTest {
     @Test
     @DisplayName("rejeita token expirado")
     void isTokenValid_expiredToken_returnsFalse() {
-        ReflectionTestUtils.setField(tokenProvider, "expirationTime", -1_000L);
-        String expiredToken = tokenProvider.generateToken(authenticationOf(user));
+        TokenProvider expiredProvider = new TokenProvider(TEST_KEY, -1_000L);
+        String expiredToken = expiredProvider.generateToken(authenticationOf(user));
 
         assertThat(tokenProvider.isTokenValid(expiredToken)).isFalse();
     }
@@ -88,5 +87,18 @@ class TokenProviderTest {
     void isTokenValid_textThatIsNotJwt_returnsFalse() {
         assertThat(tokenProvider.isTokenValid("this-is-not-a-jwt")).isFalse();
         assertThat(tokenProvider.isTokenValid("")).isFalse();
+    }
+
+    @Test
+    @DisplayName("chave curta demais falha na criação")
+    void constructor_shortKey_throwsWeakKey() {
+        assertThatThrownBy(() -> new TokenProvider("short-key", 3_600_000L))
+                .isInstanceOf(WeakKeyException.class);
+    }
+
+    @Test
+    @DisplayName("parseClaims devolve vazio para token inválido")
+    void parseClaims_invalidToken_returnsEmpty() {
+        assertThat(tokenProvider.parseClaims("this-is-not-a-jwt")).isEmpty();
     }
 }

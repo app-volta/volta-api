@@ -1,7 +1,9 @@
 package com.volta.api.handler;
 
 import com.volta.api.exception.VoltaException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.http.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -12,11 +14,14 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final String RAISE_EXCEPTION_SQL_STATE = "P0001";
+
     @ExceptionHandler(VoltaException.class)
     public ProblemDetail handleVolta(VoltaException exception) {
         HttpStatus status = exception.getStatus();
@@ -33,6 +38,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Operation conflicts with existing data");
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ProblemDetail handleDataAccess(DataAccessException exception) {
+        if (isDatabaseBusinessRuleViolation(exception)) {
+            return ProblemDetail.forStatusAndDetail(
+                    HttpStatus.UNPROCESSABLE_CONTENT, "Operation rejected by a database business rule");
+        }
+        exception.printStackTrace();
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Error");
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ProblemDetail handleInternalAuthentication(InternalAuthenticationServiceException exception) {
+        exception.printStackTrace();
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Error");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -72,5 +93,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation error");
         problem.setProperty("errors", errors);
         return ResponseEntity.badRequest().body(problem);
+    }
+
+    private boolean isDatabaseBusinessRuleViolation(Throwable exception) {
+        Throwable current = exception;
+        while (current != null) {
+            if (current instanceof SQLException sqlException
+                    && RAISE_EXCEPTION_SQL_STATE.equals(sqlException.getSQLState())) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

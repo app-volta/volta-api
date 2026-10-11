@@ -74,6 +74,6 @@ class CnpjValidationTest {
     void cnpj_invalidValue_usesExpectedMessage() {
         assertThat(validate("11222333000182"))
                 .extracting(ConstraintViolation::getMessage)
-                .containsExactly("CNPJ inválido");
+                .containsExactly("Invalid CNPJ");
     }
 }

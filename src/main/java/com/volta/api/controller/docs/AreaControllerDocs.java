@@ -37,7 +37,7 @@ public interface AreaControllerDocs {
 
     @Operation(
             summary = "Lista as áreas da minha empresa",
-            description = "Retorna as áreas da empresa do usuário autenticado. **Acesso:** EMPLOYEE."
+            description = "Retorna as áreas da empresa do usuário autenticado. **Acesso:** ADMIN, MANAGER, EMPLOYEE."
     )
     @ApiResponse(responseCode = "200", description = "Lista de áreas da empresa")
     List<AreaResponseDTO> showMine(@Parameter(hidden = true) AuthenticatedUser author);

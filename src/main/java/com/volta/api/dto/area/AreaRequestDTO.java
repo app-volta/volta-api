@@ -15,7 +15,7 @@ public record AreaRequestDTO(
         UUID companyId,
 
         @Schema(description = "Nome do setor", example = "Almoxarifado")
-        @NotBlank(message = "O nome do setor é obrigatório")
+        @NotBlank(message = "Sector name is required")
         @Size(max = 100)
         String sectorName,
 

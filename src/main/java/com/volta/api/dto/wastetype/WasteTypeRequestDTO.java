@@ -13,14 +13,14 @@ public record WasteTypeRequestDTO(
                         + "PERIGOSO, SAUDE e RADIOATIVO exigem nível de risco HIGH",
                 example = "PERIGOSO"
         )
-        @NotNull(message = "A categoria é obrigatória")
+        @NotNull(message = "Category is required")
         WasteCategory category,
 
         @Schema(description = "Descrição do tipo de resíduo", example = "Óleo usado em máquinas industriais")
         String description,
 
         @Schema(description = "Nível de risco padrão", example = "HIGH")
-        @NotNull(message = "O nível de risco é obrigatório")
+        @NotNull(message = "Risk level is required")
         RiskLevel defaultRiskLevel
 ) {
 }

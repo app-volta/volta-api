@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public record CooperativeRequestDTO(
 
         @Schema(description = "Nome da cooperativa", example = "Cooperativa Recicla Mais")
-        @NotBlank(message = "O nome é obrigatório")
+        @NotBlank(message = "Name is required")
         @Size(max = 150)
         String name,
 
@@ -22,8 +22,8 @@ public record CooperativeRequestDTO(
                 description = "CNPJ numérico ou alfanumérico, com ou sem máscara. Os dígitos verificadores são validados",
                 example = "11.444.777/0001-61"
         )
-        @NotBlank(message = "O CNPJ é obrigatório")
-        @CNPJ(format = CNPJ.Format.ALPHANUMERIC, message = "CNPJ inválido")
+        @NotBlank(message = "CNPJ is required")
+        @CNPJ(format = CNPJ.Format.ALPHANUMERIC, message = "Invalid CNPJ")
         String cnpj,
 
         @Schema(description = "Latitude da sede", example = "-23.561684")
@@ -46,7 +46,7 @@ public record CooperativeRequestDTO(
                         + "Valores: PAPEL, PLASTICO, VIDRO, METAL, MADEIRA, PERIGOSO, SAUDE, RADIOATIVO, ORGANICO, NAO_RECICLAVEL",
                 example = "PAPEL,PLASTICO,METAL"
         )
-        @NotBlank(message = "Informe ao menos uma especialidade")
+        @NotBlank(message = "At least one specialty is required")
         @Size(max = 500)
         String specialties
 ) {

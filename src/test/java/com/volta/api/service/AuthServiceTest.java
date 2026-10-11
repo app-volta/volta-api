@@ -3,7 +3,6 @@ package com.volta.api.service;
 import com.volta.api.dto.auth.LoginRequestDTO;
 import com.volta.api.dto.auth.TokenResponseDTO;
 import com.volta.api.security.jwt.TokenProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,17 +35,13 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
-    @BeforeEach
-    void setUp() {
-        ReflectionTestUtils.setField(authService, "expirationTime", 3_600_000L);
-    }
-
     @Test
     @DisplayName("login com credenciais válidas devolve o token e a expiração")
     void login_validCredentials_returnsTokenAndExpiration() {
         Authentication authenticated = mock(Authentication.class);
         when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(authenticated);
         when(tokenProvider.generateToken(authenticated)).thenReturn("fake-token");
+        when(tokenProvider.getExpirationTime()).thenReturn(3_600_000L);
 
         TokenResponseDTO response = authService.login(new LoginRequestDTO("ana@volta.com", "password123"));
 

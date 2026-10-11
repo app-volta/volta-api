@@ -8,12 +8,12 @@ import jakarta.validation.constraints.NotBlank;
 public record LoginRequestDTO(
 
         @Schema(description = "E-mail do usuário", example = "admin@volta.com")
-        @NotBlank(message = "O e-mail é obrigatório")
+        @NotBlank(message = "Email is required")
         @Email
         String email,
 
         @Schema(description = "Senha do usuário", example = "senha12345")
-        @NotBlank(message = "A senha é obrigatória")
+        @NotBlank(message = "Password is required")
         String password
 ) {
 }

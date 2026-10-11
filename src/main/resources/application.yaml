@@ -29,8 +29,8 @@ admin:
   password: ${ADMIN_PASSWORD:}
   company-id: ${ADMIN_COMPANY_ID:}
 swagger:
-  username: ${SWAGGER_USERNAME}
-  password: ${SWAGGER_PASSWORD}
+  username: ${SWAGGER_USERNAME:}
+  password: ${SWAGGER_PASSWORD:}
 springdoc:
   api-docs:
     path: /api-docs

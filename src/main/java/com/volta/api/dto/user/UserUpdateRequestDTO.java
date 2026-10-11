@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public record UserUpdateRequestDTO(
 
         @Schema(description = "Nome completo", example = "Maria Silva")
-        @NotBlank(message = "O nome é obrigatório")
+        @NotBlank(message = "Name is required")
         @Size(max = 150)
         String name,
 

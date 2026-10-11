@@ -14,18 +14,18 @@ import java.util.UUID;
 public record UserRequestDTO(
 
         @Schema(description = "Nome completo", example = "Maria Silva")
-        @NotBlank(message = "O nome é obrigatório")
+        @NotBlank(message = "Name is required")
         @Size(max = 150)
         String name,
 
         @Schema(description = "E-mail usado no login", example = "maria.silva@volta.com")
-        @NotBlank(message = "O e-mail é obrigatório")
+        @NotBlank(message = "Email is required")
         @Email
         @Size(max = 150)
         String email,
 
         @Schema(description = "Senha (8 a 72 caracteres)", example = "senha12345")
-        @NotBlank(message = "A senha é obrigatória")
+        @NotBlank(message = "Password is required")
         @Size(min = 8, max = 72)
         String password,
 

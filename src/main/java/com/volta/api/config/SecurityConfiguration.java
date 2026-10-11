@@ -45,7 +45,6 @@ public class SecurityConfiguration {
                 .password(passwordEncoder.encode(swaggerProperties.password()))
                 .build();
 
-        // Usuário isolado nesta chain para não conflitar com o UserDetailsService da API
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(new InMemoryUserDetailsManager(swaggerUser));
         provider.setPasswordEncoder(passwordEncoder);
 

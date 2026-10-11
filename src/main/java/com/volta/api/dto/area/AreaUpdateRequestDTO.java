@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public record AreaUpdateRequestDTO(
 
         @Schema(description = "Nome do setor", example = "Almoxarifado")
-        @NotBlank(message = "O nome do setor é obrigatório")
+        @NotBlank(message = "Sector name is required")
         @Size(max = 100)
         String sectorName,
 

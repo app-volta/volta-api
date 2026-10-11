@@ -45,7 +45,7 @@ public class AreaController implements AreaControllerDocs {
     }
 
     @GetMapping("/mine")
-    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
     public List<AreaResponseDTO> showMine(@AuthenticationPrincipal AuthenticatedUser author) {
         List<AreaResponseDTO> area = areaUseCase.getAreasOfMyCompany(author);
         return area;

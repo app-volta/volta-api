@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 public record UserRoleUpdateRequestDTO(
 
         @Schema(description = "Perfil de acesso", example = "MANAGER")
-        @NotNull(message = "The role is mandatory")
+        @NotNull(message = "Role is required")
         RoleType role
 
 ) {

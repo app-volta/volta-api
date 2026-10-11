@@ -27,7 +27,7 @@ public record IncidentRequestDTO(
         String photoUrl,
 
         @Schema(description = "Descrição do incidente feita pelo funcionário", example = "Vazamento de óleo próximo à máquina 3")
-        @NotBlank(message = "A descrição é obrigatória")
+        @NotBlank(message = "Description is required")
         String employeeDescription,
 
         @Schema(description = "Nível de contaminação percebido. Se omitido, assume o risco padrão do tipo de resíduo", example = "MEDIUM")
@@ -39,7 +39,7 @@ public record IncidentRequestDTO(
         BigDecimal estimatedQuantity,
 
         @Schema(description = "Prioridade do incidente. É elevada para HIGH quando o resíduo é perigoso ou a contaminação é HIGH", example = "HIGH")
-        @NotNull(message = "A prioridade é obrigatória")
+        @NotNull(message = "Priority is required")
         Priority priority
 ) {
 }

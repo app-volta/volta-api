@@ -64,7 +64,7 @@ Controller  →  UseCase (interface)  →  Service  →  Repository / Procedure 
 | **Repository** | Acesso a dados via Spring Data JPA |
 | **Procedure / Function** | Chamadas às procedures e functions PL/pgSQL do banco |
 | **Enums** | Valores de domínio e regras associadas a eles (transições de status, prazos, categorias de resíduo) |
-| **Validation** | Validações customizadas (CNPJ, categorias de resíduo) |
+| **Utils** | Utilitários de normalização (CNPJ) |
 | **Handler** | Tratamento global de exceções no formato `ProblemDetail` |
 
 ---
@@ -81,9 +81,18 @@ src/main/java/com/volta/api
 │   ├── repository/      # Repositórios Spring Data
 │   ├── procedure/       # Chamadas às procedures do banco
 │   └── function/        # Chamadas às functions do banco
-├── dto/
-│   ├── request/         # Dados de entrada (inclui request/update)
-│   └── response/        # Dados de saída
+├── dto/                 # DTOs de entrada e saída, agrupados por domínio
+│   ├── area/
+│   ├── auth/
+│   ├── collection/
+│   ├── company/
+│   ├── cooperative/
+│   ├── esg/
+│   ├── incident/
+│   ├── report/
+│   ├── review/
+│   ├── user/
+│   └── wastetype/
 ├── enums/               # Enums de domínio e regras associadas
 ├── exception/           # Exceções de negócio
 ├── handler/             # Tratamento global de erros e de autenticação
@@ -91,7 +100,7 @@ src/main/java/com/volta/api
 ├── security/            # Filtro JWT, geração de token e usuário autenticado
 ├── service/             # Regras de negócio
 ├── usecase/             # Interfaces dos casos de uso
-└── validation/          # Validadores customizados (CNPJ, categorias)
+└── utils/               # Utilitários (normalização de CNPJ)
 
 src/main/resources
 ├── application.yaml
@@ -116,10 +125,12 @@ src/main/resources
 | `DATABASE_HOST` | Sim | Host do banco usado na URL de conexão | `ep-xxx.sa-east-1.aws.neon.tech` |
 | `DATABASE_USERNAME` | Sim | Usuário do banco | `volta` |
 | `DATABASE_PASSWORD` | Sim | Senha do banco | — |
-| `JWT_KEY` | Sim | Chave de assinatura do JWT (mínimo de 32 bytes) | — |
+| `JWT_KEY` | Sim | Chave de assinatura do JWT (mínimo de 32 bytes; a aplicação não sobe com chave menor) | — |
 | `JWT_EXPIRATION` | Sim | Validade do token, em milissegundos | `86400000` (24 h) |
 | `SWAGGER_USERNAME` | Sim | Usuário de acesso à documentação Swagger | `dev` |
 | `SWAGGER_PASSWORD` | Sim | Senha de acesso à documentação Swagger | — |
+
+> `SWAGGER_USERNAME` e `SWAGGER_PASSWORD` são validadas na inicialização: se estiverem ausentes ou vazias, a aplicação não sobe. O arquivo `.env.example` lista todas as variáveis.
 | `ADMIN_EMAIL` | Não | E-mail do administrador criado na inicialização | `admin@volta.com` |
 | `ADMIN_PASSWORD` | Não | Senha do administrador criado na inicialização | — |
 | `ADMIN_COMPANY_ID` | Não | ID da empresa do administrador | UUID |
@@ -205,12 +216,12 @@ A autenticação é **stateless** com JWT. O token é obtido em `POST /auth/logi
 Authorization: Bearer <token>
 ```
 
-O token carrega o ID do usuário, a empresa e o perfil. Todas as consultas são restritas aos dados da **empresa do usuário autenticado**.
+O token carrega o ID do usuário, a empresa e o perfil. Incidentes, coletas, avaliações, métricas ESG e a listagem `/areas/mine` são restritos aos dados da **empresa do usuário autenticado**; um recurso de outra empresa retorna `404`. Os endpoints administrativos (empresas, cooperativas, usuários, tipos de resíduo e `/areas`) são exclusivos do `ADMIN` e enxergam toda a plataforma.
 
 | Perfil | Descrição |
 |---|---|
 | `ADMIN` | Administra a plataforma: empresas, cooperativas, áreas, usuários e tipos de resíduo |
-| `MANAGER` | Gestor da empresa: coletas, encerramento de incidentes, avaliações e ESG |
+| `MANAGER` | Gestor da empresa: coletas, encerramento de incidentes, avaliações, ESG e consulta das áreas da própria empresa |
 | `EMPLOYEE` | Funcionário: registra incidentes e consulta as áreas da própria empresa |
 | `OPERATOR` | Reservado para uso futuro |
 
@@ -319,7 +330,7 @@ O schema é versionado com **Flyway** em `src/main/resources/db/migration`:
 | `V2__seed_roles.sql` | Perfis de acesso (`ADMIN`, `EMPLOYEE`, `OPERATOR`, `MANAGER`) |
 | `V3__create_procedure.sql` | Procedures de negócio |
 | `V4__create_functions.sql` | Functions de cálculo |
-| `V5__create_triggers.sql` | Tabela e triggers de auditoria |
+| `V5__create_triggers.sql` | Triggers de auditoria (dependem da função `audit_changes()`, que não é criada pelas migrations deste repositório) |
 | `V6__create_indexes.sql` | Índices de desempenho |
 
 ### Procedures
@@ -340,7 +351,7 @@ O schema é versionado com **Flyway** em `src/main/resources/db/migration`:
 
 ### Auditoria
 
-A tabela `audit_log` registra automaticamente, via triggers, todas as inserções, alterações e exclusões nas tabelas `incident`, `collection` e `esg_metric`, guardando o estado anterior e o novo em JSONB.
+A V5 cria triggers nas tabelas `incident`, `collection` e `esg_metric` que chamam a função `audit_changes()`. A tabela e a função de auditoria **não** fazem parte das migrations deste repositório: em um banco novo elas precisam existir antes da V5, caso contrário o Flyway falha na inicialização.
 
 ---
 
@@ -366,7 +377,7 @@ Erros de validação (400) incluem o campo `errors`, com a mensagem de cada camp
   "status": 400,
   "detail": "Validation error",
   "errors": {
-    "cnpj": "CNPJ inválido"
+    "cnpj": "Invalid CNPJ"
   }
 }
 ```
@@ -378,8 +389,14 @@ Erros de validação (400) incluem o campo `errors`, com a mensagem de cada camp
 | `403` | Usuário sem permissão para o recurso |
 | `404` | Recurso não encontrado |
 | `409` | Conflito com dados existentes (CNPJ ou e-mail duplicado, coleta ativa) |
-| `422` | Violação de regra de negócio |
-| `500` | Erro interno |
+| `422` | Violação de regra de negócio, incluindo regras recusadas por procedures do banco (`RAISE EXCEPTION`) |
+| `500` | Erro interno, incluindo falhas de acesso ao banco |
+
+Mensagens de erro e de validação são retornadas em inglês.
+
+### Datas e horários
+
+A aplicação opera em **UTC**. Todos os campos de data e hora, enviados e retornados, estão em UTC no formato `yyyy-MM-ddTHH:mm:ss`, sem offset. O cliente é responsável por converter para o horário local (por exemplo, `America/Sao_Paulo`, UTC-3). Os prazos de agendamento também são calculados em UTC.
 
 ---
 

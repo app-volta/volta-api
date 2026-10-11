@@ -27,7 +27,9 @@ import java.util.Map;
                 version = "v1",
                 description = "API do Volta para gestão de incidentes de resíduos, coletas com cooperativas e indicadores ESG. "
                         + "Para acessar os endpoints protegidos, faça login em `POST /auth/login`, copie o token retornado "
-                        + "e informe-o no botão **Authorize**."
+                        + "e informe-o no botão **Authorize**.\n\n"
+                        + "**Datas e horários:** todos os campos de data/hora (envio e retorno) estão em **UTC**, "
+                        + "no formato `yyyy-MM-ddTHH:mm:ss`, sem offset. Converta para o horário local no cliente."
         ),
         security = @SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTH)
 )
@@ -64,7 +66,6 @@ public class OpenApiConfiguration {
         }
         responses.putIfAbsent("500", new ApiResponse().description("Erro interno do servidor"));
 
-        // Todas as respostas de erro da API seguem o formato ProblemDetail
         responses.forEach((code, response) -> {
             if (code.startsWith("4") || code.startsWith("5")) {
                 response.setContent(problemDetailContent());
@@ -94,6 +95,6 @@ public class OpenApiConfiguration {
                 .addProperty("errors", new ObjectSchema()
                         .description("Erros por campo. Presente apenas em erros de validação (400)")
                         .additionalProperties(new StringSchema())
-                        .example(Map.of("email", "O e-mail é obrigatório")));
+                        .example(Map.of("email", "Email is required")));
     }
 }
