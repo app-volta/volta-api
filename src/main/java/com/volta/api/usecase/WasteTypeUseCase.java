@@ -1,7 +1,7 @@
 package com.volta.api.usecase;
 
-import com.volta.api.dto.request.WasteTypeRequestDTO;
-import com.volta.api.dto.response.WasteTypeResponseDTO;
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeResponseDTO;
 
 import java.util.List;
 import java.util.UUID;

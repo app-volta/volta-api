@@ -73,9 +73,11 @@ public class Incident {
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)
     private Set<Attachment> attachments = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)
     private Set<Collection> collections = new HashSet<>();
 }

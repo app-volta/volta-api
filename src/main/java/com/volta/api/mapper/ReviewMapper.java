@@ -3,8 +3,8 @@ package com.volta.api.mapper;
 import com.volta.api.database.entity.Collection;
 import com.volta.api.database.entity.Review;
 import com.volta.api.database.entity.Users;
-import com.volta.api.dto.request.ReviewRequestDTO;
-import com.volta.api.dto.response.ReviewResponseDTO;
+import com.volta.api.dto.review.ReviewRequestDTO;
+import com.volta.api.dto.review.ReviewResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

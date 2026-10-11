@@ -2,8 +2,8 @@ package com.volta.api.mapper;
 
 import com.volta.api.database.entity.Company;
 import com.volta.api.database.entity.EsgMetric;
-import com.volta.api.dto.request.EsgMetricRequestDTO;
-import com.volta.api.dto.response.EsgMetricResponseDTO;
+import com.volta.api.dto.esg.EsgMetricRequestDTO;
+import com.volta.api.dto.esg.EsgMetricResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

@@ -1,14 +1,15 @@
 package com.volta.api.service;
 
 import com.volta.api.database.entity.Collection;
+import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.entity.Review;
 import com.volta.api.database.entity.Users;
 import com.volta.api.database.repository.CollectionRepository;
 import com.volta.api.database.repository.CooperativeRepository;
 import com.volta.api.database.repository.ReviewRepository;
 import com.volta.api.database.repository.UserRepository;
-import com.volta.api.dto.request.ReviewRequestDTO;
-import com.volta.api.dto.response.ReviewResponseDTO;
+import com.volta.api.dto.review.ReviewRequestDTO;
+import com.volta.api.dto.review.ReviewResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ConflictException;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +55,8 @@ public class ReviewService implements ReviewUseCase {
         Review review = reviewMapper.toEntity(dto, collection, user);
         Review saved = reviewRepository.saveAndFlush(review);
 
+        updateAverageRating(collection.getCooperative());
+
         return reviewMapper.toResponse(saved);
     }
 
@@ -68,5 +72,19 @@ public class ReviewService implements ReviewUseCase {
         }
 
         return reviews;
+    }
+
+    private void updateAverageRating(Cooperative cooperative) {
+        Double average = reviewRepository.findAverageStarsByCooperativeId(cooperative.getId());
+        BigDecimal averageRating;
+
+        if (average == null){
+            averageRating = BigDecimal.ZERO;
+        } else {
+            averageRating = new BigDecimal(average.toString());
+        }
+
+        cooperative.setAverageRating(averageRating);
+        cooperativeRepository.save(cooperative);
     }
 }

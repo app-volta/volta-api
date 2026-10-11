@@ -3,9 +3,6 @@ package com.volta.api.database.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.GrantedAuthority;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -31,6 +28,7 @@ public class Role {
     @Column(length = 50, unique = true, nullable = false)
     private String type;
 
+    @Builder.Default
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<Users> users = new HashSet<>();
 

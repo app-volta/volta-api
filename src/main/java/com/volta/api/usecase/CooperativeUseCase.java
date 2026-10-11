@@ -1,7 +1,7 @@
 package com.volta.api.usecase;
 
-import com.volta.api.dto.request.CooperativeRequestDTO;
-import com.volta.api.dto.response.CooperativeResponseDTO;
+import com.volta.api.dto.cooperative.CooperativeRequestDTO;
+import com.volta.api.dto.cooperative.CooperativeResponseDTO;
 
 import java.util.List;
 import java.util.UUID;

@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.*;
-import java.util.Collection;
 
 @Setter
 @Getter
@@ -48,15 +43,19 @@ public class Users {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Incident> incidents = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Message> messages = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Notification> notifications = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 }

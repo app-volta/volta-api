@@ -1,11 +1,10 @@
 package com.volta.api.service;
 
-import com.volta.api.dto.request.LoginRequestDTO;
-import com.volta.api.dto.response.TokenResponseDTO;
+import com.volta.api.dto.auth.LoginRequestDTO;
+import com.volta.api.dto.auth.TokenResponseDTO;
 import com.volta.api.security.jwt.TokenProvider;
 import com.volta.api.usecase.AuthUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,9 +16,6 @@ public class AuthService implements AuthUseCase {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
-    @Value("${jwt.expiration}")
-    private long expirationTime;
-
     public TokenResponseDTO login(LoginRequestDTO dto) {
         Authentication authentication = authenticationManager
                 .authenticate(
@@ -28,7 +24,7 @@ public class AuthService implements AuthUseCase {
                                 dto.password()
                         )
                 );
-        String token = tokenProvider.gerarToken(authentication);
-        return new TokenResponseDTO(token, expirationTime);
+        String token = tokenProvider.generateToken(authentication);
+        return new TokenResponseDTO(token, tokenProvider.getExpirationTime());
     }
 }

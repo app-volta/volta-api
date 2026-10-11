@@ -46,6 +46,7 @@ public class Conversation {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY)
     private Set<Message> messages = new HashSet<>();
 }

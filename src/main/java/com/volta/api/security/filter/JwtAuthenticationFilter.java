@@ -3,7 +3,6 @@ package com.volta.api.security.filter;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.security.jwt.TokenProvider;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,18 +11,18 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final TokenProvider tokenProvider;
 
     @Override
@@ -32,39 +31,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
+
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7);
-
-            //validar token
-            if (tokenProvider.isTokenValid(token)) {
-                try {
-                    Claims claims = tokenProvider.getClaims(token);
-
-                    String uid = claims.get("userId", String.class);
-                    String subject = claims.getSubject();
-                    String companyId = claims.get("companyId", String.class);
-                    String role = claims.get("role", String.class);
-
-                    UUID userId = UUID.fromString(uid);
-                    UUID companyUUID = UUID.fromString(companyId);
-
-                    AuthenticatedUser principal = new AuthenticatedUser(
-                            userId,
-                            subject,
-                            null,
-                            companyUUID,
-                            role
-                    );
-
-                    UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                } catch (JwtException | IllegalArgumentException | NullPointerException e) {
-                    // token inválido ou expirado
-                }
-            }
+            String token = authorizationHeader.substring("Bearer ".length());
+            tokenProvider.parseClaims(token)
+                    .flatMap(this::toPrincipal)
+                    .ifPresent(principal -> SecurityContextHolder.getContext().setAuthentication(
+                            new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities())
+                    ));
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private Optional<AuthenticatedUser> toPrincipal(Claims claims) {
+        String userId = claims.get("userId", String.class);
+        String companyId = claims.get("companyId", String.class);
+        String role = claims.get("role", String.class);
+
+        if (!StringUtils.hasText(userId) || !StringUtils.hasText(companyId) || !StringUtils.hasText(role)) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(
+                    new AuthenticatedUser(
+                            UUID.fromString(userId),
+                            claims.getSubject(),
+                            null,
+                            UUID.fromString(companyId),
+                            role
+                    )
+            );
+        } catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
     }
 }

@@ -5,8 +5,8 @@ import com.volta.api.database.entity.Company;
 import com.volta.api.database.entity.Incident;
 import com.volta.api.database.entity.Users;
 import com.volta.api.database.entity.WasteType;
-import com.volta.api.dto.request.IncidentRequestDTO;
-import com.volta.api.dto.response.IncidentResponseDTO;
+import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.enums.IncidentStatus;
 import org.springframework.stereotype.Component;
 

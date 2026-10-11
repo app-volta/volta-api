@@ -1,8 +1,8 @@
 package com.volta.api.mapper;
 
 import com.volta.api.database.entity.Cooperative;
-import com.volta.api.dto.request.CooperativeRequestDTO;
-import com.volta.api.dto.response.CooperativeResponseDTO;
+import com.volta.api.dto.cooperative.CooperativeRequestDTO;
+import com.volta.api.dto.cooperative.CooperativeResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

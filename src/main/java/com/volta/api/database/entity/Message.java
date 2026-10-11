@@ -42,6 +42,7 @@ public class Message {
     private String text;
 
     @NotNull
+    @Builder.Default
     @Column(nullable = false)
     private boolean reported = false;
 
@@ -49,6 +50,7 @@ public class Message {
     @Column(name = "sent_at", nullable = false)
     private LocalDateTime sentAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
     private Set<MessageAttachment> messageAttachments = new HashSet<>();
 }

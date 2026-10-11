@@ -37,15 +37,19 @@ public class Company {
     @Column(nullable = false)
     private String address;
 
+    @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<Conversation> conversations = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<Area> areas = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<EsgMetric> esgMetrics = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<Incident> incidents = new HashSet<>();
 

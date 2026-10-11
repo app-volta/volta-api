@@ -1,7 +1,7 @@
 package com.volta.api.mapper;
 
 import com.volta.api.database.entity.AiReport;
-import com.volta.api.dto.response.AiReportResponseDTO;
+import com.volta.api.dto.report.AiReportResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -53,15 +53,19 @@ public class Collection {
     private String collectionType;
 
     @NotNull
+    @Builder.Default
     @Column(nullable = false)
     private boolean urgent = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<CollectionStatus> collectionStatuses = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<Conversation> conversations = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 }

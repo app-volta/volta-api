@@ -1,7 +1,7 @@
 package com.volta.api.usecase;
 
-import com.volta.api.dto.request.CompanyRequestDTO;
-import com.volta.api.dto.response.CompanyResponseDTO;
+import com.volta.api.dto.company.CompanyRequestDTO;
+import com.volta.api.dto.company.CompanyResponseDTO;
 
 import java.util.List;
 import java.util.UUID;

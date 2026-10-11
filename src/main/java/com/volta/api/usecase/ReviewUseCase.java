@@ -1,7 +1,7 @@
 package com.volta.api.usecase;
 
-import com.volta.api.dto.request.ReviewRequestDTO;
-import com.volta.api.dto.response.ReviewResponseDTO;
+import com.volta.api.dto.review.ReviewRequestDTO;
+import com.volta.api.dto.review.ReviewResponseDTO;
 import com.volta.api.security.AuthenticatedUser;
 
 import java.util.List;
