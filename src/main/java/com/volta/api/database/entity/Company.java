@@ -39,10 +39,6 @@ public class Company {
 
     @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    private Set<Conversation> conversations = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<Area> areas = new HashSet<>();
 
     @Builder.Default
@@ -52,5 +48,4 @@ public class Company {
     @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<Incident> incidents = new HashSet<>();
-
 }

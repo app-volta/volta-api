@@ -63,9 +63,5 @@ public class Collection {
 
     @Builder.Default
     @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
-    private Set<Conversation> conversations = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "collection", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 }
