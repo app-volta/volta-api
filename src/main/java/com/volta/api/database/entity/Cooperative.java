@@ -55,10 +55,5 @@ public class Cooperative {
 
     @Builder.Default
     @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
-    private Set<Conversation> conversations = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "cooperative", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
-
 }

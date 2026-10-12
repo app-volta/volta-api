@@ -39,6 +39,8 @@ As regras de negócio seguem a legislação ambiental brasileira: Política Naci
 | springdoc-openapi | 3.0.2 | Documentação Swagger / OpenAPI |
 | Spring Boot Actuator | — | Health check |
 | Lombok | — | Redução de código repetitivo |
+| JUnit 5, Mockito e AssertJ | — | Testes unitários e de segurança |
+| JaCoCo | 0.8.13 | Cobertura de testes, com limite mínimo no build |
 | Docker | — | Empacotamento da aplicação |
 | GitHub Actions | — | Integração e entrega contínuas |
 
@@ -177,8 +179,16 @@ O `Dockerfile` usa build em dois estágios: compila com Maven e roda o `.jar` em
 ### Testes
 
 ```bash
+mvn test -Dtest='!VoltaApiApplicationTests'
+```
+
+Executa os testes unitários e de segurança, sem precisar de banco de dados. Eles cobrem as regras de negócio dos services (com Mockito), as validações dos DTOs, os enums de domínio, o JWT e a matriz de permissões por perfil de todos os endpoints (`@WebMvcTest`).
+
+```bash
 mvn verify
 ```
+
+Executa também o `VoltaApiApplicationTests`, que sobe a aplicação e aplica as migrations, e por isso exige um PostgreSQL e as variáveis de ambiente descritas acima. O JaCoCo gera o relatório em `target/site/jacoco/index.html` e o build falha se a cobertura de linhas ficar abaixo de 35%.
 
 ### Health check
 
@@ -330,7 +340,7 @@ O schema é versionado com **Flyway** em `src/main/resources/db/migration`:
 | `V2__seed_roles.sql` | Perfis de acesso (`ADMIN`, `EMPLOYEE`, `OPERATOR`, `MANAGER`) |
 | `V3__create_procedure.sql` | Procedures de negócio |
 | `V4__create_functions.sql` | Functions de cálculo |
-| `V5__create_triggers.sql` | Triggers de auditoria (dependem da função `audit_changes()`, que não é criada pelas migrations deste repositório) |
+| `V5__create_triggers.sql` | Tabela `audit_log`, função `audit_changes()` e triggers de auditoria |
 | `V6__create_indexes.sql` | Índices de desempenho |
 
 ### Procedures
@@ -351,13 +361,17 @@ O schema é versionado com **Flyway** em `src/main/resources/db/migration`:
 
 ### Auditoria
 
-A V5 cria triggers nas tabelas `incident`, `collection` e `esg_metric` que chamam a função `audit_changes()`. A tabela e a função de auditoria **não** fazem parte das migrations deste repositório: em um banco novo elas precisam existir antes da V5, caso contrário o Flyway falha na inicialização.
+A tabela `audit_log` registra automaticamente, via triggers, todas as inserções, alterações e exclusões nas tabelas `incident`, `collection` e `esg_metric`, guardando o estado anterior e o novo em JSONB. A tabela, a função `audit_changes()` e os triggers são criados pela própria V5.
+
+### Entidades
+
+O projeto mapeia como entidades JPA somente as tabelas usadas pela API: `Company`, `Users`, `Role`, `Area`, `WasteType`, `Incident`, `AiReport`, `Cooperative`, `Collection`, `CollectionStatus`, `Review` e `EsgMetric`. As tabelas `attachment`, `conversation`, `message`, `message_attachment` e `notification` existem no banco, mas ainda não têm entidade na aplicação. A tabela `notification` é preenchida pela procedure `close_incident`.
 
 ---
 
 ## Tratamento de erros
 
-Todos os erros seguem o formato **ProblemDetail** (RFC 9457):
+Todos os erros, inclusive 401 e 403, seguem o formato **ProblemDetail** (RFC 9457) e são devolvidos com `Content-Type: application/problem+json`:
 
 ```json
 {

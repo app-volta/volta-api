@@ -16,6 +16,7 @@ import com.volta.api.database.repository.WasteTypeRepository;
 import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
+import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.enums.IncidentStatus;
 import com.volta.api.enums.Priority;
@@ -51,6 +52,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import com.volta.api.database.entity.AiReport;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("IncidentService")
@@ -224,7 +226,7 @@ class IncidentServiceTest {
             when(incidentRepository.search(companyId, "PENDING", null, null)).thenReturn(List.of());
 
             List<IncidentResponseDTO> response = service.getIncidents(
-                    new IncidentFilterDTO("PENDING", null, null), author);
+                    new IncidentFilterDTO(IncidentStatus.PENDING, null, null), author);
 
             assertThat(response).isEmpty();
             verify(incidentRepository).search(companyId, "PENDING", null, null);
@@ -332,6 +334,162 @@ class IncidentServiceTest {
         @DisplayName("resíduo comum sem coleta ativa fecha pela procedure")
         void closeIncident_commonWasteWithoutActiveCollection_closesThroughProcedure() {
             Incident incident = givenOwnedIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW), IncidentStatus.PENDING);
+
+            service.closeIncident(incident.getId(), author);
+
+            verify(incidentProcedure).closeIncident(incident.getId());
+        }
+    }
+
+    private Incident fullIncident(WasteType wasteType) {
+        Incident incident = incident(wasteType, Priority.MEDIUM, IncidentStatus.PENDING);
+        Company company = company(companyId);
+        Users user = new Users();
+        user.setId(author.id());
+        Area area = new Area();
+        area.setId(UUID.randomUUID());
+        incident.setCompany(company);
+        incident.setUser(user);
+        incident.setArea(area);
+        return incident;
+    }
+
+    @Nested
+    @DisplayName("register (consultas obrigatórias)")
+    class RegisterLookups {
+
+        private IncidentRequestDTO request() {
+            return new IncidentRequestDTO(
+                    UUID.randomUUID(), UUID.randomUUID(), null, "Oil leak", null, null, Priority.LOW);
+        }
+
+        @Test
+        @DisplayName("empresa inexistente lança not found")
+        void register_missingCompany_throwsNotFound() {
+            when(companyRepository.findById(companyId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.register(request(), author))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Company not found");
+
+            verify(incidentRepository, never()).saveAndFlush(any());
+        }
+
+        @Test
+        @DisplayName("usuário inexistente lança not found")
+        void register_missingUser_throwsNotFound() {
+            when(companyRepository.findById(companyId)).thenReturn(Optional.of(company(companyId)));
+            when(userRepository.findById(author.id())).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.register(request(), author))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("User not found");
+
+            verify(incidentRepository, never()).saveAndFlush(any());
+        }
+
+        @Test
+        @DisplayName("tipo de resíduo inexistente lança not found")
+        void register_missingWasteType_throwsNotFound() {
+            IncidentRequestDTO request = request();
+            Area area = new Area();
+            area.setId(request.areaId());
+            when(companyRepository.findById(companyId)).thenReturn(Optional.of(company(companyId)));
+            when(userRepository.findById(author.id())).thenReturn(Optional.of(new Users()));
+            when(areaRepository.findByIdAndCompanyId(request.areaId(), companyId)).thenReturn(Optional.of(area));
+            when(wasteTypeRepository.findById(request.wasteTypeId())).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.register(request, author))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Waste type not found");
+
+            verify(incidentRepository, never()).saveAndFlush(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("consultas com resultado")
+    class QueriesWithResults {
+
+        @Test
+        @DisplayName("getIncidents converte os incidentes encontrados")
+        void getIncidents_foundIncidents_convertsAll() {
+            Incident first = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            Incident second = fullIncident(wasteType(WasteCategory.PAPEL, RiskLevel.LOW));
+            when(incidentRepository.search(companyId, null, null, null)).thenReturn(List.of(first, second));
+
+            List<IncidentResponseDTO> response = service.getIncidents(new IncidentFilterDTO(null, null, null), author);
+
+            assertThat(response).extracting(IncidentResponseDTO::id)
+                    .containsExactly(first.getId(), second.getId());
+        }
+
+        @Test
+        @DisplayName("getIncidentById existente devolve o incidente convertido")
+        void getIncidentById_existing_returnsConvertedIncident() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+
+            IncidentResponseDTO response = service.getIncidentById(incident.getId(), author);
+
+            assertThat(response.id()).isEqualTo(incident.getId());
+            assertThat(response.companyId()).isEqualTo(companyId);
+            assertThat(response.wasteTypeId()).isEqualTo(incident.getWasteType().getId());
+        }
+
+        @Test
+        @DisplayName("incidente sem tipo de resíduo devolve wasteTypeId nulo")
+        void getIncidentById_withoutWasteType_returnsNullWasteTypeId() {
+            Incident incident = fullIncident(null);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+
+            assertThat(service.getIncidentById(incident.getId(), author).wasteTypeId()).isNull();
+        }
+
+        @Test
+        @DisplayName("relatório de IA existente é devolvido convertido")
+        void getAiReport_existingReport_returnsConvertedReport() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            AiReport report = new AiReport();
+            report.setId(UUID.randomUUID());
+            report.setIncident(incident);
+            report.setDetectedWasteType("Lubricant oil");
+            report.setAiContaminationLevel("HIGH");
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.of(report));
+
+            AiReportResponseDTO response = service.getAiReport(incident.getId(), author);
+
+            assertThat(response.id()).isEqualTo(report.getId());
+            assertThat(response.incidentId()).isEqualTo(incident.getId());
+            assertThat(response.detectedWasteType()).isEqualTo("Lubricant oil");
+            assertThat(response.aiContaminationLevel()).isEqualTo("HIGH");
+        }
+
+        @Test
+        @DisplayName("incidente sem relatório de IA lança not found")
+        void getAiReport_withoutReport_throwsNotFound() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.getAiReport(incident.getId(), author))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("AI report not found");
+        }
+    }
+
+    @Nested
+    @DisplayName("closeIncident (sem tipo de resíduo)")
+    class CloseWithoutWasteType {
+
+        @Test
+        @DisplayName("incidente sem tipo de resíduo não é tratado como perigoso e fecha pela procedure")
+        void closeIncident_withoutWasteType_closesThroughProcedure() {
+            Incident incident = incident(null, Priority.LOW, IncidentStatus.PENDING);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
 
             service.closeIncident(incident.getId(), author);
 

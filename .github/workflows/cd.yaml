@@ -44,28 +44,9 @@ jobs:
           echo "environment=${ENVIRONMENT}" >> "$GITHUB_OUTPUT"
           echo "Ambiente resolvido: ${ENVIRONMENT}"
 
-  validate-test:
-    name: validate-test
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Configurar Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Executar testes unitários
-        run: mvn --batch-mode test -Dtest='!VoltaApiApplicationTests'
-
   build-test:
     name: build-test
-    needs: [ setup, validate-test ]
+    needs: setup
     runs-on: ubuntu-latest
 
     services:

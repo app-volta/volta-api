@@ -101,4 +101,10 @@ class TokenProviderTest {
     void parseClaims_invalidToken_returnsEmpty() {
         assertThat(tokenProvider.parseClaims("this-is-not-a-jwt")).isEmpty();
     }
+
+    @Test
+    @DisplayName("expõe o tempo de expiração configurado")
+    void getExpirationTime_returnsConfiguredValue() {
+        assertThat(tokenProvider.getExpirationTime()).isEqualTo(3_600_000L);
+    }
 }

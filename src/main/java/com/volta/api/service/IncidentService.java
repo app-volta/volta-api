@@ -82,8 +82,8 @@ public class IncidentService implements IncidentUseCase {
 
         List<Incident> found = incidentRepository.search(
                 author.companyId(),
-                filter.status(),
-                filter.priority(),
+                filter.status() != null ? filter.status().name() : null,
+                filter.priority() != null ? filter.priority().name() : null,
                 filter.areaId()
         );
 

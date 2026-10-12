@@ -59,6 +59,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import com.volta.api.database.entity.CollectionStatus;
+import com.volta.api.database.entity.WasteType;
+import com.volta.api.dto.collection.CollectionStatusResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CollectionService")
@@ -575,6 +578,115 @@ class CollectionServiceTest {
 
             assertThat(response.collectionId()).isEqualTo(collection.getId());
             assertThat(response.completionHours()).isEqualByComparingTo("36.50");
+        }
+    }
+
+    @Nested
+    @DisplayName("register (casos adicionais)")
+    class RegisterExtra {
+
+        @Test
+        @DisplayName("categoria fora do padrão CONAMA 275 lança regra de negócio")
+        void register_nonConamaCategory_throwsBusinessRule() {
+            WasteType unknown = new WasteType();
+            unknown.setId(UUID.randomUUID());
+            unknown.setCategory("UNKNOWN_CATEGORY");
+            unknown.setDefaultRiskLevel(RiskLevel.LOW.name());
+            Incident incident = incident(unknown, Priority.MEDIUM, IncidentStatus.PENDING);
+            Cooperative cooperative = cooperative("PLASTICO");
+            givenIncidentAndCooperative(incident, cooperative);
+
+            assertThatThrownBy(() -> service.register(requestFor(incident, cooperative, false), author))
+                    .isInstanceOf(BusinessRuleException.class)
+                    .hasMessage("Waste type category 'UNKNOWN_CATEGORY' is not a CONAMA 275 category");
+
+            verify(collectionRepository, never()).saveAndFlush(any());
+        }
+
+        @Test
+        @DisplayName("resíduo de risco HIGH com cooperativa habilitada em PERIGOSO é aceito")
+        void register_highRiskWasteWithHazardousSpecialty_isAccepted() {
+            Incident incident = pendingIncident(WasteCategory.METAL, RiskLevel.HIGH, Priority.HIGH);
+            Cooperative cooperative = cooperative("METAL,PERIGOSO");
+            givenIncidentAndCooperative(incident, cooperative);
+            UUID savedId = UUID.randomUUID();
+            when(collectionRepository.saveAndFlush(any(Collection.class))).thenAnswer(invocation -> {
+                Collection saved = invocation.getArgument(0);
+                saved.setId(savedId);
+                return saved;
+            });
+
+            CollectionResponseDTO response = service.register(requestFor(incident, cooperative, false), author);
+
+            assertThat(response.id()).isEqualTo(savedId);
+            verify(collectionProcedure).updateCollectionStatus(savedId, "REQUESTED", "Collection Requested");
+        }
+    }
+
+    @Nested
+    @DisplayName("consultas com resultado")
+    class QueriesWithResults {
+
+        private Collection ownedCollection() {
+            Incident incident = pendingIncident(WasteCategory.PLASTICO, RiskLevel.LOW, Priority.MEDIUM);
+            Collection collection = collection(
+                    incident, cooperative("PLASTICO"), CollectionStatusType.SCHEDULED, NOW.minusDays(1), false);
+            givenOwnedCollection(collection);
+            return collection;
+        }
+
+        @Test
+        @DisplayName("getCollectionById devolve a coleta convertida")
+        void getCollectionById_ownedCollection_returnsConvertedCollection() {
+            Collection collection = ownedCollection();
+
+            CollectionResponseDTO response = service.getCollectionById(collection.getId(), author);
+
+            assertThat(response.id()).isEqualTo(collection.getId());
+            assertThat(response.currentStatus()).isEqualTo("SCHEDULED");
+        }
+
+        @Test
+        @DisplayName("getCollectionStatus devolve o histórico convertido")
+        void getCollectionStatus_ownedCollection_returnsConvertedHistory() {
+            Collection collection = ownedCollection();
+            CollectionStatus first = new CollectionStatus();
+            first.setId(UUID.randomUUID());
+            first.setCollection(collection);
+            first.setStatus("REQUESTED");
+            CollectionStatus second = new CollectionStatus();
+            second.setId(UUID.randomUUID());
+            second.setCollection(collection);
+            second.setStatus("SCHEDULED");
+            second.setObservation("Scheduled for Monday");
+            when(collectionStatusRepository.findByCollectionIdOrderByChangedAtAsc(collection.getId()))
+                    .thenReturn(List.of(first, second));
+
+            List<CollectionStatusResponseDTO> response = service.getCollectionStatus(collection.getId(), author);
+
+            assertThat(response).extracting(CollectionStatusResponseDTO::status)
+                    .containsExactly("REQUESTED", "SCHEDULED");
+            assertThat(response.get(1).collectionId()).isEqualTo(collection.getId());
+            assertThat(response.get(1).observation()).isEqualTo("Scheduled for Monday");
+        }
+    }
+
+    @Nested
+    @DisplayName("register (urgente opcional)")
+    class RegisterUrgentOptional {
+
+        @Test
+        @DisplayName("urgente omitido assume false para incidente não crítico")
+        void register_nullUrgent_defaultsToFalse() {
+            Incident incident = pendingIncident(WasteCategory.PLASTICO, RiskLevel.LOW, Priority.MEDIUM);
+            Cooperative cooperative = cooperative("PLASTICO");
+            givenIncidentAndCooperative(incident, cooperative);
+            when(collectionRepository.saveAndFlush(any(Collection.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            CollectionRequestDTO request = new CollectionRequestDTO(incident.getId(), cooperative.getId(), "Recyclable", null);
+
+            CollectionResponseDTO response = service.register(request, author);
+
+            assertThat(response.urgent()).isFalse();
         }
     }
 }

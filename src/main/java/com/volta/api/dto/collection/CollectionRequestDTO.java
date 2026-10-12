@@ -23,7 +23,7 @@ public record CollectionRequestDTO(
         @Size(max = 50)
         String collectionType,
 
-        @Schema(description = "Indica se a coleta é urgente. É forçado para true quando o incidente é CRITICAL", example = "false")
-        boolean urgent
+        @Schema(description = "Indica se a coleta é urgente. Opcional, o padrão é false. É forçado para true quando o incidente é CRITICAL", example = "false")
+        Boolean urgent
 ) {
 }

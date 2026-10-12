@@ -31,4 +31,9 @@ public record AuthenticatedUser(
     public String getUsername() {
         return email;
     }
+
+    @Override
+    public String toString() {
+        return "AuthenticatedUser[id=" + id + ", email=" + email + ", companyId=" + companyId + ", role=" + role + "]";
+    }
 }

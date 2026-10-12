@@ -75,9 +75,5 @@ public class Incident {
 
     @Builder.Default
     @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)
-    private Set<Attachment> attachments = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "incident", fetch = FetchType.LAZY)
     private Set<Collection> collections = new HashSet<>();
 }
