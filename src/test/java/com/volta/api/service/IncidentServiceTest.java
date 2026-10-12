@@ -226,7 +226,7 @@ class IncidentServiceTest {
             when(incidentRepository.search(companyId, "PENDING", null, null)).thenReturn(List.of());
 
             List<IncidentResponseDTO> response = service.getIncidents(
-                    new IncidentFilterDTO("PENDING", null, null), author);
+                    new IncidentFilterDTO(IncidentStatus.PENDING, null, null), author);
 
             assertThat(response).isEmpty();
             verify(incidentRepository).search(companyId, "PENDING", null, null);

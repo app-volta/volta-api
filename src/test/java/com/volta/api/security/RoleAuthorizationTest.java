@@ -128,7 +128,7 @@ class RoleAuthorizationTest {
                 endpoint(HttpMethod.DELETE, "/areas/" + ID, ADMIN),
 
                 endpoint(HttpMethod.POST, "/collections", """
-                        {"incidentId":"%s","cooperativeId":"%s","collectionType":"Recyclable","urgent":false}""".formatted(ID, ID), ADMIN_MANAGER),
+                        {"incidentId":"%s","cooperativeId":"%s","collectionType":"Recyclable"}""".formatted(ID, ID), ADMIN_MANAGER),
                 endpoint(HttpMethod.GET, "/collections", ADMIN_MANAGER),
                 endpoint(HttpMethod.GET, "/collections/" + ID, ADMIN_MANAGER),
                 endpoint(HttpMethod.GET, "/collections/" + ID + "/completion-time", ADMIN_MANAGER),
@@ -283,5 +283,33 @@ class RoleAuthorizationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.email").value("Email is required"))
                 .andExpect(jsonPath("$.errors.password").value("Password is required"));
+    }
+
+    @Test
+    @DisplayName("filtro de incidentes com status inválido devolve 400")
+    void incidents_withInvalidStatusFilter_returns400() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/incidents")
+                        .param("status", "XYZ")
+                        .with(authentication(authenticationOf("MANAGER"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("filtro de incidentes com prioridade inválida devolve 400")
+    void incidents_withInvalidPriorityFilter_returns400() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/incidents")
+                        .param("priority", "URGENT")
+                        .with(authentication(authenticationOf("MANAGER"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("filtro de incidentes com valores válidos é aceito")
+    void incidents_withValidFilters_isAccepted() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/incidents")
+                        .param("status", "PENDING")
+                        .param("priority", "HIGH")
+                        .with(authentication(authenticationOf("MANAGER"))))
+                .andExpect(status().isOk());
     }
 }

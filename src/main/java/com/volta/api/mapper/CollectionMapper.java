@@ -21,7 +21,7 @@ public class CollectionMapper {
         collection.setIncident(incident);
         collection.setCooperative(cooperative);
         collection.setCollectionType(dto.collectionType());
-        collection.setUrgent(dto.urgent());
+        collection.setUrgent(Boolean.TRUE.equals(dto.urgent()));
         collection.setCurrentStatus(CollectionStatusType.REQUESTED.name());
 
         return collection;

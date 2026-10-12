@@ -670,4 +670,23 @@ class CollectionServiceTest {
             assertThat(response.get(1).observation()).isEqualTo("Scheduled for Monday");
         }
     }
+
+    @Nested
+    @DisplayName("register (urgente opcional)")
+    class RegisterUrgentOptional {
+
+        @Test
+        @DisplayName("urgente omitido assume false para incidente não crítico")
+        void register_nullUrgent_defaultsToFalse() {
+            Incident incident = pendingIncident(WasteCategory.PLASTICO, RiskLevel.LOW, Priority.MEDIUM);
+            Cooperative cooperative = cooperative("PLASTICO");
+            givenIncidentAndCooperative(incident, cooperative);
+            when(collectionRepository.saveAndFlush(any(Collection.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            CollectionRequestDTO request = new CollectionRequestDTO(incident.getId(), cooperative.getId(), "Recyclable", null);
+
+            CollectionResponseDTO response = service.register(request, author);
+
+            assertThat(response.urgent()).isFalse();
+        }
+    }
 }
