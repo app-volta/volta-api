@@ -36,6 +36,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import com.volta.api.dto.user.UserUpdateRequestDTO;
+import java.util.List;
+import com.volta.api.database.entity.Company;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService")
@@ -168,6 +171,132 @@ class UserServiceTest {
                     targetId, new UserRoleUpdateRequestDTO(RoleType.MANAGER), author))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage("User not found");
+        }
+    }
+
+    private Users user(UUID id, String name) {
+        return Users.builder()
+                .id(id).name(name).email(name.toLowerCase() + "@volta.com")
+                .company(company(companyId)).role(role("EMPLOYEE")).build();
+    }
+
+    @Nested
+    @DisplayName("register (papel)")
+    class RegisterRole {
+
+        @Test
+        @DisplayName("papel EMPLOYEE inexistente lança not found e não salva")
+        void register_missingEmployeeRole_throwsNotFoundAndDoesNotSave() {
+            Company company = company(companyId);
+            when(userRepository.findByEmail("ana@volta.com")).thenReturn(Optional.empty());
+            when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+            when(roleRepository.findByType("EMPLOYEE")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.register(userRequest(companyId).build()))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Role not found");
+
+            verify(userRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("consultas")
+    class Queries {
+
+        @Test
+        @DisplayName("getUsers converte todos os usuários")
+        void getUsers_existingUsers_convertsAll() {
+            when(userRepository.findAll()).thenReturn(List.of(
+                    user(UUID.randomUUID(), "Ana"), user(UUID.randomUUID(), "Bruno")));
+
+            assertThat(service.getUsers()).extracting(UserResponseDTO::name)
+                    .containsExactly("Ana", "Bruno");
+        }
+
+        @Test
+        @DisplayName("getUsers sem usuários devolve lista vazia")
+        void getUsers_noUsers_returnsEmptyList() {
+            when(userRepository.findAll()).thenReturn(List.of());
+
+            assertThat(service.getUsers()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("getUserById existente devolve o usuário convertido")
+        void getUserById_existing_returnsConvertedUser() {
+            Users user = user(UUID.randomUUID(), "Ana");
+            when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+            UserResponseDTO response = service.getUserById(user.getId());
+
+            assertThat(response.id()).isEqualTo(user.getId());
+            assertThat(response.email()).isEqualTo("ana@volta.com");
+            assertThat(response.role()).isEqualTo("EMPLOYEE");
+        }
+
+        @Test
+        @DisplayName("getUserById inexistente lança not found")
+        void getUserById_missing_throwsNotFound() {
+            UUID id = UUID.randomUUID();
+            when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.getUserById(id))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("User not found");
+        }
+    }
+
+    @Nested
+    @DisplayName("update")
+    class Update {
+
+        @Test
+        @DisplayName("usuário inexistente lança not found e não salva")
+        void update_missingUser_throwsNotFoundAndDoesNotSave() {
+            UUID id = UUID.randomUUID();
+            when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.update(id, new UserUpdateRequestDTO("Ana Maria", "Lead")))
+                    .isInstanceOf(ResourceNotFoundException.class);
+
+            verify(userRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("usuário existente altera nome e cargo e salva")
+        void update_existingUser_changesNameAndPositionAndSaves() {
+            Users user = user(UUID.randomUUID(), "Ana");
+            when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+            UserResponseDTO response = service.update(user.getId(), new UserUpdateRequestDTO("Ana Maria", "Lead"));
+
+            assertThat(user.getName()).isEqualTo("Ana Maria");
+            assertThat(user.getPosition()).isEqualTo("Lead");
+            assertThat(response.name()).isEqualTo("Ana Maria");
+            assertThat(response.position()).isEqualTo("Lead");
+            verify(userRepository).save(user);
+        }
+    }
+
+    @Nested
+    @DisplayName("updateRole (papel inexistente)")
+    class UpdateRoleMissingRole {
+
+        @Test
+        @DisplayName("papel inexistente lança not found e não salva")
+        void updateRole_missingRole_throwsNotFoundAndDoesNotSave() {
+            Users target = user(UUID.randomUUID(), "Bruno");
+            AuthenticatedUser author = authenticatedUser(UUID.randomUUID(), companyId, "ADMIN");
+            when(userRepository.findById(target.getId())).thenReturn(Optional.of(target));
+            when(roleRepository.findByType("MANAGER")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.updateRole(
+                    target.getId(), new UserRoleUpdateRequestDTO(RoleType.MANAGER), author))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Role not found");
+
+            verify(userRepository, never()).save(any());
         }
     }
 }

@@ -106,4 +106,36 @@ class JwtAuthenticationFilterTest {
 
         assertThat(runFilterWith("Bearer " + token)).isNull();
     }
+
+    @Test
+    @DisplayName("header que não é Bearer não autentica")
+    void doFilter_nonBearerHeader_doesNotAuthenticate() throws Exception {
+        assertThat(runFilterWith("Basic dXNlcjpwYXNz")).isNull();
+    }
+
+    @Test
+    @DisplayName("token sem companyId não autentica")
+    void doFilter_tokenWithoutCompanyId_doesNotAuthenticate() throws Exception {
+        String token = Jwts.builder()
+                .subject("ana@volta.com")
+                .claim("userId", UUID.randomUUID().toString())
+                .claim("role", "ADMIN")
+                .signWith(Keys.hmacShaKeyFor(TEST_KEY.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+
+        assertThat(runFilterWith("Bearer " + token)).isNull();
+    }
+
+    @Test
+    @DisplayName("token sem role não autentica")
+    void doFilter_tokenWithoutRole_doesNotAuthenticate() throws Exception {
+        String token = Jwts.builder()
+                .subject("ana@volta.com")
+                .claim("userId", UUID.randomUUID().toString())
+                .claim("companyId", UUID.randomUUID().toString())
+                .signWith(Keys.hmacShaKeyFor(TEST_KEY.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+
+        assertThat(runFilterWith("Bearer " + token)).isNull();
+    }
 }

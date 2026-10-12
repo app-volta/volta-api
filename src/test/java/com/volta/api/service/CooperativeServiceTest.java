@@ -30,6 +30,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CooperativeService")
@@ -156,6 +157,79 @@ class CooperativeServiceTest {
             assertThat(response.specialties()).isEqualTo("VIDRO,METAL");
             assertThat(existing.getName()).isEqualTo("Recicla Mais");
             verify(cooperativeRepository).save(existing);
+        }
+    }
+
+    private Cooperative cooperative(UUID id, String name) {
+        Cooperative cooperative = new Cooperative();
+        cooperative.setId(id);
+        cooperative.setName(name);
+        cooperative.setCnpj("11444777000161");
+        cooperative.setLatitude(new BigDecimal("-23.561684"));
+        cooperative.setLongitude(new BigDecimal("-46.655981"));
+        cooperative.setSpecialties("PAPEL");
+        return cooperative;
+    }
+
+    @Nested
+    @DisplayName("consultas")
+    class Queries {
+
+        @Test
+        @DisplayName("getCooperatives converte todas as cooperativas")
+        void getCooperatives_existingRecords_convertsAll() {
+            when(cooperativeRepository.findAll()).thenReturn(List.of(
+                    cooperative(UUID.randomUUID(), "First"), cooperative(UUID.randomUUID(), "Second")));
+
+            assertThat(service.getCooperatives()).extracting(CooperativeResponseDTO::name)
+                    .containsExactly("First", "Second");
+        }
+
+        @Test
+        @DisplayName("getCooperativeById existente devolve a cooperativa convertida")
+        void getCooperativeById_existing_returnsConvertedCooperative() {
+            Cooperative cooperative = cooperative(ID, "First");
+            when(cooperativeRepository.findById(ID)).thenReturn(Optional.of(cooperative));
+
+            CooperativeResponseDTO response = service.getCooperativeById(ID);
+
+            assertThat(response.id()).isEqualTo(ID);
+            assertThat(response.specialties()).isEqualTo("PAPEL");
+        }
+
+        @Test
+        @DisplayName("getCooperativeById inexistente lança not found")
+        void getCooperativeById_missing_throwsNotFound() {
+            when(cooperativeRepository.findById(ID)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.getCooperativeById(ID))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Cooperative not found");
+        }
+    }
+
+    @Nested
+    @DisplayName("delete")
+    class Delete {
+
+        @Test
+        @DisplayName("inexistente lança not found e não apaga")
+        void delete_missing_throwsNotFoundAndDoesNotDelete() {
+            when(cooperativeRepository.existsById(ID)).thenReturn(false);
+
+            assertThatThrownBy(() -> service.delete(ID)).isInstanceOf(ResourceNotFoundException.class);
+
+            verify(cooperativeRepository, never()).deleteById(any());
+        }
+
+        @Test
+        @DisplayName("existente remove pelo id")
+        void delete_existing_removesById() {
+            when(cooperativeRepository.existsById(ID)).thenReturn(true);
+
+            service.delete(ID);
+
+            verify(cooperativeRepository).deleteById(ID);
         }
     }
 }
