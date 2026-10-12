@@ -1,0 +1,35 @@
+package com.volta.api.mapper;
+
+import com.volta.api.database.entity.Area;
+import com.volta.api.database.entity.Company;
+import com.volta.api.dto.area.AreaRequestDTO;
+import com.volta.api.dto.area.AreaUpdateRequestDTO;
+import com.volta.api.dto.area.AreaResponseDTO;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AreaMapper {
+    public Area toEntity(AreaRequestDTO dto, Company company) {
+        Area area = new Area();
+
+        area.setCompany(company);
+        area.setSectorName(dto.sectorName());
+        area.setLocationDescription(dto.locationDescription());
+
+        return area;
+    }
+
+    public AreaResponseDTO toResponse(Area area) {
+        return new AreaResponseDTO(
+                area.getId(),
+                area.getCompany().getId(),
+                area.getSectorName(),
+                area.getLocationDescription()
+        );
+    }
+
+    public void updateEntity(Area area, AreaUpdateRequestDTO dto) {
+        area.setSectorName(dto.sectorName());
+        area.setLocationDescription(dto.locationDescription());
+    }
+}

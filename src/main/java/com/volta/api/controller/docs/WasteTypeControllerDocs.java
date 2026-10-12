@@ -1,0 +1,60 @@
+package com.volta.api.controller.docs;
+
+import com.volta.api.dto.wastetype.WasteTypeRequestDTO;
+import com.volta.api.dto.wastetype.WasteTypeResponseDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.List;
+import java.util.UUID;
+
+@Tag(name = "Tipos de resíduo", description = "Catálogo de categorias de resíduo e seu nível de risco padrão")
+public interface WasteTypeControllerDocs {
+
+    @Operation(
+            summary = "Cadastra um tipo de resíduo",
+            description = "Categorias PERIGOSO, SAUDE e RADIOATIVO exigem nível de risco HIGH (NBR 10004 Classe I). "
+                    + "**Acesso:** ADMIN."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Tipo de resíduo cadastrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "422", description = "Categoria perigosa sem nível de risco HIGH")
+    })
+    WasteTypeResponseDTO create(WasteTypeRequestDTO dto);
+
+    @Operation(summary = "Lista todos os tipos de resíduo", description = "**Acesso:** qualquer usuário autenticado.")
+    @ApiResponse(responseCode = "200", description = "Lista de tipos de resíduo")
+    List<WasteTypeResponseDTO> show();
+
+    @Operation(summary = "Busca um tipo de resíduo pelo ID", description = "**Acesso:** qualquer usuário autenticado.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tipo de resíduo encontrado"),
+            @ApiResponse(responseCode = "404", description = "Tipo de resíduo não encontrado")
+    })
+    WasteTypeResponseDTO show(@Parameter(description = "ID do tipo de resíduo") UUID id);
+
+    @Operation(
+            summary = "Atualiza um tipo de resíduo",
+            description = "Categorias PERIGOSO, SAUDE e RADIOATIVO exigem nível de risco HIGH (NBR 10004 Classe I). "
+                    + "**Acesso:** ADMIN."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tipo de resíduo atualizado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Tipo de resíduo não encontrado"),
+            @ApiResponse(responseCode = "422", description = "Categoria perigosa sem nível de risco HIGH")
+    })
+    WasteTypeResponseDTO update(@Parameter(description = "ID do tipo de resíduo") UUID id, WasteTypeRequestDTO dto);
+
+    @Operation(summary = "Remove um tipo de resíduo", description = "**Acesso:** ADMIN.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Tipo de resíduo removido"),
+            @ApiResponse(responseCode = "404", description = "Tipo de resíduo não encontrado"),
+            @ApiResponse(responseCode = "409", description = "Tipo de resíduo possui registros vinculados")
+    })
+    void remove(@Parameter(description = "ID do tipo de resíduo") UUID id);
+}

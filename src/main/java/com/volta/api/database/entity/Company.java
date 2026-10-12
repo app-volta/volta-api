@@ -1,0 +1,51 @@
+package com.volta.api.database.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+public class Company {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(
+            columnDefinition = "UUID DEFAULT gen_random_uuid()",
+            updatable = false,
+            nullable = false,
+            unique = true
+    )
+    private UUID id;
+
+    @NotNull
+    @Column(length = 150, nullable = false)
+    private String name;
+
+    @NotNull
+    @Column(length = 18, nullable = false)
+    private String cnpj;
+
+    @NotNull
+    @Column(nullable = false)
+    private String address;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private Set<Area> areas = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private Set<EsgMetric> esgMetrics = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private Set<Incident> incidents = new HashSet<>();
+}
