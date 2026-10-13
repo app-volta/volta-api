@@ -3,8 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [ develop, main ]
-  push:
-    branches: [ develop, main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -61,10 +59,10 @@ jobs:
       - name: Build, testes e empacotamento
         run: mvn --batch-mode verify
 
-      - name: Publicar relatório de testes
+      - name: Publicar relatório de cobertura
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: relatorio-testes-surefire
-          path: target/surefire-reports/
+          name: relatorio-cobertura-jacoco
+          path: target/site/jacoco/
           retention-days: 5
