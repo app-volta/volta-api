@@ -142,8 +142,19 @@ src/main/resources
 
 ### Administrador inicial
 
-Na inicialização, a classe `AdminBootstrap` cria um usuário com perfil **ADMIN** quando `ADMIN_EMAIL`, `ADMIN_PASSWORD` e `ADMIN_COMPANY_ID` estão preenchidos e ainda não existe usuário com esse e-mail. A empresa informada em `ADMIN_COMPANY_ID` precisa existir no banco.
+Na inicialização, o `AdminBootstrap` cria um usuário `ADMIN` se `ADMIN_EMAIL`,
+`ADMIN_PASSWORD` e `ADMIN_COMPANY_ID` estiverem preenchidos **e** não existir
+usuário com esse e-mail.
 
+- **Roda a cada start e é idempotente**: se o e-mail já existe, não faz nada.
+  Mudar `ADMIN_PASSWORD` depois **não** altera a senha do usuário existente.
+- **A empresa precisa existir antes.** Como só um ADMIN cria empresas, a primeira
+  empresa tem de ser inserida direto no banco (SQL) antes do primeiro start.
+- **O perfil `ADMIN` vem da migração `V2__seed_roles.sql`.**
+- **Erro na configuração derruba a aplicação.** `ADMIN_COMPANY_ID` com UUID inválido
+  ou de empresa inexistente interrompe o start.
+- **Depois de criar o admin, remova `ADMIN_PASSWORD` do ambiente.**
+- Se alguma das três variáveis faltar, nada é criado (a aplicação registra um aviso).
 ---
 
 ## Como executar
