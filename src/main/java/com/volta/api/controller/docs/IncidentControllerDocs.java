@@ -4,6 +4,7 @@ import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
+import com.volta.api.dto.scoring.IncidentScoringContextDTO;
 import com.volta.api.security.AuthenticatedUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -79,6 +80,22 @@ public interface IncidentControllerDocs {
             @ApiResponse(responseCode = "404", description = "Incidente ou relatório não encontrados")
     })
     AiReportResponseDTO showAiReport(
+            @Parameter(description = "ID do incidente") UUID id,
+            @Parameter(hidden = true) AuthenticatedUser author
+    );
+
+    @Operation(
+            summary = "Consulta o contexto de score da ocorrência",
+            description = "Retorna os dados da ocorrência usados no cálculo de score de cooperativas. "
+                    + "Sem nível de contaminação informado, devolve o risco padrão do resíduo. "
+                    + "O campo origin é nulo enquanto a área não tiver coordenadas cadastradas. "
+                    + "**Acesso:** ADMIN, MANAGER, EMPLOYEE."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Contexto encontrado"),
+            @ApiResponse(responseCode = "404", description = "Incidente não encontrado")
+    })
+    IncidentScoringContextDTO showScoringContext(
             @Parameter(description = "ID do incidente") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );

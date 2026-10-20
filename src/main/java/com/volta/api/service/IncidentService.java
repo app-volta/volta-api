@@ -7,6 +7,7 @@ import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
+import com.volta.api.dto.scoring.IncidentScoringContextDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.enums.IncidentStatus;
 import com.volta.api.enums.Priority;
@@ -15,6 +16,7 @@ import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.AiReportMapper;
 import com.volta.api.mapper.IncidentMapper;
+import com.volta.api.mapper.ScoringMapper;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.IncidentUseCase;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +50,8 @@ public class IncidentService implements IncidentUseCase {
     private final AiReportMapper aiReportMapper;
 
     private final CollectionRepository collectionRepository;
+
+    private final ScoringMapper scoringMapper;
 
     public IncidentResponseDTO register(IncidentRequestDTO dto, AuthenticatedUser author) {
 
@@ -140,5 +144,16 @@ public class IncidentService implements IncidentUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("AI report"));
 
         return aiReportMapper.toResponse(aiReport);
+    }
+
+    @Transactional(readOnly = true)
+    public IncidentScoringContextDTO getScoringContext(UUID id, AuthenticatedUser author) {
+        Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident"));
+
+        AiReport aiReport = aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(id)
+                .orElse(null);
+
+        return scoringMapper.toIncidentContext(incident, aiReport);
     }
 }

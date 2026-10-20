@@ -4,11 +4,13 @@ import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.repository.CooperativeRepository;
 import com.volta.api.dto.cooperative.CooperativeRequestDTO;
 import com.volta.api.dto.cooperative.CooperativeResponseDTO;
+import com.volta.api.dto.scoring.CooperativeScoringDataDTO;
 import com.volta.api.enums.WasteCategory;
 import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.InvalidRequestException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CooperativeMapper;
+import com.volta.api.mapper.ScoringMapper;
 import com.volta.api.usecase.CooperativeUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class CooperativeService implements CooperativeUseCase {
 
     private final CooperativeMapper cooperativeMapper;
 
+    private final ScoringMapper scoringMapper;
 
     public CooperativeResponseDTO register(CooperativeRequestDTO dto) {
         validateSpecialties(dto.specialties());
@@ -44,6 +47,16 @@ public class CooperativeService implements CooperativeUseCase {
 
         for (Cooperative cooperative : cooperativeRepository.findAll()) {
             cooperatives.add(cooperativeMapper.toResponse(cooperative));
+        }
+
+        return cooperatives;
+    }
+
+    public List<CooperativeScoringDataDTO> getScoringData() {
+        List<CooperativeScoringDataDTO> cooperatives = new ArrayList<>();
+
+        for (Cooperative cooperative : cooperativeRepository.findAll()) {
+            cooperatives.add(scoringMapper.toCooperativeData(cooperative));
         }
 
         return cooperatives;

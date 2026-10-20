@@ -8,6 +8,8 @@ import com.volta.api.exception.ConflictException;
 import com.volta.api.exception.InvalidRequestException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CooperativeMapper;
+import com.volta.api.mapper.ScoringMapper;
+import com.volta.api.dto.scoring.CooperativeScoringDataDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +47,7 @@ class CooperativeServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new CooperativeService(cooperativeRepository, new CooperativeMapper());
+        service = new CooperativeService(cooperativeRepository, new CooperativeMapper(), new ScoringMapper());
     }
 
     private CooperativeRequestDTO request(String specialties) {
@@ -205,6 +207,59 @@ class CooperativeServiceTest {
             assertThatThrownBy(() -> service.getCooperativeById(ID))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage("Cooperative not found");
+        }
+    }
+
+    @Nested
+    @DisplayName("getScoringData")
+    class GetScoringData {
+
+        private Cooperative cooperative(String specialties, BigDecimal averageRating) {
+            Cooperative cooperative = new Cooperative();
+            cooperative.setId(ID);
+            cooperative.setName("Recicla Sul");
+            cooperative.setCnpj("11444777000161");
+            cooperative.setLatitude(new BigDecimal("-23.561684"));
+            cooperative.setLongitude(new BigDecimal("-46.655981"));
+            cooperative.setAverageRating(averageRating);
+            cooperative.setSpecialties(specialties);
+            return cooperative;
+        }
+
+        @Test
+        @DisplayName("sem cooperativas devolve lista vazia")
+        void getScoringData_noCooperatives_returnsEmptyList() {
+            when(cooperativeRepository.findAll()).thenReturn(List.of());
+
+            assertThat(service.getScoringData()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("devolve especialidades como lista normalizada e sem repetição")
+        void getScoringData_returnsNormalizedSpecialtyList() {
+            when(cooperativeRepository.findAll())
+                    .thenReturn(List.of(cooperative("Papel,, plástico ,PERIGOSO,papel", new BigDecimal("4.50"))));
+
+            List<CooperativeScoringDataDTO> result = service.getScoringData();
+
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).id()).isEqualTo(ID);
+            assertThat(result.get(0).name()).isEqualTo("Recicla Sul");
+            assertThat(result.get(0).latitude()).isEqualByComparingTo("-23.561684");
+            assertThat(result.get(0).longitude()).isEqualByComparingTo("-46.655981");
+            assertThat(result.get(0).averageRating()).isEqualByComparingTo("4.50");
+            assertThat(result.get(0).specialties()).containsExactly("PAPEL", "PLASTICO", "PERIGOSO");
+        }
+
+        @Test
+        @DisplayName("especialidades nulas viram lista vazia e a avaliação segue como veio")
+        void getScoringData_nullSpecialties_returnsEmptyListAndKeepsRating() {
+            when(cooperativeRepository.findAll()).thenReturn(List.of(cooperative(null, null)));
+
+            List<CooperativeScoringDataDTO> result = service.getScoringData();
+
+            assertThat(result.get(0).specialties()).isEmpty();
+            assertThat(result.get(0).averageRating()).isNull();
         }
     }
 
