@@ -14,6 +14,8 @@ public class CompanyMapper {
         company.setName(dto.name());
         company.setCnpj(dto.cnpj());
         company.setAddress(dto.address());
+        company.setLatitude(dto.latitude());
+        company.setLongitude(dto.longitude());
 
         return company;
     }
@@ -23,7 +25,9 @@ public class CompanyMapper {
                 company.getId(),
                 company.getName(),
                 company.getCnpj(),
-                company.getAddress()
+                company.getAddress(),
+                company.getLatitude(),
+                company.getLongitude()
         );
     }
 
@@ -31,5 +35,7 @@ public class CompanyMapper {
         company.setName(dto.name());
         company.setCnpj(dto.cnpj());
         company.setAddress(dto.address());
+        company.setLatitude(dto.latitude());
+        company.setLongitude(dto.longitude());
     }
 }

@@ -4,6 +4,7 @@ import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.scoring.IncidentScoringContextDTO;
 import com.volta.api.security.AuthenticatedUser;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface IncidentUseCase {
     void closeIncident(UUID id, AuthenticatedUser author);
 
     AiReportResponseDTO getAiReport(UUID id, AuthenticatedUser author);
+
+    IncidentScoringContextDTO getScoringContext(UUID id, AuthenticatedUser author);
 }
