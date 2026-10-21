@@ -403,8 +403,8 @@ ALTER TABLE users
             );
 
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION;
-ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
+    ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION,
+    ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
 
 -- ============================================================
 -- 18. COOPERATIVE_WASTE_TYPE
