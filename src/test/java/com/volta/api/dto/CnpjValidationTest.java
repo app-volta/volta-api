@@ -34,7 +34,7 @@ class CnpjValidationTest {
     }
 
     private Set<ConstraintViolation<CompanyRequestDTO>> validate(String cnpj) {
-        return validator.validate(new CompanyRequestDTO("Volta Industry", cnpj, "Av. Paulista, 1000"));
+        return validator.validate(new CompanyRequestDTO("Volta Industry", cnpj, "Av. Paulista, 1000", null, null));
     }
 
     @ParameterizedTest(name = "\"{0}\" é válido")

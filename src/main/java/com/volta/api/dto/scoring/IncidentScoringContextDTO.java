@@ -14,7 +14,7 @@ public record IncidentScoringContextDTO(
         WasteTypeScoringDTO wasteType,
         @Schema(description = "Nível de contaminação; usa o risco padrão do resíduo quando não informado", example = "MEDIUM")
         String contaminationLevel,
-        @Schema(description = "Ponto de origem da medição de distância; nulo enquanto não houver coordenadas cadastradas")
+        @Schema(description = "Ponto de origem da medição de distância; coordenadas da empresa; nulo enquanto ela não as tiver cadastradas")
         CoordinatesScoringDTO origin,
         @Schema(description = "Resumo do relatório de IA; nulo quando a ocorrência não tem relatório")
         AiReportScoringDTO aiReport

@@ -37,6 +37,12 @@ public class Company {
     @Column(nullable = false)
     private String address;
 
+    @Column(columnDefinition = "DOUBLE PRECISION")
+    private Double latitude;
+
+    @Column(columnDefinition = "DOUBLE PRECISION")
+    private Double longitude;
+
     @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private Set<Area> areas = new HashSet<>();

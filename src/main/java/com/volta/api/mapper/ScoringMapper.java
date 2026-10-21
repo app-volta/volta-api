@@ -1,11 +1,13 @@
 package com.volta.api.mapper;
 
 import com.volta.api.database.entity.AiReport;
+import com.volta.api.database.entity.Company;
 import com.volta.api.database.entity.Cooperative;
 import com.volta.api.database.entity.Incident;
 import com.volta.api.database.entity.WasteType;
 import com.volta.api.dto.scoring.AiReportScoringDTO;
 import com.volta.api.dto.scoring.CooperativeScoringDataDTO;
+import com.volta.api.dto.scoring.CoordinatesScoringDTO;
 import com.volta.api.dto.scoring.IncidentScoringContextDTO;
 import com.volta.api.dto.scoring.WasteTypeScoringDTO;
 import com.volta.api.enums.WasteCategory;
@@ -43,9 +45,17 @@ public class ScoringMapper {
                         wasteType.getDefaultRiskLevel()
                 ),
                 contaminationLevel,
-                null,
+                toOrigin(incident.getCompany()),
                 aiReportDto
         );
+    }
+
+    private CoordinatesScoringDTO toOrigin(Company company) {
+        if (company == null || company.getLatitude() == null || company.getLongitude() == null) {
+            return null;
+        }
+
+        return new CoordinatesScoringDTO(company.getLatitude(), company.getLongitude());
     }
 
     public CooperativeScoringDataDTO toCooperativeData(Cooperative cooperative) {

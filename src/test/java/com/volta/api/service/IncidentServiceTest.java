@@ -527,6 +527,45 @@ class IncidentServiceTest {
         }
 
         @Test
+        @DisplayName("empresa com coordenadas devolve a origem")
+        void getScoringContext_companyWithCoordinates_returnsOrigin() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            incident.getCompany().setLatitude(-23.561684);
+            incident.getCompany().setLongitude(-46.655981);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            IncidentScoringContextDTO context = service.getScoringContext(incident.getId(), author);
+
+            assertThat(context.origin().latitude()).isEqualTo(-23.561684);
+            assertThat(context.origin().longitude()).isEqualTo(-46.655981);
+        }
+
+        @Test
+        @DisplayName("empresa sem coordenadas devolve origem nula")
+        void getScoringContext_companyWithoutCoordinates_returnsNullOrigin() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThat(service.getScoringContext(incident.getId(), author).origin()).isNull();
+        }
+
+        @Test
+        @DisplayName("incidente sem empresa devolve origem nula")
+        void getScoringContext_incidentWithoutCompany_returnsNullOrigin() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            incident.setCompany(null);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThat(service.getScoringContext(incident.getId(), author).origin()).isNull();
+        }
+
+        @Test
         @DisplayName("sem relatório de IA e sem contaminação usa o risco padrão e relatório nulo")
         void getScoringContext_withoutReportAndContamination_usesDefaultRisk() {
             Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));

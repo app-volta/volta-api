@@ -88,7 +88,7 @@ public interface IncidentControllerDocs {
             summary = "Consulta o contexto de score da ocorrência",
             description = "Retorna os dados da ocorrência usados no cálculo de score de cooperativas. "
                     + "Sem nível de contaminação informado, devolve o risco padrão do resíduo. "
-                    + "O campo origin é nulo enquanto a área não tiver coordenadas cadastradas. "
+                    + "O campo origin traz as coordenadas da empresa e é nulo enquanto ela não as tiver cadastradas. "
                     + "**Acesso:** ADMIN, MANAGER, EMPLOYEE."
     )
     @ApiResponses({

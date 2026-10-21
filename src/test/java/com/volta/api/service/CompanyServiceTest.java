@@ -5,6 +5,7 @@ import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.company.CompanyRequestDTO;
 import com.volta.api.dto.company.CompanyResponseDTO;
 import com.volta.api.exception.ConflictException;
+import com.volta.api.exception.InvalidRequestException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CompanyMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,11 @@ class CompanyServiceTest {
     }
 
     private CompanyRequestDTO request() {
-        return new CompanyRequestDTO("Volta Industry", CNPJ, "Paulista Avenue, 1000");
+        return new CompanyRequestDTO("Volta Industry", CNPJ, "Paulista Avenue, 1000", null, null);
+    }
+
+    private CompanyRequestDTO request(Double latitude, Double longitude) {
+        return new CompanyRequestDTO("Volta Industry", CNPJ, "Paulista Avenue, 1000", latitude, longitude);
     }
 
     private Company company(UUID id, String name, String cnpj) {
@@ -92,6 +97,40 @@ class CompanyServiceTest {
             assertThat(response.id()).isEqualTo(savedId);
             assertThat(response.name()).isEqualTo("Volta Industry");
             assertThat(response.cnpj()).isEqualTo(NORMALIZED_CNPJ);
+        }
+
+        @Test
+        @DisplayName("coordenadas informadas são salvas e devolvidas")
+        void register_withCoordinates_savesAndReturnsCoordinates() {
+            when(companyRepository.existsByCnpj(NORMALIZED_CNPJ)).thenReturn(false);
+            when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            CompanyResponseDTO response = service.register(request(-23.561684, -46.655981));
+
+            ArgumentCaptor<Company> captor = ArgumentCaptor.forClass(Company.class);
+            verify(companyRepository).save(captor.capture());
+            assertThat(captor.getValue().getLatitude()).isEqualTo(-23.561684);
+            assertThat(captor.getValue().getLongitude()).isEqualTo(-46.655981);
+            assertThat(response.latitude()).isEqualTo(-23.561684);
+            assertThat(response.longitude()).isEqualTo(-46.655981);
+        }
+
+        @Test
+        @DisplayName("somente latitude lança requisição inválida e não salva")
+        void register_onlyLatitude_throwsInvalidRequestAndDoesNotSave() {
+            assertThatThrownBy(() -> service.register(request(-23.5, null)))
+                    .isInstanceOf(InvalidRequestException.class);
+
+            verify(companyRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("somente longitude lança requisição inválida e não salva")
+        void register_onlyLongitude_throwsInvalidRequestAndDoesNotSave() {
+            assertThatThrownBy(() -> service.register(request(null, -46.6)))
+                    .isInstanceOf(InvalidRequestException.class);
+
+            verify(companyRepository, never()).save(any());
         }
     }
 

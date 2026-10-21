@@ -1,4 +1,9 @@
+-- ============================================================
+-- VOLTA - PostgreSQL - CREATES e  ALTERS/CONSTRAINTS
+-- ============================================================
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 
 -- ============================================================
 -- 1. COMPANY
@@ -396,3 +401,7 @@ ALTER TABLE users
                         AND cooperative_id IS NOT NULL
                     )
             );
+
+ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION,
+    ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
