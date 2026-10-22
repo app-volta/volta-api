@@ -46,7 +46,6 @@ jobs:
 
   build-test:
     name: build-test
-    needs: setup
     runs-on: ubuntu-latest
 
     services:

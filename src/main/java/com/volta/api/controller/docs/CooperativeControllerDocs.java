@@ -2,6 +2,7 @@ package com.volta.api.controller.docs;
 
 import com.volta.api.dto.cooperative.CooperativeRequestDTO;
 import com.volta.api.dto.cooperative.CooperativeResponseDTO;
+import com.volta.api.dto.scoring.CooperativeScoringDataDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +26,14 @@ public interface CooperativeControllerDocs {
     @Operation(summary = "Lista todas as cooperativas", description = "**Acesso:** ADMIN.")
     @ApiResponse(responseCode = "200", description = "Lista de cooperativas")
     List<CooperativeResponseDTO> show();
+
+    @Operation(
+            summary = "Lista os dados de cooperativas para cálculo de score",
+            description = "Retorna id, nome, coordenadas, média de avaliação e especialidades (lista no formato do enum "
+                    + "WasteCategory) de todas as cooperativas, sem CNPJ. **Acesso:** ADMIN, MANAGER, EMPLOYEE."
+    )
+    @ApiResponse(responseCode = "200", description = "Lista de dados para score")
+    List<CooperativeScoringDataDTO> showScoringData();
 
     @Operation(summary = "Busca uma cooperativa pelo ID", description = "**Acesso:** ADMIN.")
     @ApiResponses({

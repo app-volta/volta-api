@@ -26,6 +26,8 @@ import com.volta.api.exception.BusinessRuleException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.AiReportMapper;
 import com.volta.api.mapper.IncidentMapper;
+import com.volta.api.mapper.ScoringMapper;
+import com.volta.api.dto.scoring.IncidentScoringContextDTO;
 import com.volta.api.security.AuthenticatedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -100,7 +102,8 @@ class IncidentServiceTest {
                 incidentProcedure,
                 aiReportRepository,
                 new AiReportMapper(),
-                collectionRepository);
+                collectionRepository,
+                new ScoringMapper());
     }
 
     @Nested
@@ -478,6 +481,117 @@ class IncidentServiceTest {
             assertThatThrownBy(() -> service.getAiReport(incident.getId(), author))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage("AI report not found");
+        }
+    }
+
+    @Nested
+    @DisplayName("getScoringContext")
+    class GetScoringContext {
+
+        @Test
+        @DisplayName("incidente de outra empresa lança not found sem consultar relatório")
+        void getScoringContext_ofAnotherCompany_throwsNotFoundWithoutQueryingReport() {
+            UUID id = UUID.randomUUID();
+            when(incidentRepository.findByIdAndCompanyId(id, companyId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.getScoringContext(id, author))
+                    .isInstanceOf(ResourceNotFoundException.class);
+
+            verifyNoInteractions(aiReportRepository);
+        }
+
+        @Test
+        @DisplayName("com relatório de IA devolve contexto completo e origem nula")
+        void getScoringContext_withAiReport_returnsFullContext() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PERIGOSO, RiskLevel.HIGH));
+            incident.setContaminationLevel("MEDIUM");
+            AiReport report = new AiReport();
+            report.setDetectedWasteType("Lubricant oil");
+            report.setAiContaminationLevel("HIGH");
+            report.setRecommendations("Isolate the area");
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.of(report));
+
+            IncidentScoringContextDTO context = service.getScoringContext(incident.getId(), author);
+
+            assertThat(context.incidentId()).isEqualTo(incident.getId());
+            assertThat(context.priority()).isEqualTo("MEDIUM");
+            assertThat(context.wasteType().category()).isEqualTo("PERIGOSO");
+            assertThat(context.wasteType().defaultRiskLevel()).isEqualTo("HIGH");
+            assertThat(context.contaminationLevel()).isEqualTo("MEDIUM");
+            assertThat(context.origin()).isNull();
+            assertThat(context.aiReport().detectedWasteType()).isEqualTo("Lubricant oil");
+            assertThat(context.aiReport().aiContaminationLevel()).isEqualTo("HIGH");
+            assertThat(context.aiReport().recommendations()).isEqualTo("Isolate the area");
+        }
+
+        @Test
+        @DisplayName("empresa com coordenadas devolve a origem")
+        void getScoringContext_companyWithCoordinates_returnsOrigin() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            incident.getCompany().setLatitude(-23.561684);
+            incident.getCompany().setLongitude(-46.655981);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            IncidentScoringContextDTO context = service.getScoringContext(incident.getId(), author);
+
+            assertThat(context.origin().latitude()).isEqualTo(-23.561684);
+            assertThat(context.origin().longitude()).isEqualTo(-46.655981);
+        }
+
+        @Test
+        @DisplayName("empresa sem coordenadas devolve origem nula")
+        void getScoringContext_companyWithoutCoordinates_returnsNullOrigin() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThat(service.getScoringContext(incident.getId(), author).origin()).isNull();
+        }
+
+        @Test
+        @DisplayName("incidente sem empresa devolve origem nula")
+        void getScoringContext_incidentWithoutCompany_returnsNullOrigin() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            incident.setCompany(null);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            assertThat(service.getScoringContext(incident.getId(), author).origin()).isNull();
+        }
+
+        @Test
+        @DisplayName("sem relatório de IA e sem contaminação usa o risco padrão e relatório nulo")
+        void getScoringContext_withoutReportAndContamination_usesDefaultRisk() {
+            Incident incident = fullIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW));
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            IncidentScoringContextDTO context = service.getScoringContext(incident.getId(), author);
+
+            assertThat(context.contaminationLevel()).isEqualTo("LOW");
+            assertThat(context.aiReport()).isNull();
+        }
+
+        @Test
+        @DisplayName("categoria fora do formato do enum é normalizada")
+        void getScoringContext_unnormalizedCategory_isNormalized() {
+            WasteType wasteType = wasteType(WasteCategory.NAO_RECICLAVEL, RiskLevel.LOW);
+            wasteType.setCategory("Não reciclável");
+            Incident incident = fullIncident(wasteType);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            when(aiReportRepository.findFirstByIncidentIdOrderByGeneratedAtDesc(incident.getId()))
+                    .thenReturn(Optional.empty());
+
+            IncidentScoringContextDTO context = service.getScoringContext(incident.getId(), author);
+
+            assertThat(context.wasteType().category()).isEqualTo("NAO_RECICLAVEL");
         }
     }
 

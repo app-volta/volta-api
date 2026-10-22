@@ -3,6 +3,7 @@ package com.volta.api.controller;
 import com.volta.api.controller.docs.CooperativeControllerDocs;
 import com.volta.api.dto.cooperative.CooperativeRequestDTO;
 import com.volta.api.dto.cooperative.CooperativeResponseDTO;
+import com.volta.api.dto.scoring.CooperativeScoringDataDTO;
 import com.volta.api.usecase.CooperativeUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,13 @@ public class CooperativeController implements CooperativeControllerDocs {
     @PreAuthorize("hasAuthority('ADMIN')")
     public List<CooperativeResponseDTO> show() {
         List<CooperativeResponseDTO> cooperatives = cooperativeUseCase.getCooperatives();
+        return cooperatives;
+    }
+
+    @GetMapping("/scoring-data")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
+    public List<CooperativeScoringDataDTO> showScoringData() {
+        List<CooperativeScoringDataDTO> cooperatives = cooperativeUseCase.getScoringData();
         return cooperatives;
     }
 
