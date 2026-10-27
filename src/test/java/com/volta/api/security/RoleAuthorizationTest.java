@@ -13,6 +13,7 @@ import com.volta.api.usecase.CooperativeUseCase;
 import com.volta.api.usecase.EsgUseCase;
 import com.volta.api.usecase.IncidentUseCase;
 import com.volta.api.usecase.ReviewUseCase;
+import com.volta.api.usecase.SummaryUseCase;
 import com.volta.api.usecase.UserUseCase;
 import com.volta.api.usecase.WasteTypeUseCase;
 import org.junit.jupiter.api.DisplayName;
@@ -95,6 +96,9 @@ class RoleAuthorizationTest {
     private ReviewUseCase reviewUseCase;
 
     @MockitoBean
+    private SummaryUseCase summaryUseCase;
+
+    @MockitoBean
     private UserUseCase userUseCase;
 
     @MockitoBean
@@ -159,7 +163,9 @@ class RoleAuthorizationTest {
                 endpoint(HttpMethod.GET, "/esg/score", ADMIN_MANAGER),
                 endpoint(HttpMethod.POST, "/esg/metrics", """
                         {"period":"2026-09","totalWasteKg":100,"totalRecycledKg":50}""", ADMIN_MANAGER),
-                endpoint(HttpMethod.GET, "/esg/metrics", ADMIN_MANAGER),
+                endpoint(HttpMethod.GET, "/esg/metrics", ADMIN_MANAGER_EMPLOYEE),
+
+                endpoint(HttpMethod.GET, "/summary", ADMIN_MANAGER_EMPLOYEE),
 
                 endpoint(HttpMethod.POST, "/incidents", """
                         {"areaId":"%s","wasteTypeId":"%s","employeeDescription":"Oil leak","priority":"LOW"}""".formatted(ID, ID), EMPLOYEE),
