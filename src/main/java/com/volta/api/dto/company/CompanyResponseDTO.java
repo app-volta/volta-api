@@ -13,6 +13,10 @@ public record CompanyResponseDTO(
         @Schema(description = "CNPJ sem máscara", example = "11222333000181")
         String cnpj,
         @Schema(description = "Endereço", example = "Av. Paulista, 1000 - São Paulo/SP")
-        String address
+        String address,
+        @Schema(description = "Latitude da empresa; nula quando não cadastrada", example = "-23.561684")
+        Double latitude,
+        @Schema(description = "Longitude da empresa; nula quando não cadastrada", example = "-46.655981")
+        Double longitude
 ) {
 }

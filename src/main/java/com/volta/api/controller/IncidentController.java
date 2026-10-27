@@ -5,6 +5,7 @@ import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
+import com.volta.api.dto.scoring.IncidentScoringContextDTO;
 import com.volta.api.security.AuthenticatedUser;
 import com.volta.api.usecase.IncidentUseCase;
 import jakarta.validation.Valid;
@@ -73,5 +74,15 @@ public class IncidentController implements IncidentControllerDocs {
     ) {
         AiReportResponseDTO aiReport = incidentUseCase.getAiReport(id, author);
         return aiReport;
+    }
+
+    @GetMapping("/{id}/scoring-context")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
+    public IncidentScoringContextDTO showScoringContext(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ) {
+        IncidentScoringContextDTO context = incidentUseCase.getScoringContext(id, author);
+        return context;
     }
 }

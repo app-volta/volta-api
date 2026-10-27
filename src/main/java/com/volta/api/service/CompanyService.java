@@ -5,6 +5,7 @@ import com.volta.api.database.repository.CompanyRepository;
 import com.volta.api.dto.company.CompanyRequestDTO;
 import com.volta.api.dto.company.CompanyResponseDTO;
 import com.volta.api.exception.ConflictException;
+import com.volta.api.exception.InvalidRequestException;
 import com.volta.api.exception.ResourceNotFoundException;
 import com.volta.api.mapper.CompanyMapper;
 import com.volta.api.usecase.CompanyUseCase;
@@ -24,6 +25,8 @@ public class CompanyService implements CompanyUseCase {
     private final CompanyMapper companyMapper;
 
     public CompanyResponseDTO register(CompanyRequestDTO dto) {
+        validateCoordinates(dto);
+
         if (companyRepository.existsByCnpj(dto.cnpj())) {
             throw new ConflictException("CNPJ already registered");
         }
@@ -50,6 +53,8 @@ public class CompanyService implements CompanyUseCase {
 
     @Transactional
     public CompanyResponseDTO update(UUID id, CompanyRequestDTO dto) {
+        validateCoordinates(dto);
+
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company"));
 
@@ -68,5 +73,11 @@ public class CompanyService implements CompanyUseCase {
             throw new ResourceNotFoundException("Company");
         }
         companyRepository.deleteById(id);
+    }
+
+    private void validateCoordinates(CompanyRequestDTO dto) {
+        if ((dto.latitude() == null) != (dto.longitude() == null)) {
+            throw new InvalidRequestException("Latitude and longitude must be informed together");
+        }
     }
 }
