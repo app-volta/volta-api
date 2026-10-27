@@ -40,7 +40,7 @@ public class EsgController implements EsgControllerDocs {
     }
 
     @PostMapping("/metrics")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPlOYEE')")
     @ResponseStatus(HttpStatus.CREATED)
     public EsgMetricResponseDTO createMetric(
             @Valid @RequestBody EsgMetricRequestDTO dto,
@@ -50,7 +50,7 @@ public class EsgController implements EsgControllerDocs {
     }
 
     @GetMapping("/metrics")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'EMPLOYEE')")
     public List<EsgMetricResponseDTO> showMetrics(@AuthenticationPrincipal AuthenticatedUser author) {
         List<EsgMetricResponseDTO> metrics = esgUseCase.getMetrics(author);
         return metrics;
