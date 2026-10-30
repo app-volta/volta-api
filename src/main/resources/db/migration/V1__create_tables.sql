@@ -42,6 +42,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     position VARCHAR(100),
+    photo_url VARCHAR(2048),
+    registered_at DATE,
+    first_login BOOLEAN,
 
     CONSTRAINT fk_users_company
     FOREIGN KEY (company_id)
@@ -98,6 +101,9 @@ CREATE TABLE IF NOT EXISTS incident (
     priority VARCHAR(30) NOT NULL,
     status VARCHAR(50) NOT NULL,
     registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ai_description TEXT,
+    title VARCHAR(100),
+    change_reason VARCHAR(200),
 
     CONSTRAINT fk_incident_company
     FOREIGN KEY (company_id)
