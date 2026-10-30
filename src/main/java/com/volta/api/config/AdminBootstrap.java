@@ -14,6 +14,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Component
@@ -42,6 +43,8 @@ public class AdminBootstrap implements ApplicationRunner {
                         .email(adminProperties.email())
                         .role(role)
                         .company(company)
+                        .registeredAt(LocalDate.now())
+                        .firstLogin(true)
                         .passwordHash(passwordEncoder.encode(adminProperties.password()))
                         .build()
         );

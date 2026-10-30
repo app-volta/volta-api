@@ -5,6 +5,7 @@ import com.volta.api.database.procedure.IncidentProcedure;
 import com.volta.api.database.repository.*;
 import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.incident.IncidentUpdateRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.dto.scoring.IncidentScoringContextDTO;
@@ -102,6 +103,46 @@ public class IncidentService implements IncidentUseCase {
         Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Incident"));
         return incidentMapper.toResponse(incident);
+    }
+
+    @Transactional
+    public IncidentResponseDTO update(UUID id, IncidentUpdateRequestDTO dto, AuthenticatedUser author) {
+        Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident"));
+
+        if (!IncidentStatus.PENDING.name().equals(incident.getStatus())) {
+            throw new BusinessRuleException("Only pending incidents can be edited");
+        }
+
+        WasteType wasteType = null;
+        if (dto.wasteTypeId() != null) {
+            wasteType = wasteTypeRepository.findById(dto.wasteTypeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Waste type"));
+        }
+
+        incidentMapper.updateEntity(incident, dto, wasteType);
+
+        if (incident.getContaminationLevel() == null) {
+            incident.setContaminationLevel(incident.getWasteType().getDefaultRiskLevel());
+        }
+        incident.setPriority(
+                resolvePriority(Priority.valueOf(incident.getPriority()), incident.getContaminationLevel(), incident.getWasteType()).name()
+        );
+
+        return incidentMapper.toResponse(incidentRepository.save(incident));
+    }
+
+    @Transactional
+    public IncidentResponseDTO approve(UUID id, AuthenticatedUser author) {
+        Incident incident = incidentRepository.findByIdAndCompanyId(id, author.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident"));
+
+        if (!IncidentStatus.PENDING.name().equals(incident.getStatus())) {
+            throw new BusinessRuleException("Only pending incidents can be approved");
+        }
+
+        incident.setStatus(IncidentStatus.APPROVED.name());
+        return incidentMapper.toResponse(incidentRepository.save(incident));
     }
 
     @Transactional

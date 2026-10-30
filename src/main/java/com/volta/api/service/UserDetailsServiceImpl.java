@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getId(),
                 user.getEmail(),
                 user.getPasswordHash(),
-                user.getCompany().getId(),
+                user.getCompany() != null ? user.getCompany().getId() : null,
                 user.getRole().getType()
         );
     }

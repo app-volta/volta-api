@@ -2,6 +2,7 @@ package com.volta.api.security.jwt;
 
 import com.volta.api.security.AuthenticatedUser;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -32,15 +33,18 @@ public class TokenProvider {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + expirationTime);
 
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .subject(user.getUsername())
                 .claim("userId", user.id().toString())
-                .claim("companyId", user.companyId().toString())
                 .claim("role", user.role())
                 .issuedAt(now)
-                .expiration(expiration)
-                .signWith(signingKey)
-                .compact();
+                .expiration(expiration);
+
+        if (user.companyId() != null) {
+            builder.claim("companyId", user.companyId().toString());
+        }
+
+        return builder.signWith(signingKey).compact();
     }
 
     public long getExpirationTime() {

@@ -55,6 +55,15 @@ public class Incident {
     @Column(name = "employee_description", nullable = false)
     private String employeeDescription;
 
+    @Column(name = "ai_description", columnDefinition = "TEXT")
+    private String aiDescription;
+
+    @Column(length = 100)
+    private String title;
+
+    @Column(name = "change_reason", length = 200)
+    private String changeReason;
+
     @Column(name = "contamination_level", length = 50)
     private String contaminationLevel;
 

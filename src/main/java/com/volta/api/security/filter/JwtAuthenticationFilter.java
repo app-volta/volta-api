@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String companyId = claims.get("companyId", String.class);
         String role = claims.get("role", String.class);
 
-        if (!StringUtils.hasText(userId) || !StringUtils.hasText(companyId) || !StringUtils.hasText(role)) {
+        if (!StringUtils.hasText(userId) || !StringUtils.hasText(role)) {
             return Optional.empty();
         }
 
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             UUID.fromString(userId),
                             claims.getSubject(),
                             null,
-                            UUID.fromString(companyId),
+                            StringUtils.hasText(companyId) ? UUID.fromString(companyId) : null,
                             role
                     )
             );
