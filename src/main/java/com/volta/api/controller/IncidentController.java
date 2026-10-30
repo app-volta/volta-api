@@ -3,6 +3,7 @@ package com.volta.api.controller;
 import com.volta.api.controller.docs.IncidentControllerDocs;
 import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.incident.IncidentUpdateRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.dto.scoring.IncidentScoringContextDTO;
@@ -53,6 +54,27 @@ public class IncidentController implements IncidentControllerDocs {
             @AuthenticationPrincipal AuthenticatedUser author
     ) {
         IncidentResponseDTO incident = incidentUseCase.getIncidentById(id, author);
+        return incident;
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public IncidentResponseDTO update(
+            @PathVariable UUID id,
+            @Valid @RequestBody IncidentUpdateRequestDTO dto,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ) {
+        IncidentResponseDTO incident = incidentUseCase.update(id, dto, author);
+        return incident;
+    }
+
+    @PatchMapping("/{id}/approve")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public IncidentResponseDTO approve(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser author
+    ) {
+        IncidentResponseDTO incident = incidentUseCase.approve(id, author);
         return incident;
     }
 

@@ -2,6 +2,7 @@ package com.volta.api.dto.esg;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,6 +21,18 @@ public record EsgMetricResponseDTO(
         @Schema(description = "Percentual reciclado", example = "80.00")
         BigDecimal recyclingPercentage,
         @Schema(description = "Data e hora do cálculo", example = "2026-10-15T09:30:00")
-        LocalDateTime calculatedAt
+        LocalDateTime calculatedAt,
+        @Schema(description = "Meta semanal de reciclagem, em kg", example = "300.00")
+        BigDecimal weeklyTarget,
+        @Schema(description = "Data da meta semanal", example = "2026-10-12")
+        LocalDate weeklyDate,
+        @Schema(description = "Meta mensal de reciclagem, em kg", example = "1200.00")
+        BigDecimal monthlyTarget,
+        @Schema(description = "Data da meta mensal", example = "2026-10-31")
+        LocalDate monthlyDate,
+        @Schema(description = "Meta trimestral de reciclagem, em kg", example = "3600.00")
+        BigDecimal quarterlyTarget,
+        @Schema(description = "Data da meta trimestral", example = "2026-12-31")
+        LocalDate quarterlyDate
 ) {
 }

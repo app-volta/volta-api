@@ -12,8 +12,11 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE IF NOT EXISTS company (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(150) NOT NULL,
-    cnpj VARCHAR(14) NOT NULL UNIQUE,
-    address VARCHAR(255) NOT NULL
+    cnpj VARCHAR(18) NOT NULL UNIQUE,
+    address VARCHAR(255) NOT NULL,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
+    is_available BOOLEAN NOT NULL DEFAULT TRUE
     );
 
 
@@ -39,6 +42,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     position VARCHAR(100),
+    photo_url VARCHAR(2048),
+    registered_at DATE,
+    first_login BOOLEAN,
 
     CONSTRAINT fk_users_company
     FOREIGN KEY (company_id)
@@ -95,6 +101,9 @@ CREATE TABLE IF NOT EXISTS incident (
     priority VARCHAR(30) NOT NULL,
     status VARCHAR(50) NOT NULL,
     registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ai_description TEXT,
+    title VARCHAR(100),
+    change_reason VARCHAR(200),
 
     CONSTRAINT fk_incident_company
     FOREIGN KEY (company_id)
@@ -350,6 +359,12 @@ CREATE TABLE IF NOT EXISTS esg_metric (
     total_recycled_kg DECIMAL(14,2) NOT NULL DEFAULT 0,
     recycling_percentage DECIMAL(5,2) NOT NULL DEFAULT 0,
     calculated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    weekly_target NUMERIC(12,2),
+    weekly_date DATE,
+    monthly_target NUMERIC(12,2),
+    monthly_date DATE,
+    quarterly_target NUMERIC(12,2),
+    quarterly_date DATE,
 
     CONSTRAINT fk_esg_metric_company
     FOREIGN KEY (company_id)
@@ -368,6 +383,8 @@ CREATE TABLE IF NOT EXISTS esg_metric (
     CHECK (total_recycled_kg <= total_waste_kg)
     );
 
+
+
 ALTER TABLE company
 ALTER COLUMN cnpj TYPE VARCHAR(18);
 
@@ -375,7 +392,7 @@ ALTER TABLE cooperative
 ALTER COLUMN cnpj TYPE VARCHAR(18);
 
 ALTER TABLE company
-    ADD COLUMN is_available BOOLEAN NOT NULL DEFAULT TRUE;
+    ADD COLUMN IF NOT EXISTS is_available BOOLEAN NOT NULL DEFAULT TRUE;
 
 ALTER TABLE users
     ALTER COLUMN company_id DROP NOT NULL;

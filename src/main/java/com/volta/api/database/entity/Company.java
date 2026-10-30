@@ -37,6 +37,10 @@ public class Company {
     @Column(nullable = false)
     private String address;
 
+    @Builder.Default
+    @Column(name = "is_available", nullable = false)
+    private Boolean isAvailable = true;
+
     @Column(columnDefinition = "DOUBLE PRECISION")
     private Double latitude;
 

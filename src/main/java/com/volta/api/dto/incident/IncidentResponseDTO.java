@@ -28,9 +28,15 @@ public record IncidentResponseDTO(
         BigDecimal estimatedQuantity,
         @Schema(description = "Prioridade", example = "HIGH", allowableValues = {"LOW", "MEDIUM", "HIGH", "CRITICAL"})
         String priority,
-        @Schema(description = "Status do incidente", example = "PENDING", allowableValues = {"PENDING", "CLOSED"})
+        @Schema(description = "Status do incidente", example = "PENDING", allowableValues = {"PENDING", "APPROVED", "CLOSED"})
         String status,
         @Schema(description = "Data e hora do registro", example = "2026-10-15T09:30:00")
-        LocalDateTime registeredAt
+        LocalDateTime registeredAt,
+        @Schema(description = "Título do incidente", example = "Vazamento de óleo na máquina 3")
+        String title,
+        @Schema(description = "Descrição gerada pela IA", example = "Resíduo oleoso com risco de contaminação do solo")
+        String aiDescription,
+        @Schema(description = "Motivo da última alteração", example = "Quantidade corrigida após vistoria")
+        String changeReason
 ) {
 }

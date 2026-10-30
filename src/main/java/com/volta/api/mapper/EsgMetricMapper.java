@@ -31,7 +31,13 @@ public class EsgMetricMapper {
                 esgMetric.getTotalWasteKg(),
                 esgMetric.getTotalRecycledKg(),
                 esgMetric.getRecyclingPercentage(),
-                esgMetric.getCalculatedAt()
+                esgMetric.getCalculatedAt(),
+                esgMetric.getWeeklyTarget(),
+                esgMetric.getWeeklyDate(),
+                esgMetric.getMonthlyTarget(),
+                esgMetric.getMonthlyDate(),
+                esgMetric.getQuarterlyTarget(),
+                esgMetric.getQuarterlyDate()
         );
     }
 }

@@ -114,8 +114,8 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    @DisplayName("token sem companyId não autentica")
-    void doFilter_tokenWithoutCompanyId_doesNotAuthenticate() throws Exception {
+    @DisplayName("token sem companyId autentica com companyId nulo")
+    void doFilter_tokenWithoutCompanyId_authenticatesWithNullCompanyId() throws Exception {
         String token = Jwts.builder()
                 .subject("ana@volta.com")
                 .claim("userId", UUID.randomUUID().toString())
@@ -123,7 +123,9 @@ class JwtAuthenticationFilterTest {
                 .signWith(Keys.hmacShaKeyFor(TEST_KEY.getBytes(StandardCharsets.UTF_8)))
                 .compact();
 
-        assertThat(runFilterWith("Bearer " + token)).isNull();
+        AuthenticatedUser principal = (AuthenticatedUser) runFilterWith("Bearer " + token).getPrincipal();
+
+        assertThat(principal.companyId()).isNull();
     }
 
     @Test

@@ -16,6 +16,7 @@ import com.volta.api.database.repository.WasteTypeRepository;
 import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
+import com.volta.api.dto.incident.IncidentUpdateRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.enums.CollectionStatusType;
 import com.volta.api.enums.IncidentStatus;
@@ -256,6 +257,116 @@ class IncidentServiceTest {
                     .isInstanceOf(ResourceNotFoundException.class);
 
             verifyNoInteractions(aiReportRepository);
+        }
+    }
+
+    @Nested
+    @DisplayName("update e approve")
+    class UpdateAndApprove {
+
+        private Incident givenOwnedIncident(WasteType wasteType, IncidentStatus status) {
+            Incident incident = incident(wasteType, Priority.LOW, status);
+            incident.setCompany(company(companyId));
+            Users user = new Users();
+            user.setId(UUID.randomUUID());
+            incident.setUser(user);
+            Area area = new Area();
+            area.setId(UUID.randomUUID());
+            incident.setArea(area);
+            when(incidentRepository.findByIdAndCompanyId(incident.getId(), companyId)).thenReturn(Optional.of(incident));
+            return incident;
+        }
+
+        private void givenSaveReturnsArgument() {
+            when(incidentRepository.save(any(Incident.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        }
+
+        private IncidentUpdateRequestDTO updateRequest(UUID wasteTypeId, Priority priority) {
+            return new IncidentUpdateRequestDTO(
+                    "New title",
+                    wasteTypeId,
+                    "AI description",
+                    null,
+                    new BigDecimal("12.50"),
+                    priority,
+                    "Quantity fixed");
+        }
+
+        @Test
+        @DisplayName("update altera os campos e registra o motivo")
+        void update_pendingIncident_appliesChangesAndReason() {
+            WasteType wasteType = wasteType(WasteCategory.PLASTICO, RiskLevel.LOW);
+            Incident incident = givenOwnedIncident(wasteType, IncidentStatus.PENDING);
+            incident.setContaminationLevel(RiskLevel.LOW.name());
+
+            givenSaveReturnsArgument();
+
+            IncidentResponseDTO response = service.update(incident.getId(), updateRequest(null, Priority.MEDIUM), author);
+
+            assertThat(response.title()).isEqualTo("New title");
+            assertThat(response.aiDescription()).isEqualTo("AI description");
+            assertThat(response.changeReason()).isEqualTo("Quantity fixed");
+            assertThat(response.estimatedQuantity()).isEqualByComparingTo("12.50");
+            assertThat(response.priority()).isEqualTo(Priority.MEDIUM.name());
+        }
+
+        @Test
+        @DisplayName("update com resíduo perigoso eleva a prioridade para HIGH")
+        void update_hazardousWasteType_raisesPriorityToHigh() {
+            WasteType common = wasteType(WasteCategory.PLASTICO, RiskLevel.LOW);
+            WasteType hazardous = wasteType(WasteCategory.PERIGOSO, RiskLevel.HIGH);
+            Incident incident = givenOwnedIncident(common, IncidentStatus.PENDING);
+            when(wasteTypeRepository.findById(hazardous.getId())).thenReturn(Optional.of(hazardous));
+
+            givenSaveReturnsArgument();
+
+            IncidentResponseDTO response = service.update(incident.getId(), updateRequest(hazardous.getId(), Priority.LOW), author);
+
+            assertThat(response.priority()).isEqualTo(Priority.HIGH.name());
+        }
+
+        @Test
+        @DisplayName("update de incidente aprovado lança business rule")
+        void update_approvedIncident_throwsBusinessRule() {
+            Incident incident = givenOwnedIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW), IncidentStatus.APPROVED);
+
+            assertThatThrownBy(() -> service.update(incident.getId(), updateRequest(null, null), author))
+                    .isInstanceOf(BusinessRuleException.class);
+
+            verify(incidentRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("update de incidente inexistente lança not found")
+        void update_missingIncident_throwsNotFound() {
+            UUID id = UUID.randomUUID();
+            when(incidentRepository.findByIdAndCompanyId(id, companyId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.update(id, updateRequest(null, null), author))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("approve muda o status de PENDING para APPROVED")
+        void approve_pendingIncident_setsApproved() {
+            Incident incident = givenOwnedIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW), IncidentStatus.PENDING);
+
+            givenSaveReturnsArgument();
+
+            IncidentResponseDTO response = service.approve(incident.getId(), author);
+
+            assertThat(response.status()).isEqualTo(IncidentStatus.APPROVED.name());
+        }
+
+        @Test
+        @DisplayName("approve de incidente que não está pendente lança business rule")
+        void approve_closedIncident_throwsBusinessRule() {
+            Incident incident = givenOwnedIncident(wasteType(WasteCategory.PLASTICO, RiskLevel.LOW), IncidentStatus.CLOSED);
+
+            assertThatThrownBy(() -> service.approve(incident.getId(), author))
+                    .isInstanceOf(BusinessRuleException.class);
+
+            verify(incidentRepository, never()).save(any());
         }
     }
 

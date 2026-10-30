@@ -2,6 +2,7 @@ package com.volta.api.controller.docs;
 
 import com.volta.api.dto.incident.IncidentFilterDTO;
 import com.volta.api.dto.incident.IncidentRequestDTO;
+import com.volta.api.dto.incident.IncidentUpdateRequestDTO;
 import com.volta.api.dto.report.AiReportResponseDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
 import com.volta.api.dto.scoring.IncidentScoringContextDTO;
@@ -50,6 +51,42 @@ public interface IncidentControllerDocs {
             @ApiResponse(responseCode = "404", description = "Incidente não encontrado")
     })
     IncidentResponseDTO show(
+            @Parameter(description = "ID do incidente") UUID id,
+            @Parameter(hidden = true) AuthenticatedUser author
+    );
+
+    @Operation(
+            summary = "Edita um incidente",
+            description = "Altera as informações principais do incidente (título, tipo de resíduo, descrição da IA, contaminação, "
+                    + "quantidade e prioridade) e registra o motivo da alteração. Campos omitidos não mudam. "
+                    + "Os dados informados pelo funcionário (área, foto e descrição) não são editáveis.\n\n"
+                    + "**Regras:** só incidentes PENDING podem ser editados. A prioridade é elevada para no mínimo HIGH "
+                    + "se o resíduo é perigoso ou a contaminação é HIGH.\n\n"
+                    + "**Acesso:** ADMIN, MANAGER."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Incidente atualizado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Incidente ou tipo de resíduo não encontrados"),
+            @ApiResponse(responseCode = "422", description = "Incidente não está pendente")
+    })
+    IncidentResponseDTO update(
+            @Parameter(description = "ID do incidente") UUID id,
+            IncidentUpdateRequestDTO dto,
+            @Parameter(hidden = true) AuthenticatedUser author
+    );
+
+    @Operation(
+            summary = "Aprova um incidente",
+            description = "Muda o status do incidente de PENDING para APPROVED. Depois de aprovado, ele não pode mais ser editado.\n\n"
+                    + "**Acesso:** ADMIN, MANAGER."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Incidente aprovado"),
+            @ApiResponse(responseCode = "404", description = "Incidente não encontrado"),
+            @ApiResponse(responseCode = "422", description = "Incidente não está pendente")
+    })
+    IncidentResponseDTO approve(
             @Parameter(description = "ID do incidente") UUID id,
             @Parameter(hidden = true) AuthenticatedUser author
     );

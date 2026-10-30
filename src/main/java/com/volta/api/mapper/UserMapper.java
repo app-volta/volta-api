@@ -13,7 +13,7 @@ public class UserMapper {
                 user.getName(),
                 user.getEmail(),
                 user.getPosition(),
-                user.getCompany().getId(),
+                user.getCompany() != null ? user.getCompany().getId() : null,
                 user.getRole().getType()
         );
     }

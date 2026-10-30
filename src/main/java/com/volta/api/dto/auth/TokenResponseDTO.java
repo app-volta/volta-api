@@ -7,6 +7,8 @@ public record TokenResponseDTO(
         @Schema(description = "Token JWT para o header Authorization: Bearer", example = "eyJhbGciOiJIUzI1NiJ9...")
         String token,
         @Schema(description = "Validade do token, em milissegundos", example = "86400000")
-        long expiresIn
+        long expiresIn,
+        @Schema(description = "Indica se este é o primeiro login do usuário. Após este login, passa a ser false nos próximos", example = "true")
+        boolean firstLogin
 ) {
 }

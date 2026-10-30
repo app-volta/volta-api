@@ -7,6 +7,7 @@ import com.volta.api.database.entity.Users;
 import com.volta.api.database.entity.WasteType;
 import com.volta.api.dto.incident.IncidentRequestDTO;
 import com.volta.api.dto.incident.IncidentResponseDTO;
+import com.volta.api.dto.incident.IncidentUpdateRequestDTO;
 import com.volta.api.enums.IncidentStatus;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,28 @@ public class IncidentMapper {
         return incident;
     }
 
+    public void updateEntity(Incident incident, IncidentUpdateRequestDTO dto, WasteType wasteType) {
+        if (dto.title() != null) {
+            incident.setTitle(dto.title());
+        }
+        if (wasteType != null) {
+            incident.setWasteType(wasteType);
+        }
+        if (dto.aiDescription() != null) {
+            incident.setAiDescription(dto.aiDescription());
+        }
+        if (dto.contaminationLevel() != null) {
+            incident.setContaminationLevel(dto.contaminationLevel().name());
+        }
+        if (dto.estimatedQuantity() != null) {
+            incident.setEstimatedQuantity(dto.estimatedQuantity());
+        }
+        if (dto.priority() != null) {
+            incident.setPriority(dto.priority().name());
+        }
+        incident.setChangeReason(dto.changeReason());
+    }
+
     public IncidentResponseDTO toResponse(Incident incident) {
         return new IncidentResponseDTO(
                 incident.getId(),
@@ -51,7 +74,10 @@ public class IncidentMapper {
                 incident.getEstimatedQuantity(),
                 incident.getPriority(),
                 incident.getStatus(),
-                incident.getRegisteredAt()
+                incident.getRegisteredAt(),
+                incident.getTitle(),
+                incident.getAiDescription(),
+                incident.getChangeReason()
         );
     }
 }

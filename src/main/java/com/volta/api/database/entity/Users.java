@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import java.time.LocalDate;
 import java.util.*;
 
 @Setter
@@ -17,10 +18,13 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cooperative_id")
+    private Cooperative cooperative;
 
     @NotNull
     @Column(length = 150, nullable = false)
@@ -37,6 +41,15 @@ public class Users {
 
     @Column(length = 100)
     private String position;
+
+    @Column(name = "photo_url", length = 2048)
+    private String photoUrl;
+
+    @Column(name = "registered_at")
+    private LocalDate registeredAt;
+
+    @Column(name = "first_login")
+    private Boolean firstLogin;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)

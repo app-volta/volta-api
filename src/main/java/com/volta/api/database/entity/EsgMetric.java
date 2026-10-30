@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -50,4 +51,22 @@ public class EsgMetric {
     @CreationTimestamp
     @Column(name = "calculated_at", nullable = false)
     private LocalDateTime calculatedAt;
+
+    @Column(name = "weekly_target", columnDefinition = "NUMERIC(12,2)")
+    private BigDecimal weeklyTarget;
+
+    @Column(name = "weekly_date")
+    private LocalDate weeklyDate;
+
+    @Column(name = "monthly_target", columnDefinition = "NUMERIC(12,2)")
+    private BigDecimal monthlyTarget;
+
+    @Column(name = "monthly_date")
+    private LocalDate monthlyDate;
+
+    @Column(name = "quarterly_target", columnDefinition = "NUMERIC(12,2)")
+    private BigDecimal quarterlyTarget;
+
+    @Column(name = "quarterly_date")
+    private LocalDate quarterlyDate;
 }

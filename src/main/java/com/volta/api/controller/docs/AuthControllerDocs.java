@@ -14,7 +14,8 @@ public interface AuthControllerDocs {
     @Operation(
             summary = "Realiza login",
             description = "Autentica o usuário por e-mail e senha e retorna um token JWT. "
-                    + "Use o token no botão **Authorize** para acessar os demais endpoints. **Acesso:** público."
+                    + "Use o token no botão **Authorize** para acessar os demais endpoints. "
+                    + "O campo firstLogin indica se é o primeiro login do usuário (true apenas nesta resposta). **Acesso:** público."
     )
     @SecurityRequirements
     @ApiResponses({

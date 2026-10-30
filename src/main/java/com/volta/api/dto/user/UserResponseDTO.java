@@ -15,7 +15,7 @@ public record UserResponseDTO(
         String position,
         @Schema(description = "ID da empresa", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
         UUID companyId,
-        @Schema(description = "Perfil de acesso", example = "MANAGER", allowableValues = {"ADMIN", "MANAGER", "EMPLOYEE", "OPERATOR"})
+        @Schema(description = "Perfil de acesso", example = "MANAGER", allowableValues = {"ADMIN", "MANAGER", "EMPLOYEE"})
         String role
 
 ) {
