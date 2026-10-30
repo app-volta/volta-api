@@ -414,9 +414,7 @@ ALTER TABLE users
             );
 
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION;
-
-ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION,
     ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
 
 -- ============================================================
@@ -425,11 +423,11 @@ ALTER TABLE company
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS cooperative_waste_type (
-                                                      cooperative_id UUID NOT NULL,
-                                                      waste_type_id UUID NOT NULL,
+    cooperative_id UUID NOT NULL,
+    waste_type_id UUID NOT NULL,
 
-                                                      CONSTRAINT pk_cooperative_waste_type
-                                                      PRIMARY KEY (cooperative_id, waste_type_id),
+    CONSTRAINT pk_cooperative_waste_type
+    PRIMARY KEY (cooperative_id, waste_type_id),
 
     CONSTRAINT fk_cwt_cooperative
     FOREIGN KEY (cooperative_id)
@@ -439,56 +437,3 @@ CREATE TABLE IF NOT EXISTS cooperative_waste_type (
     FOREIGN KEY (waste_type_id)
     REFERENCES waste_type(id)
     );
-
-UPDATE waste_type
-SET category = CASE category
-                   WHEN 'PLASTIC'     THEN 'PLASTICO'
-                   WHEN 'PAPER'       THEN 'PAPEL'
-                   WHEN 'GLASS'       THEN 'VIDRO'
-                   WHEN 'METAL'       THEN 'METAL'
-                   WHEN 'ORGANIC'     THEN 'ORGANICO'
-                   WHEN 'ELECTRONIC'  THEN 'ELETRONICO'
-                   WHEN 'CHEMICAL'    THEN 'QUIMICO'
-                   WHEN 'TEXTILE'     THEN 'TEXTIL'
-                   WHEN 'WOOD'        THEN 'MADEIRA'
-                   WHEN 'MIXED'       THEN 'MISTO'
-                   ELSE category
-    END
-WHERE category IN (
-                   'PLASTIC', 'PAPER', 'GLASS', 'METAL', 'ORGANIC',
-                   'ELECTRONIC', 'CHEMICAL', 'TEXTILE', 'WOOD', 'MIXED'
-    );
-
-UPDATE users
-SET role_id = 'cfdfa46f-dc1e-4442-bf2e-1d0a307edfa8'
-WHERE role_id = '91a5199b-8722-45ff-997a-d065d456f935';
-
-DELETE FROM role
-WHERE id = '91a5199b-8722-45ff-997a-d065d456f935'
-  AND type = 'OPERATOR';
-
-ALTER TABLE users
-    ADD COLUMN photo_url VARCHAR(2048);
-
-ALTER TABLE incident
-    ADD COLUMN ai_description TEXT;
-
-ALTER TABLE incident
-    ADD COLUMN title VARCHAR(100);
-
-ALTER TABLE incident
-    ADD COLUMN change_reason VARCHAR(200);
-
-ALTER TABLE users
-    ADD COLUMN registered_at DATE;
-
-ALTER TABLE users
-    ADD COLUMN first_login BOOLEAN;
-
-ALTER TABLE esg_metric
-    ADD COLUMN IF NOT EXISTS weekly_target    NUMERIC(12,2),
-    ADD COLUMN IF NOT EXISTS weekly_date      DATE,
-    ADD COLUMN IF NOT EXISTS monthly_target   NUMERIC(12,2),
-    ADD COLUMN IF NOT EXISTS monthly_date     DATE,
-    ADD COLUMN IF NOT EXISTS quarterly_target NUMERIC(12,2),
-    ADD COLUMN IF NOT EXISTS quarterly_date   DATE;
